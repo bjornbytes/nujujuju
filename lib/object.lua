@@ -1,19 +1,21 @@
 local object = {}
 
-function object.create(state)
-  local self = {
+function object.create()
+  return setmetatable({}, {__index = object})
+end
+
+function object:new(state)
+  local instance = {
     _state = lib.rx.Subject.create(state)
   }
 
-  return setmetatable(self, {
+  return setmetatable(instance, {
     __index = function(_, key)
       if key == 'state' then
-        return self._state:getValue()
-      else
-        local val = rawget(self, key)
-        if val then return val end
-        return object[key]
+        return instance._state:getValue()
       end
+
+      return self[key]
     end
   })
 end

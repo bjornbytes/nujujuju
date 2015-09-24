@@ -1,13 +1,12 @@
-local grid = lib.object.create({})
+local grid = lib.object.create()
 
 grid.props = {
-  size = 50
+  size = 55
 }
 
 function grid:bind()
   love.draw
     :subscribe(function()
-      local g = love.graphics
       local w, h = g.getDimensions()
 
       g.setColor(35, 35, 35)
@@ -25,4 +24,4 @@ function grid:bind()
     end)
 end
 
-return grid
+return grid:new({})

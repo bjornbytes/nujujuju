@@ -1,8 +1,4 @@
-local muju = lib.object.create({
-  x = 400,
-  y = 300,
-  transformed = false
-})
+local muju = lib.object.create()
 
 muju.props = {
   speed = 160,
@@ -24,7 +20,6 @@ function muju:bind()
 
   love.draw
     :subscribe(function()
-      local g = love.graphics
       g.setColor(255, 255, 255, 50)
       g.circle('fill', self.state.x, self.state.y, self.props.radius, 64)
       g.circle('line', self.state.x, self.state.y, self.props.radius, 64)
@@ -57,4 +52,9 @@ function muju:move(w, a, s, d)
   self:setState(state)
 end
 
-return muju
+return muju:new({
+  x = 400,
+  y = 300,
+  transformed = false
+})
+
