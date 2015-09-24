@@ -1,6 +1,6 @@
 local tick = {
   framerate = -1,
-  rate = .03,
+  rate = 1 / 60,
   scale = 1,
   sleep = .001,
   delta = 0,

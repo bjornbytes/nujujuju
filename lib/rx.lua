@@ -929,6 +929,47 @@ function Observable:wrap(size)
   end)
 end
 
+function Observable.zip(...)
+  local sources = {...}
+  local values = {}
+
+  return Observable.create(function(observer)
+    local function onNext(i)
+      return function(value)
+        values[i] = values[i] or {}
+        table.insert(values[i], value)
+        local ready = true
+        for i = 1, #sources do
+          if not values[i] or #values[i] == 0 then
+            ready = false
+            break
+          end
+        end
+        if ready then
+          local payload = {}
+          for i = 1, #sources do
+            payload[i] = values[i][1]
+            table.remove(values[i], 1)
+          end
+          observer:onNext(unpack(payload))
+        end
+      end
+    end
+
+    local function onError(message)
+      return observer:onError(message)
+    end
+
+    local function onComplete()
+      return observer:onComplete()
+    end
+
+    for i = 1, #sources do
+      sources[i]:subscribe(onNext(i), onError, onComplete)
+    end
+  end)
+end
+
 --- @class Scheduler
 -- @description Schedulers manage groups of Observables.
 local Scheduler = {}
