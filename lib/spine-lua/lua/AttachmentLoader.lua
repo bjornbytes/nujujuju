@@ -28,35 +28,30 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local AttachmentType = require "lib/spine/lua/AttachmentType"
+local AttachmentType = require "lib/spine-lua/lua/AttachmentType"
+local RegionAttachment = require "lib/spine-lua/lua/RegionAttachment"
+local BoundingBoxAttachment = require "lib/spine-lua/lua/BoundingBoxAttachment"
 
-local BoundingBoxAttachment = {}
-function BoundingBoxAttachment.new (name)
-	if not name then error("name cannot be nil", 2) end
+local AttachmentLoader = {}
+function AttachmentLoader.new ()
+	local self = {}
 
-	local self = {
-		name = name,
-		type = AttachmentType.boundingbox,
-		vertices = {}
-	}
+	function self:newRegionAttachment (skin, name, path)
+		return RegionAttachment.new(name)
+	end
 
-	function self:computeWorldVertices (x, y, bone, worldVertices)
-		x = x + bone.worldX
-		y = y + bone.worldY
-		local m00 = bone.m00
-		local m01 = bone.m01
-		local m10 = bone.m10
-		local m11 = bone.m11
-		local vertices = self.vertices
-		local count = #vertices
-		for i = 1, count, 2 do
-			local px = vertices[i]
-			local py = vertices[i + 1]
-			worldVertices[i] = px * m00 + py * m01 + x
-			worldVertices[i + 1] = px * m10 + py * m11 + y
-		end
+	function self:newMeshAttachment (skin, name, path)
+		return MeshAttachment.new(name)
+	end
+
+	function self:newSkinningMeshAttachment (skin, name, path)
+		return SkinningMeshAttachment.new(name)
+	end
+
+	function self:newBoundingBoxAttachment (skin, name)
+		return BoundingBoxAttachment.new(name)
 	end
 
 	return self
 end
-return BoundingBoxAttachment
+return AttachmentLoader

@@ -28,17 +28,18 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local SkeletonData = require "lib/spine/lua/SkeletonData"
-local BoneData = require "lib/spine/lua/BoneData"
-local SlotData = require "lib/spine/lua/SlotData"
-local Skin = require "lib/spine/lua/Skin"
-local AttachmentLoader = require "lib/spine/lua/AttachmentLoader"
-local Animation = require "lib/spine/lua/Animation"
-local IkConstraintData = require "lib/spine/lua/IkConstraintData"
-local IkConstraint = require "lib/spine/lua/IkConstraint"
-local EventData = require "lib/spine/lua/EventData"
-local Event = require "lib/spine/lua/Event"
-local AttachmentType = require "lib/spine/lua/AttachmentType"
+local utils = require "lib/spine-lua/lua/utils"
+local SkeletonData = require "lib/spine-lua/lua/SkeletonData"
+local BoneData = require "lib/spine-lua/lua/BoneData"
+local SlotData = require "lib/spine-lua/lua/SlotData"
+local Skin = require "lib/spine-lua/lua/Skin"
+local AttachmentLoader = require "lib/spine-lua/lua/AttachmentLoader"
+local Animation = require "lib/spine-lua/lua/Animation"
+local IkConstraintData = require "lib/spine-lua/lua/IkConstraintData"
+local IkConstraint = require "lib/spine-lua/lua/IkConstraint"
+local EventData = require "lib/spine-lua/lua/EventData"
+local Event = require "lib/spine-lua/lua/Event"
+local AttachmentType = require "lib/spine-lua/lua/AttachmentType"
 
 local SkeletonJson = {}
 function SkeletonJson.new (attachmentLoader)
@@ -50,7 +51,7 @@ function SkeletonJson.new (attachmentLoader)
 	}
 
 	function self:readSkeletonDataFile (fileName, base)
-		return self:readSkeletonData(spine.utils.readFile(fileName, base))
+		return self:readSkeletonData(utils.readFile(fileName, base))
 	end
 
 	local readAttachment
@@ -58,11 +59,10 @@ function SkeletonJson.new (attachmentLoader)
 	local readCurve
 	local getArray
 
-	function self:readSkeletonData (jsonText)
+	function self:readSkeletonData (json)
 		local skeletonData = SkeletonData.new(self.attachmentLoader)
 
-		local root = spine.utils.readJSON(jsonText)
-		if not root then error("Invalid JSON: " .. jsonText, 2) end
+    root = json
 
 		-- Skeleton.
 		if root["skeleton"] then

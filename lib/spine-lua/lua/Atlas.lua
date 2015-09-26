@@ -28,12 +28,12 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local AtlasPage = require 'lib/spine/lua/AtlasPage'
-local AtlasRegion = require 'lib/spine/lua/AtlasRegion'
+local AtlasPage = require 'lib/spine-lua/lua/AtlasPage'
+local AtlasRegion = require 'lib/spine-lua/lua/AtlasRegion'
 
 local Atlas = {}
 
-function Atlas.new(path, textureLoader)
+function Atlas.new(atlas, textureLoader)
   local self = {
     textureLoader = textureLoader,
     pages = {},
@@ -59,7 +59,7 @@ function Atlas.new(path, textureLoader)
     return str, unpack(t)
   end
 
-  local line, str = '', spine.utils.readFile(path)
+  local line, str = '', atlas
   if not str then return nil end
   repeat
     line, str = getLine(str)

@@ -28,32 +28,35 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local AnimationStateData = {}
+local AttachmentType = require "lib/spine-lua/lua/AttachmentType"
 
-function AnimationStateData.new (skeletonData)
-	if not skeletonData then error("skeletonData cannot be nil", 2) end
+local BoundingBoxAttachment = {}
+function BoundingBoxAttachment.new (name)
+	if not name then error("name cannot be nil", 2) end
 
 	local self = {
-		skeletonData = skeletonData,
-		animationToMixTime = {},
-		defaultMix = 0
+		name = name,
+		type = AttachmentType.boundingbox,
+		vertices = {}
 	}
 
-	function self:setMix (fromName, toName, duration)
-		if not self.animationToMixTime[fromName] then
-			self.animationToMixTime[fromName] = {}
+	function self:computeWorldVertices (x, y, bone, worldVertices)
+		x = x + bone.worldX
+		y = y + bone.worldY
+		local m00 = bone.m00
+		local m01 = bone.m01
+		local m10 = bone.m10
+		local m11 = bone.m11
+		local vertices = self.vertices
+		local count = #vertices
+		for i = 1, count, 2 do
+			local px = vertices[i]
+			local py = vertices[i + 1]
+			worldVertices[i] = px * m00 + py * m01 + x
+			worldVertices[i + 1] = px * m10 + py * m11 + y
 		end
-		self.animationToMixTime[fromName][toName] = duration
-	end
-	
-	function self:getMix (fromName, toName)
-		local first = self.animationToMixTime[fromName]
-		if not first then return self.defaultMix end
-		local duration = first[toName]
-		if not duration then return self.defaultMix end
-		return duration
 	end
 
 	return self
 end
-return AnimationStateData
+return BoundingBoxAttachment

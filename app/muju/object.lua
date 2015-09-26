@@ -14,7 +14,7 @@ muju.state = function()
     footstep = 0
   }
 
-  state.animation = lib.animation.create(app.muju.spine)
+  state.animation = lib.animation.create(app.muju.spine, app.muju.animation)
 
   return state
 end
@@ -37,6 +37,10 @@ function muju:bind()
     :filter(self.shouldFootstep)
     :subscribe(self.footstep)
 
+  love.update
+    :map(function() return self end)
+    :subscribe(self.animate)
+
   love.draw
     :subscribe(function()
       local props, state = app.muju.props, self.state
@@ -45,7 +49,10 @@ function muju:bind()
       local scale = 2 * props.radius / image:getWidth() * 1.5
       local bob = math.sin(state.bob * props.bob.rate) * props.bob.strength / 2
       g.setColor(255, 255, 255)
-      g.draw(image, state.x, state.y + 10 + bob, 0, scale * state.facing.x, scale, props.origin.x, props.origin.y)
+      state.animation.flipped = state.facing.x == 1
+      state.animation:tick(lib.tick.delta)
+      state.animation:draw(state.x, state.y + 10 + bob)
+      --g.draw(image, state.x, state.y + 10 + bob, 0, scale * state.facing.x, scale, props.origin.x, props.origin.y)
     end)
 
   return self
@@ -95,6 +102,13 @@ function muju:footstep()
   local sound = love.audio.play(app.muju.sound['footstep' .. love.math.random(1, 2)])
   sound:setVolume(.5)
   sound:setPitch(.9 + love.math.random() * .2)
+end
+
+function muju:animate()
+  local props, state = app.muju.props, self.state
+  local speed = math.sqrt((state.speed.x ^ 2) + (state.speed.y ^ 2)) / props.speed
+  state.animation.speed = speed > .1 and speed or 1
+  state.animation:set(speed > .1 and 'walk' or 'idle')
 end
 
 return muju

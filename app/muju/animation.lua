@@ -1,5 +1,5 @@
 return {
-  scale = .65,
+  scale = .55,
   offset = {
     x = 0,
     y = 0
@@ -8,46 +8,24 @@ return {
   states = {
 
     idle = {
-      priority = 1,
       loop = true,
-      speed = .4,
-      mix = {
-        walk = .2,
-        summon = .1,
-        death = .2
-      }
+      speed = .4
     },
 
     walk = {
-      priority = 1,
       loop = true,
-      speed = 1.2,
-      mix = {
-        idle = .1,
-        summon = .1,
-        death = .2
-      }
+      speed = 1.4
     },
 
     summon = {
-      priority = 2,
-      blocking = true,
-      speed = 1.85,
-      mix = {
-        walk = .2,
-        idle = .2
-      }
+      speed = 1.85
     },
 
     death = {
-      priority = 3,
-      blocking = true,
       speed = .7
     },
 
     resurrect = {
-      priority = 3,
-      blocking = true,
       speed = .9
     }
   }

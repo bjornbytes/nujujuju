@@ -28,30 +28,32 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local AttachmentType = require "lib/spine/lua/AttachmentType"
-local RegionAttachment = require "lib/spine/lua/RegionAttachment"
-local BoundingBoxAttachment = require "lib/spine/lua/BoundingBoxAttachment"
+local AnimationStateData = {}
 
-local AttachmentLoader = {}
-function AttachmentLoader.new ()
-	local self = {}
+function AnimationStateData.new (skeletonData)
+	if not skeletonData then error("skeletonData cannot be nil", 2) end
 
-	function self:newRegionAttachment (skin, name, path)
-		return RegionAttachment.new(name)
+	local self = {
+		skeletonData = skeletonData,
+		animationToMixTime = {},
+		defaultMix = 0.2
+	}
+
+	function self:setMix (fromName, toName, duration)
+		if not self.animationToMixTime[fromName] then
+			self.animationToMixTime[fromName] = {}
+		end
+		self.animationToMixTime[fromName][toName] = duration
 	end
-
-	function self:newMeshAttachment (skin, name, path)
-		return MeshAttachment.new(name)
-	end
-
-	function self:newSkinningMeshAttachment (skin, name, path)
-		return SkinningMeshAttachment.new(name)
-	end
-
-	function self:newBoundingBoxAttachment (skin, name)
-		return BoundingBoxAttachment.new(name)
+	
+	function self:getMix (fromName, toName)
+		local first = self.animationToMixTime[fromName]
+		if not first then return self.defaultMix end
+		local duration = first[toName]
+		if not duration then return self.defaultMix end
+		return duration
 	end
 
 	return self
 end
-return AttachmentLoader
+return AnimationStateData

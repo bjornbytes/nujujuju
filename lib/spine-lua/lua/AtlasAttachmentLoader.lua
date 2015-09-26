@@ -28,8 +28,8 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local RegionAttachment = require 'lib/spine/lua/RegionAttachment'
-local BoundingBoxAttachment = require "lib/spine/lua/BoundingBoxAttachment"
+local RegionAttachment = require 'lib/spine-lua/lua/RegionAttachment'
+local BoundingBoxAttachment = require "lib/spine-lua/lua/BoundingBoxAttachment"
 
 local AtlasAttachmentLoader = {}
 
