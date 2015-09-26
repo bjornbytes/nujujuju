@@ -5,6 +5,13 @@ grid.props = {
 }
 
 function grid:bind()
+  love.update
+    :subscribe(function()
+      self:setState({
+        debug = love.keyboard.isDown('`')
+      })
+    end)
+
   love.draw
     :subscribe(function()
       local w, h = g.getDimensions()
@@ -12,7 +19,10 @@ function grid:bind()
       g.setColor(35, 35, 35)
       g.rectangle('fill', 0, 0, w, h)
 
+      if not self.state.debug then return end
+
       g.setColor(255, 255, 255, 50)
+
       local size = self.props.size
       for x = size, w, size do
         g.line(x, 0, x, h)
@@ -24,4 +34,6 @@ function grid:bind()
     end)
 end
 
-return grid:new({})
+return grid:new({
+  debug = false
+})

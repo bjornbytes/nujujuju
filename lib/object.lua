@@ -6,7 +6,7 @@ end
 
 function object:new(state)
   local instance = {
-    _state = lib.rx.Subject.create(state)
+    _state = lib.rx.Subject.create(f.try(state or self.state))
   }
 
   return setmetatable(instance, {

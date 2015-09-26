@@ -4,6 +4,7 @@ function funk.try(f, ...)
   if type(f) == 'function' then
     return f(...)
   end
+  return f
 end
 
 function funk.eq(x)
