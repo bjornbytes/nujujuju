@@ -1084,7 +1084,21 @@ end
 -- @arg {function} onError - Called when the Subject terminates due to an error.
 -- @arg {function} onComplete - Called when the Subject completes normally.
 function Subject:subscribe(onNext, onError, onComplete)
-  table.insert(self.observers, Observer.create(onNext, onError, onComplete))
+  local observer = Observer.create(onNext, onError, onComplete)
+  table.insert(self.observers, observer)
+  return self:dispose(observer)
+end
+
+function Subject:dispose(observer)
+  return function()
+    for i = 1, #self.observers do
+      if self.observers[i] == observer then
+        table.remove(self.observers, i)
+        return true
+      end
+    end
+    return false
+  end
 end
 
 --- Pushes zero or more values to the Subject. It will be broadcasted to all Observers.

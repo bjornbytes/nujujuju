@@ -9,7 +9,7 @@ function object:new(state)
     _state = lib.rx.Subject.create(f.try(state or self.state))
   }
 
-  return setmetatable(instance, {
+  setmetatable(instance, {
     __index = function(_, key)
       if key == 'state' then
         return instance._state:getValue()
@@ -18,6 +18,10 @@ function object:new(state)
       return self[key]
     end
   })
+
+  f.try(instance.bind, instance)
+
+  return instance
 end
 
 function object:setState(updates)
