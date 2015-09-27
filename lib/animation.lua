@@ -36,6 +36,12 @@ function animation.create(spine, config)
 
   self:set(self.config.default)
 
+  self.events = lib.rx.Subject.create()
+
+  self.animationState.onEvent = function(_, event)
+    self.events:onNext(event)
+  end
+
   return self
 end
 

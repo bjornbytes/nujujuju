@@ -9,8 +9,5 @@ return {
   bob = {
     rate = 15,
     strength = 3
-  },
-  footstep = {
-    rate = math.pi * 2 / 15
   }
 }

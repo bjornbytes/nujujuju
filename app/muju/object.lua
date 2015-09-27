@@ -32,9 +32,9 @@ function muju:bind()
     :unpack()
     :subscribe(f.self(self.move, self))
 
-  love.update
-    :map(function() return self end)
-    :filter(self.shouldFootstep)
+  self.state.animation.events
+    :pluck('data', 'name')
+    :filter(f.chain(f.any, f.eq('stepone'), f.eq('steptwo')))
     :subscribe(self.footstep)
 
   love.update
@@ -93,12 +93,7 @@ function muju:move(w, a, s, d)
   self:setState(state)
 end
 
-function muju:shouldFootstep()
-  return self.state.bob > self.state.footstep
-end
-
 function muju:footstep()
-  self:setState({footstep = self.state.footstep + app.muju.props.footstep.rate})
   local sound = love.audio.play(app.muju.sound['footstep' .. love.math.random(1, 2)])
   sound:setVolume(.5)
   sound:setPitch(.9 + love.math.random() * .2)

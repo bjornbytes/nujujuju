@@ -9,8 +9,39 @@ end
 
 function funk.eq(x)
   return function(y)
-    return y == x
+    return x == y
   end
+end
+
+function funk.chain(combine, ...)
+  local fs = {...}
+  return function(...)
+    local result = nil
+    for i = 1, #fs do
+      result = combine(result, fs[i](...))
+    end
+    return result
+  end
+end
+
+function funk.flow(...)
+  return funk.chain(funk.id, ...)
+end
+
+function funk.any(...)
+  local result = nil
+  for i = 1, #arg do
+    result = result or arg[i]
+  end
+  return result
+end
+
+function funk.all(...)
+  local result = nil
+  for i = 1, #arg do
+    result = result and arg[i]
+  end
+  return result
 end
 
 function funk.val(value)

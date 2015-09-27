@@ -514,7 +514,9 @@ end
 -- tables produced by the original.
 -- @arg {function} key - The key to extract from the table.
 -- @returns {Observable}
-function Observable:pluck(key)
+function Observable:pluck(key, ...)
+  if not key then return self end
+
   return Observable.create(function(observer)
     local function onNext(t)
       return observer:onNext(t[key])
@@ -529,7 +531,7 @@ function Observable:pluck(key)
     end
 
     return self:subscribe(onNext, onError, onComplete)
-  end)
+  end):pluck(...)
 end
 
 --- Returns a new Observable that produces a single value computed by accumulating the results of
