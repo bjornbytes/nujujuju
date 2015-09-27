@@ -13,6 +13,12 @@ function funk.eq(x)
   end
 end
 
+function funk.negate(f)
+  return function(...)
+    return not f(...)
+  end
+end
+
 function funk.chain(combine, ...)
   local fs = {...}
   return function(...)

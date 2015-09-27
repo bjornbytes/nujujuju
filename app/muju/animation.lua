@@ -2,7 +2,7 @@ return {
   scale = .55,
   offset = {
     x = 0,
-    y = 0
+    y = 10
   },
   default = 'idle',
   states = {

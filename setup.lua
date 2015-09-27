@@ -22,3 +22,7 @@ g = love.graphics
 function math.lerp(x, y, z)
   return x + (y - x) * z
 end
+
+function math.sign(x)
+  return x > 0 and 1 or (x < 0 and -1 or 0)
+end
