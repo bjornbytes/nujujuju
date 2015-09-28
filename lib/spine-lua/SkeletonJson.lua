@@ -28,18 +28,18 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local utils = require "lib/spine-lua/lua/utils"
-local SkeletonData = require "lib/spine-lua/lua/SkeletonData"
-local BoneData = require "lib/spine-lua/lua/BoneData"
-local SlotData = require "lib/spine-lua/lua/SlotData"
-local Skin = require "lib/spine-lua/lua/Skin"
-local AttachmentLoader = require "lib/spine-lua/lua/AttachmentLoader"
-local Animation = require "lib/spine-lua/lua/Animation"
-local IkConstraintData = require "lib/spine-lua/lua/IkConstraintData"
-local IkConstraint = require "lib/spine-lua/lua/IkConstraint"
-local EventData = require "lib/spine-lua/lua/EventData"
-local Event = require "lib/spine-lua/lua/Event"
-local AttachmentType = require "lib/spine-lua/lua/AttachmentType"
+local utils = require "lib/spine-lua/utils"
+local SkeletonData = require "lib/spine-lua/SkeletonData"
+local BoneData = require "lib/spine-lua/BoneData"
+local SlotData = require "lib/spine-lua/SlotData"
+local Skin = require "lib/spine-lua/Skin"
+local AttachmentLoader = require "lib/spine-lua/AttachmentLoader"
+local Animation = require "lib/spine-lua/Animation"
+local IkConstraintData = require "lib/spine-lua/IkConstraintData"
+local IkConstraint = require "lib/spine-lua/IkConstraint"
+local EventData = require "lib/spine-lua/EventData"
+local Event = require "lib/spine-lua/Event"
+local AttachmentType = require "lib/spine-lua/AttachmentType"
 
 local SkeletonJson = {}
 function SkeletonJson.new (attachmentLoader)

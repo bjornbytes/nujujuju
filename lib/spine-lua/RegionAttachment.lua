@@ -28,7 +28,7 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local AttachmentType = require "lib/spine-lua/lua/AttachmentType"
+local AttachmentType = require "lib/spine-lua/AttachmentType"
 
 local RegionAttachment = {}
 function RegionAttachment.new (name)

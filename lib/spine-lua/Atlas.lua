@@ -28,8 +28,8 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local AtlasPage = require 'lib/spine-lua/lua/AtlasPage'
-local AtlasRegion = require 'lib/spine-lua/lua/AtlasRegion'
+local AtlasPage = require 'lib/spine-lua/AtlasPage'
+local AtlasRegion = require 'lib/spine-lua/AtlasRegion'
 
 local Atlas = {}
 

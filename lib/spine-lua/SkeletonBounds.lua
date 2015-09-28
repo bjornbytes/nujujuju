@@ -28,8 +28,8 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local AttachmentType = require "lib/spine-lua/lua/AttachmentType"
-local utils = require "lib/spine-lua/lua/utils"
+local AttachmentType = require "lib/spine-lua/AttachmentType"
+local utils = require "lib/spine-lua/utils"
 
 local SkeletonBounds = {}
 function SkeletonBounds.new ()

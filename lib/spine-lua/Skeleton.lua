@@ -28,11 +28,11 @@
 -- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------------
 
-local utils = require "lib/spine-lua/lua/utils"
-local Bone = require "lib/spine-lua/lua/Bone"
-local Slot = require "lib/spine-lua/lua/Slot"
-local IkConstraint = require "lib/spine-lua/lua/IkConstraint"
-local AttachmentLoader = require "lib/spine-lua/lua/AttachmentLoader"
+local utils = require "lib/spine-lua/utils"
+local Bone = require "lib/spine-lua/Bone"
+local Slot = require "lib/spine-lua/Slot"
+local IkConstraint = require "lib/spine-lua/IkConstraint"
+local AttachmentLoader = require "lib/spine-lua/AttachmentLoader"
 
 local Skeleton = {}
 function Skeleton.new (skeletonData)
