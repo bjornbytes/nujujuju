@@ -54,7 +54,7 @@ function checkbox:render()
 
   g.setFont(self.gooey.font)
   g.setColor(255, 255, 255, 180 + (75 * factor))
-  g.print(self.label, x + r + 1.4 * r, y - g.getFont():getHeight() / 2)
+  g.print(self.label, x + r + self.padding, y - g.getFont():getHeight() / 2)
 end
 
 function checkbox:mousereleased(mx, my, b)
