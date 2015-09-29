@@ -32,7 +32,7 @@ function muju:bind()
 
   love.update:subscribe(app.muju.actions.animate(self))
 
-  love.draw:subscribe(app.muju.actions.render(self))
+  love.draw:subscribe(app.muju.actions.draw(self))
 
   return self
 end

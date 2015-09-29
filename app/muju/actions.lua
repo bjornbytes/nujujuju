@@ -44,7 +44,7 @@ function actions.flip(self)
   end
 end
 
-function actions.render(self)
+function actions.draw(self)
   return function()
     local props, state = app.muju.props, self.state
     g.setColor(255, 255, 255)
