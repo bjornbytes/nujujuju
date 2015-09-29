@@ -12,10 +12,10 @@ function inspector:bind()
 
   self.dropdown = self.gooey:add(lib.dropdown, 'test.dropdown')
   self.dropdown.geometry = function() return 20, 76, 100, 20 end
-  self.dropdown.choices = {'muju', 'grid', 'bruju'}
+  self.dropdown.choices = {'bruju', 'thuju', 'kuju', 'xuju'}
   self.dropdown.padding = 6
-  self.dropdown.label = 'thing'
-  self.dropdown.value = 'muju'
+  self.dropdown.label = 'minion'
+  self.dropdown.value = 'bruju'
 
   -- This should go somewhere else more 'global'?
   self.hand = love.mouse.getSystemCursor('hand')
@@ -28,6 +28,8 @@ function inspector:bind()
   end)
 
   love.draw:subscribe(function()
+    g.setColor(0, 0, 0, 60)
+    g.rectangle('fill', 0, 0, 140, 120)
     self.gooey:render(self.button)
     self.gooey:render(self.dropdown)
     self.gooey:render(self.checkbox)
