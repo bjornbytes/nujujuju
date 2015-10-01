@@ -14,7 +14,7 @@ return {
 
     walk = {
       loop = true,
-      speed = 1.6
+      speed = 1.3
     },
 
     summon = {
