@@ -30,6 +30,11 @@ function muju:bind()
     :filter(f.chain(f.any, f.eq('stepone'), f.eq('steptwo')))
     :subscribe(app.muju.actions.footstep)
 
+  self.state.animation.events
+    :pluck('data', 'name')
+    :filter(f.eq('staff'))
+    :subscribe(app.muju.actions.limp(self))
+
   love.update:subscribe(app.muju.actions.animate(self))
 
   love.update

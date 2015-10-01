@@ -17,6 +17,14 @@ return love.update
     x = a and -1 or (d and 1 or 0)
     y = w and -1 or (s and 1 or 0)
 
+    local joystick = love.joystick.getJoysticks()[1]
+    if joystick then
+      x = joystick:getGamepadAxis('leftx')
+      y = joystick:getGamepadAxis('lefty')
+      if math.abs(x) < .2 then x = 0 end
+      if math.abs(y) < .2 then y = 0 end
+    end
+
     return {
       x = x,
       y = y

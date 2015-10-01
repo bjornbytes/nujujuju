@@ -19,6 +19,7 @@ function scene.load(level)
     })
 
     scene.objects.muju = app.muju.object:new()
+    scene.objects.particles = lib.particles.create():bind()
     scene.objects.inspector = app.inspector
   end
 end
