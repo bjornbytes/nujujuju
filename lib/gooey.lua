@@ -33,6 +33,10 @@ function gooey:bind()
     self.hot = nil
   end)
 
+  love.textinput:subscribe(function(char)
+    self:call('textinput', char)
+  end)
+
   love.resize:subscribe(function()
     self:call('resize')
   end)
@@ -58,8 +62,8 @@ function gooey:call(method, ...)
     end
   end
 
-  --local components = table.filter(self.components, function(c) return c.lastDraw and tick - c.lastDraw <= 1 and c ~= self.focused end)
-  for code, component in pairs(self.components) do
+  local components = table.filter(self.components, function(c) return c ~= self.focused end)
+  for code, component in pairs(components) do
     f.try(component[method], component, ...)
   end
 end
@@ -72,6 +76,12 @@ function gooey:add(class, code, vars)
   f.try(component.activate, component)
   self.components[code] = component
   return component
+end
+
+function gooey:remove(code)
+  local component = self:get(code)
+  f.try(component.deactivate, component)
+  self.components[code] = nil
 end
 
 function gooey:focus(component)

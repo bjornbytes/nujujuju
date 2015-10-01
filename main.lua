@@ -60,4 +60,27 @@ function table.interpolate(t1, t2, z)
   return interp
 end
 
+function table.keys(t)
+  local keys = {}
+  for k in pairs(t) do
+    table.insert(keys, k)
+  end
+  return keys
+end
+
+function table.filter(t, fn, iterator)
+  iterator = iterator or pairs
+  local res = {}
+  for k, v in iterator(t) do
+    if fn(v, k) then
+      if iterator == pairs then
+        res[k] = v
+      else
+        table.insert(res, v)
+      end
+    end
+  end
+  return res
+end
+
 app.scene.load('overgrowth')

@@ -1,5 +1,12 @@
 return love.update
   :map(function()
+    if app.inspector.gooey.focused then
+      return {
+        x = 0,
+        y = 0
+      }
+    end
+
     local w = love.keyboard.isDown('w')
     local a = love.keyboard.isDown('a')
     local s = love.keyboard.isDown('s')
