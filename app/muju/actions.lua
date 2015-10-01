@@ -51,12 +51,12 @@ function actions.draw(self)
     state.animation:tick(lib.tick.delta)
     state.animation:draw(state.position.x, state.position.y)
 
-    g.setColor(255, 255, 255, 80)
+    --[[g.setColor(255, 255, 255, 80)
     g.circle('fill', state.position.x, state.position.y, props.radius, 50)
     g.setColor(255, 255, 255, 255)
     g.setLineWidth(2)
     g.circle('line', state.position.x, state.position.y, props.radius, 50)
-    g.setLineWidth(1)
+    g.setLineWidth(1)]]
   end
 end
 
