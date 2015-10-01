@@ -7,8 +7,8 @@ function actions.move(self)
     local direction = math.atan2(y, x)
 
     if x == 0 and y == 0 then
-      state.speed.x = math.lerp(state.speed.x, 0, props.acceleration * lib.tick.rate)
-      state.speed.y = math.lerp(state.speed.y, 0, props.acceleration * lib.tick.rate)
+      state.speed.x = math.lerp(state.speed.x, 0, math.min(props.acceleration * lib.tick.rate, 1))
+      state.speed.y = math.lerp(state.speed.y, 0, math.min(props.acceleration * lib.tick.rate, 1))
     else
       state.speed.x = math.lerp(state.speed.x, props.speed * math.cos(direction), 10 * lib.tick.rate)
       state.speed.y = math.lerp(state.speed.y, props.speed * math.sin(direction), 10 * lib.tick.rate)
@@ -50,6 +50,13 @@ function actions.draw(self)
     g.setColor(255, 255, 255)
     state.animation:tick(lib.tick.delta)
     state.animation:draw(state.position.x, state.position.y)
+
+    g.setColor(255, 255, 255, 80)
+    g.circle('fill', state.position.x, state.position.y, props.radius, 50)
+    g.setColor(255, 255, 255, 255)
+    g.setLineWidth(2)
+    g.circle('line', state.position.x, state.position.y, props.radius, 50)
+    g.setLineWidth(1)
   end
 end
 
