@@ -27,7 +27,7 @@ function muju:bind()
 
   self.state.animation.events
     :pluck('data', 'name')
-    :filter(f.chain(f.any, f.eq('stepone'), f.eq('steptwo')))
+    :filter(f.eq('step'))
     :subscribe(app.muju.actions.footstep)
 
   self.state.animation.events
