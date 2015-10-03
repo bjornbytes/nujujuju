@@ -56,8 +56,8 @@ function funk.val(value)
   end
 end
 
-function funk.id(x)
-  return x
+function funk.id(...)
+  return ...
 end
 
 function funk.self(f, self)

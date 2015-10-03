@@ -34,4 +34,21 @@ function object:setState(updates)
   self._state:onNext(state)
 end
 
+function object:updateState(fn)
+  local state = self.state
+  fn(state)
+  self:setState(state)
+end
+
+function object:lerp(key, speed, getTarget)
+  love.update
+    :map(function() return self end)
+    :map(getTarget)
+    :subscribe(function(target)
+      local state = self.state
+      state[key] = math.lerp(state[key], target, math.min(speed * lib.tick.rate, 1))
+      self:setState(state)
+    end)
+end
+
 return object

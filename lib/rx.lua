@@ -217,6 +217,10 @@ end
 function Observable:combine(...)
   local sources = {...}
   local combinator = table.remove(sources)
+  if type(combinator) ~= 'function' then
+    table.insert(sources, combinator)
+    combinator = function(...) return ... end
+  end
   table.insert(sources, 1, self)
 
   return Observable.create(function(observer)

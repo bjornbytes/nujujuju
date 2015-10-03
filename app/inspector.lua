@@ -13,85 +13,89 @@ function inspector:bind()
   end
 
   self.gooey = lib.gooey.create():bind()
-  self.dropdown = self.gooey:add(lib.dropdown, 'test.dropdown')
+  self.dropdown = self.gooey:add(lib.dropdown, 'inspector.editing')
   self.dropdown.geometry = offset(6, 8, 100, 20)
   self.dropdown.choices = {'muju'}
   self.dropdown.padding = 6
   self.dropdown.label = 'subject'
   self.dropdown.value = 'muju'
 
-  self.subject = lib.rx.Subject.create()
-  self.editors = self.subject
-    :map(function(subject)
-      local keys = table.keys(app[subject].props)
-      for i = 1, #keys do
-        local key = keys[i]
-        local editor = self.gooey:add(lib.editor, 'prop.' .. key)
-        editor.label = key
-        editor.value = app[subject].props[key]
-        editor.geometry = offset(8, 24 + 20 * i, self.props.width - 16)
-        editor.valueSubject:subscribe(function(value)
-          app[subject].props[key] = tonumber(value) or value
-        end)
-        keys[i] = editor
-      end
-      return keys
-    end)
+  self.editing = lib.rx.Subject.create()
+  self.editors = self.editing:map(self.setupEditors(self))
 
   love.keypressed
     :filter(f.eq(' '))
-    :subscribe(function()
-      local state = self.state
-      state.active = not state.active
-      self:setState(state)
-    end)
+    :subscribe(self.toggleActive(self))
 
-  love.update
-    :map(function()
-      return self.state.active and 0 or -self.props.width
-    end)
-    :subscribe(function()
-      local state = self.state
-      state.x = math.lerp(state.x, state.active and 0 or -self.props.width, 16 * lib.tick.rate)
-      self:setState(state)
-    end)
+  self:lerp('x', 16, self.getTargetX)
 
-  self.hand = love.mouse.getSystemCursor('hand')
   love.mousemoved
     :pack()
-    :combine(self.editors, function(...) return ... end)
-    :subscribe(function(mouse, editors)
-      local mx, my = unpack(mouse)
-      local contains = false
-      contains = contains or self.dropdown:contains(mx, my)
-      for i = 1, #editors do
-        contains = contains or editors[i]:contains(mx, my)
-      end
-      if contains then
-        love.mouse.setCursor(self.hand)
-      else
-        love.mouse.setCursor()
-      end
-    end)
+    :combine(self.editors)
+    :subscribe(self.updateCursor(self))
 
   love.draw
     :with(self.editors)
-    :subscribe(function(_, editors)
-      local props, state = self.props, self.state
-      local height = love.graphics.getHeight()
-      g.setColor(0, 0, 0, 60)
-      g.rectangle('fill', state.x, 0, props.width, height)
-      self.gooey:render(self.dropdown)
+    :subscribe(self.render(self))
 
-      if editors then
-        g.setColor(255, 255, 255)
-        for i = 1, #editors do
-          self.gooey:render(editors[i])
-        end
-      end
+  self.editing:onNext('muju')
+end
+
+function inspector:getTargetX()
+  return self.state.active and 0 or -self.props.width
+end
+
+function inspector:toggleActive()
+  return function()
+    self:updateState(function(state)
+      state.active = not state.active
     end)
+  end
+end
 
-  self.subject:onNext('muju')
+function inspector:updateCursor()
+  local hand = love.mouse.getSystemCursor('hand')
+  return function(mouse, editors)
+    local mx, my = unpack(mouse)
+    local contains = false
+    contains = contains or self.dropdown:contains(mx, my)
+    for i = 1, #editors do
+      contains = contains or editors[i]:contains(mx, my)
+    end
+    love.mouse.setCursor(contains and hand or nil)
+  end
+end
+
+function inspector:setupEditors()
+  return function(editing)
+    return table.map(table.keys(app[editing].props), function(prop, i)
+      local editor = self.gooey:add(lib.editor, 'prop.' .. prop)
+      editor.label = prop
+      editor.value = app[editing].props[prop]
+      editor.geometry = offset(8, 24 + 20 * i, self.props.width - 16)
+      editor.valueSubject:subscribe(function(newValue)
+        app[editing].props[prop] = tonumber(newValue) or newValue
+      end)
+      return editor
+    end)
+  end
+end
+
+function inspector:render()
+  return function(_, editors)
+    local props, state = self.props, self.state
+    local height = love.graphics.getHeight()
+    g.setColor(0, 0, 0, 60)
+    g.rectangle('fill', state.x, 0, props.width, height)
+    self.gooey:render(self.dropdown)
+
+    if editors then
+      g.setColor(255, 255, 255)
+      for i = 1, #editors do
+        self.gooey:render(editors[i])
+      end
+    end
+  end
 end
 
 return inspector:new({

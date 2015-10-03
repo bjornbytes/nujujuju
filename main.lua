@@ -87,4 +87,13 @@ function table.filter(t, fn, iterator)
   return res
 end
 
+function table.map(t, fn, iterator)
+  iterator = iterator or pairs
+  local res = {}
+  for k, v in iterator(t) do
+    res[k] = fn(v, k)
+  end
+  return res
+end
+
 app.scene.load('overgrowth')
