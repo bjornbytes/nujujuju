@@ -41,12 +41,12 @@ function muju:bind()
     :map(function()
       local self, other = self.state.position, app.scene.objects.shrine.state
       local distance, direction = math.distance(self.x, self.y, other.x, other.y), math.direction(self.x, self.y, other.x, other.y)
-      return self, other, distance, direction
+      return distance, direction
     end)
-    :filter(function(self, other, distance, direction)
+    :filter(function(distance, direction)
       return distance < app.muju.props.radius + app.shrine.props.radius
     end)
-    :map(function(self, other, distance, direction)
+    :map(function(distance, direction)
       local delta = (app.muju.props.radius + app.shrine.props.radius) - distance
       return delta * math.cos(direction), delta * math.sin(direction)
     end)

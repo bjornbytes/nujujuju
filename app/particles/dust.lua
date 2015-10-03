@@ -14,5 +14,7 @@ dust.options.linearAcceleration = {0, -150, 0, -350}
 dust.options.linearDamping = 10
 dust.options.rotation = {0, 2 * math.pi}
 dust.options.spin = {-10, 10}
+dust.options.speed = 250
+dust.options.spread = math.pi / 15
 
 return dust

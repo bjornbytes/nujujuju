@@ -2,22 +2,23 @@ local actions = {}
 
 function actions.move(self)
   return function(input)
-    local x, y = input.x, input.y
-    local props, state = app.muju.props, self.state
-    local direction = math.atan2(y, x)
-    local length = math.min(math.distance(0, 0, x, y), 1)
+    return self:updateState(function(state)
+      local x, y = input.x, input.y
+      local props = app.muju.props
+      local direction = math.atan2(y, x)
+      local length = math.min(math.distance(0, 0, x, y), 1)
 
-    if x == 0 and y == 0 then
-      state.speed.x = math.lerp(state.speed.x, 0, math.min(props.acceleration * lib.tick.rate, 1))
-      state.speed.y = math.lerp(state.speed.y, 0, math.min(props.acceleration * lib.tick.rate, 1))
-    else
-      state.speed.x = math.lerp(state.speed.x, props.speed * math.cos(direction) * length, 10 * lib.tick.rate)
-      state.speed.y = math.lerp(state.speed.y, props.speed * math.sin(direction) * length, 10 * lib.tick.rate)
-    end
+      if x == 0 and y == 0 then
+        state.speed.x = math.lerp(state.speed.x, 0, math.min(props.acceleration * lib.tick.rate, 1))
+        state.speed.y = math.lerp(state.speed.y, 0, math.min(props.acceleration * lib.tick.rate, 1))
+      else
+        state.speed.x = math.lerp(state.speed.x, props.speed * math.cos(direction) * length, 10 * lib.tick.rate)
+        state.speed.y = math.lerp(state.speed.y, props.speed * math.sin(direction) * length, 10 * lib.tick.rate)
+      end
 
-    state.position.x = state.position.x + state.speed.x * lib.tick.rate
-    state.position.y = state.position.y + state.speed.y * lib.tick.rate
-    self:setState(state)
+      state.position.x = state.position.x + state.speed.x * lib.tick.rate
+      state.position.y = state.position.y + state.speed.y * lib.tick.rate
+    end)
   end
 end
 
@@ -30,12 +31,11 @@ end
 function actions.limp(self)
   return function()
     local state = self.state
-    for i = 1, 25 do
-      app.scene.objects.particles:emit('dust', self.state.position.x + (self.state.animation.flipped and 40 or -40), self.state.position.y, 1, {
-        direction = love.math.random() < .5 and math.pi or 0,
-        speed = 250
-      })
-    end
+    local x = state.position.x + (state.animation.flipped and 40 or -40)
+    local y = state.position.y
+    app.scene.objects.particles:emit('dust', x, y, 25, function()
+      return { direction = love.math.random() < .5 and math.pi or 0 }
+    end)
   end
 end
 
@@ -51,9 +51,9 @@ end
 
 function actions.flip(self)
   return function(x)
-    local state = self.state
-    state.animation.flipped = x > 0
-    self:setState(state)
+    return self:updateState(function(state)
+      state.animation.flipped = x > 0
+    end)
   end
 end
 

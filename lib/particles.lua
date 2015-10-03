@@ -44,16 +44,22 @@ function particles:emit(code, x, y, count, options)
 
   options = options or {}
 
-  for option, value in pairs(options) do
-    self:apply(code, option, value)
-  end
+  if type(options) == 'function' then
+    for i = 1, count do
+      self:emit(code, x, y, 1, options())
+    end
+  else
+    for option, value in pairs(options) do
+      self:apply(code, option, value)
+    end
 
-  self.systems[code]:setPosition(x, y)
-  self.systems[code]:emit(count)
+    self.systems[code]:setPosition(x, y)
+    self.systems[code]:emit(count)
 
-  for option, value in pairs(options) do
-    if app.particles[code].options[option] then
-      self:apply(code, option, app.particles[code].options[option])
+    for option, value in pairs(options) do
+      if app.particles[code].options[option] then
+        self:apply(code, option, app.particles[code].options[option])
+      end
     end
   end
 end
