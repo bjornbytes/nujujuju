@@ -44,6 +44,7 @@ function actions.animate(self)
     local props, state = app.muju.props, self.state
     local speed = math.sqrt((state.speed.x ^ 2) + (state.speed.y ^ 2)) / props.speed
     state.animation.speed = speed > .1 and speed or 1
+    state.animation.speed = 1
     local joystick = love.joystick.getJoysticks()[1]
     local moving
     if joystick then

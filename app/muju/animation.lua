@@ -19,7 +19,7 @@ return {
 
     stop = {
       loop = false,
-      speed = .5
+      speed = .75
     },
 
     summon = {

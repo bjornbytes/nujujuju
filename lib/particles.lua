@@ -30,6 +30,7 @@ function particles:bind()
       g.setBlendMode(app.particles[code].blendMode or 'alpha')
       g.draw(system)
       g.setBlendMode('alpha')
+      return -800
     end
   end)
 
