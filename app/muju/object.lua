@@ -10,7 +10,7 @@ muju.state = function()
       x = 0,
       y = 0
     },
-    shuffle = love.audio.loop(app.muju.sound.shuffle)
+    shuffle = love.audio.play(app.muju.sound.shuffle)
   }
 
   shuffle:setVolume(.25)
