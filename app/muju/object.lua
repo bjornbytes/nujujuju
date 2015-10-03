@@ -38,7 +38,7 @@ function muju:bind()
   love.update:subscribe(app.muju.actions.animate(self))
 
   for _, object in ipairs({'shrine', 'dirt'}) do
-    self:subscribeCollision(object, app.muju.actions.resolveCollision(self))
+    self:subscribeCollision(object, app.muju.actions.resolveCollision(self, app.scene.objects[object]))
   end
 
   love.draw:subscribe(app.muju.actions.draw(self))

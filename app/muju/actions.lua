@@ -57,11 +57,16 @@ function actions.flip(self)
   end
 end
 
-function actions.resolveCollision(self)
+function actions.resolveCollision(self, other)
   return function(dx, dy)
-    return self:updateState(function(state)
-      state.position.x = math.lerp(state.position.x, state.position.x - dx, 8 * lib.tick.rate)
-      state.position.y = math.lerp(state.position.y, state.position.y - dy, 8 * lib.tick.rate)
+    self:updateState(function(state)
+      state.position.x = math.lerp(state.position.x, state.position.x - dx / 2, 12 * lib.tick.rate)
+      state.position.y = math.lerp(state.position.y, state.position.y - dy / 2, 12 * lib.tick.rate)
+    end)
+
+    return other:updateState(function(state)
+      state.x = math.lerp(state.x, state.x + dx / 2, 12 * lib.tick.rate)
+      state.y = math.lerp(state.y, state.y + dy / 2, 12 * lib.tick.rate)
     end)
   end
 end
