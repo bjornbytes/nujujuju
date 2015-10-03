@@ -37,29 +37,34 @@ function muju:bind()
 
   love.update:subscribe(app.muju.actions.animate(self))
 
-  love.update
-    :map(function()
-      local self, other = self.state.position, app.scene.objects.shrine.state
-      local distance, direction = math.distance(self.x, self.y, other.x, other.y), math.direction(self.x, self.y, other.x, other.y)
-      return distance, direction
-    end)
-    :filter(function(distance, direction)
-      return distance < app.muju.props.radius + app.shrine.props.radius
-    end)
-    :map(function(distance, direction)
-      local delta = (app.muju.props.radius + app.shrine.props.radius) - distance
-      return delta * math.cos(direction), delta * math.sin(direction)
-    end)
-    :subscribe(function(dx, dy)
-      local props, state = app.muju.props, self.state
-      state.position.x = math.lerp(state.position.x, state.position.x - dx, 8 * lib.tick.rate)
-      state.position.y = math.lerp(state.position.y, state.position.y - dy, 8 * lib.tick.rate)
-      self:setState(state)
-    end)
+  for _, object in ipairs({'shrine', 'dirt'}) do
+    self:subscribeCollision(object, app.muju.actions.resolveCollision(self))
+  end
 
   love.draw:subscribe(app.muju.actions.draw(self))
 
   return self
+end
+
+function muju:subscribeCollision(name, fn)
+  local object = app.scene.objects[name]
+  local myProps = app.muju.props
+  local theirProps = app[name].props
+  return love.update
+    :map(function()
+      local self, other = self.state.position, object.state
+      local distance = math.distance(self.x, self.y, other.x, other.y)
+      local direction = math.direction(self.x, self.y, other.x, other.y)
+      return distance, direction
+    end)
+    :filter(function(distance, direction)
+      return distance < myProps.radius + theirProps.radius
+    end)
+    :map(function(distance, direction)
+      local delta = (myProps.radius + theirProps.radius) - distance
+      return delta * math.cos(direction), delta * math.sin(direction)
+    end)
+    :subscribe(fn)
 end
 
 return muju

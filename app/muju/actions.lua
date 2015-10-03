@@ -57,6 +57,15 @@ function actions.flip(self)
   end
 end
 
+function actions.resolveCollision(self)
+  return function(dx, dy)
+    return self:updateState(function(state)
+      state.position.x = math.lerp(state.position.x, state.position.x - dx, 8 * lib.tick.rate)
+      state.position.y = math.lerp(state.position.y, state.position.y - dy, 8 * lib.tick.rate)
+    end)
+  end
+end
+
 function actions.draw(self)
   return function()
     local props, state = app.muju.props, self.state
