@@ -33,7 +33,7 @@ end
 -- @arg {*...} values
 function Observer:onNext(...)
   if not self.stopped then
-    self._onNext(...)
+    return self._onNext(...)
   end
 end
 

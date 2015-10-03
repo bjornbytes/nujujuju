@@ -1,5 +1,5 @@
 return {
-  speed = 150,
+  speed = 120,
   acceleration = 10,
   radius = 20
 }

@@ -58,11 +58,11 @@ function muju:subscribeCollision(name, fn)
       return distance, direction
     end)
     :filter(function(distance, direction)
-      return distance < myProps.radius + theirProps.radius
+      return distance < myProps.radius + theirProps.radius * math.abs(math.cos(direction))
     end)
     :map(function(distance, direction)
       local delta = (myProps.radius + theirProps.radius) - distance
-      return delta * math.cos(direction), delta * math.sin(direction)
+      return delta * math.cos(direction), delta * math.sin(direction) * math.abs(math.cos(direction))
     end)
     :subscribe(fn)
 end

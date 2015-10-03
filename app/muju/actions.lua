@@ -85,6 +85,8 @@ function actions.draw(self)
     g.setLineWidth(2)
     g.circle('line', state.position.x, state.position.y, props.radius, 50)
     g.setLineWidth(1)]]
+
+    return -state.position.y - 5
   end
 end
 

@@ -1,3 +1,3 @@
 return {
-  radius = 20
+  radius = 30
 }

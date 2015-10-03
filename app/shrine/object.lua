@@ -15,6 +15,8 @@ function shrine:bind()
       g.setLineWidth(2)
       g.circle('line', state.x, state.y, props.radius, 50)
       g.setLineWidth(1)]]
+
+      return -state.y
     end)
 
   return self
