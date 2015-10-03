@@ -18,7 +18,7 @@ return {
     },
 
     stop = {
-      loop = true,
+      loop = false,
       speed = 1.1
     },
 
