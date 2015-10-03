@@ -33,7 +33,7 @@ function actions.limp(self)
     local state = self.state
     local x = state.position.x + (state.animation.flipped and 40 or -40)
     local y = state.position.y
-    app.scene.objects.particles:emit('dust', x, y, 25, function()
+    app.scene.particles:emit('dust', x, y, 25, function()
       return { direction = love.math.random() < .5 and math.pi or 0 }
     end)
   end
