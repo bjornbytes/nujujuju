@@ -5,7 +5,7 @@ grid.props = {
 }
 
 function grid:bind()
-  self.bg = app.environment.grass
+  self.bg = app.environment.dirt
   self.bg:setWrap('repeat', 'repeat')
   self.quad = g.newQuad(0, 0, g.getWidth(), g.getHeight(), self.bg:getDimensions())
 
@@ -22,6 +22,8 @@ function grid:bind()
 
       g.setColor(255, 255, 255)
       g.draw(self.bg, self.quad, 0, 0)
+
+      g.drawCenter(app.environment.bush, 60, 600, 100)
 
       if not self.state.debug then return end
 

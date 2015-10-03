@@ -96,4 +96,9 @@ function table.map(t, fn, iterator)
   return res
 end
 
+function g.drawCenter(image, size, x, y)
+  local scale = size / image:getWidth()
+  g.draw(image, x, y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
+end
+
 app.scene.load('overgrowth')
