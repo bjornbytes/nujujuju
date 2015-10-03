@@ -24,7 +24,7 @@ end
 
 function actions.footstep()
   local sound = love.audio.play(app.muju.sound['footstep' .. love.math.random(1, 2)])
-  sound:setVolume(.1)
+  sound:setVolume(.5)
   sound:setPitch(.9 + love.math.random() * .2)
 end
 
