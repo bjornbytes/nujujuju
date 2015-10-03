@@ -1,5 +1,5 @@
 {
-"skeleton": { "hash": "O5gYHBPJRjX1atSEv0ZB3yBgyRM", "spine": "2.1.27", "width": 111.06, "height": 181 },
+"skeleton": { "hash": "00/2LZw4JipxksYkZJwMSfex/O4", "spine": "2.1.27", "width": 111.06, "height": 181 },
 "bones": [
 	{ "name": "root" },
 	{ "name": "robebottom", "parent": "root", "length": 62.59, "x": -1.41, "y": 84.35, "rotation": -94.5 },
@@ -101,7 +101,7 @@
 	"attack": {},
 	"flor": {},
 	"staff": {},
-	"stepone": {},
+	"step": {},
 	"steptwo": {},
 	"stop": {},
 	"summon": {}
@@ -2658,7 +2658,8 @@
 			}
 		},
 		"events": [
-			{ "time": 0.3333, "name": "staff" }
+			{ "time": 0.3333, "name": "staff" },
+			{ "time": 0.5666, "name": "step" }
 		]
 	}
 }
