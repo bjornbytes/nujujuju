@@ -9,8 +9,12 @@ muju.state = function()
     speed = {
       x = 0,
       y = 0
-    }
+    },
+    shuffle = love.audio.loop(app.muju.sound.shuffle)
   }
+
+  shuffle:setVolume(.25)
+  shuffle:setLooping(true)
 
   state.animation = lib.animation.create(app.muju.spine, app.muju.animation)
 
@@ -19,6 +23,16 @@ end
 
 function muju:bind()
   lib.input:subscribe(app.muju.actions.move(self))
+
+  self:tint(.5, .2, .7)
+
+  love.update
+    :map(function() return self.state end)
+    :subscribe(function()
+      local state
+      local speed = math.sqrt((state.speed.x ^ 2) + (state.speed.y ^ 2)) / props.speed
+      state.shuffle:setVolume(speed)
+    end)
 
   love.update:map(function() return self.state end)
     :pluck('speed', 'x')
@@ -51,6 +65,13 @@ function muju:bind()
   love.draw:subscribe(app.muju.actions.draw(self))
 
   return self
+end
+
+function muju:tint(r, g, b)
+  for _, slot in pairs({'robebottom', 'torso', 'front_upper_arm', 'rear_upper_arm', 'front_bracer', 'rear_bracer'}) do
+    local slot = self.state.animation.skeleton:findSlot(slot)
+    slot.r, slot.g, slot.b = r, g, b
+  end
 end
 
 function muju:subscribeCollision(name, fn)
