@@ -23,12 +23,6 @@ function grid:bind()
       g.setColor(255, 255, 255)
       g.draw(self.bg, self.quad, 0, 0)
 
-      g.drawCenter(app.environment.bush, 60, 600, 100)
-      g.drawCenter(app.environment.rock1, 60, 200, 200)
-      g.drawCenter(app.environment.rock2, 60, 700, 500)
-      g.drawCenter(app.environment.rock3, 60, 500, 400)
-      g.drawCenter(app.environment.rock4, 60, 300, 450)
-
       if not self.state.debug then return end
 
       g.setColor(255, 255, 255, 50)

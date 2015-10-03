@@ -44,7 +44,7 @@ function muju:bind()
 
   love.update:subscribe(app.muju.actions.animate(self))
 
-  for _, object in ipairs({'shrine', 'dirt'}) do
+  for _, object in ipairs({'shrine', 'dirt', 'rock1', 'rock2', 'rock3', 'rock4', 'bush'}) do
     self:subscribeCollision(object, app.muju.actions.resolveCollision(self, app.scene.objects[object]))
   end
 
@@ -56,7 +56,7 @@ end
 function muju:subscribeCollision(name, fn)
   local object = app.scene.objects[name]
   local myProps = app.muju.props
-  local theirProps = app[name].props
+  local theirProps = app[name] and app[name].props or app.obstacle.props
   return love.update
     :map(function()
       local self, other = self.state.position, object.state
