@@ -29,7 +29,7 @@ function muju:bind()
   love.update
     :map(function() return self.state end)
     :subscribe(function()
-      local state
+      local state = self.state
       local speed = math.sqrt((state.speed.x ^ 2) + (state.speed.y ^ 2)) / props.speed
       state.shuffle:setVolume(speed)
     end)
