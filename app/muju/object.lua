@@ -13,7 +13,7 @@ muju.state = function()
     shuffle = love.audio.play(app.muju.sound.shuffle)
   }
 
-  state.shuffle:setVolume(.25)
+  state.shuffle:setVolume(0)
   state.shuffle:setLooping(true)
 
   state.animation = lib.animation.create(app.muju.spine, app.muju.animation)
@@ -31,7 +31,7 @@ function muju:bind()
     :subscribe(function()
       local props, state = app.muju.props, self.state
       local speed = math.sqrt((state.speed.x ^ 2) + (state.speed.y ^ 2)) / props.speed
-      state.shuffle:setVolume(speed)
+      state.shuffle:setVolume(speed * props.shuffleVolume)
     end)
 
   love.update:map(function() return self.state end)
