@@ -13,7 +13,7 @@ muju.state = function()
     shuffle = love.audio.play(app.muju.sound.shuffle)
   }
 
-  state.shuffle:setVolume(.5)
+  state.shuffle:setVolume(.25)
   state.shuffle:setLooping(true)
 
   state.animation = lib.animation.create(app.muju.spine, app.muju.animation)
