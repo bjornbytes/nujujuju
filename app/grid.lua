@@ -5,6 +5,10 @@ grid.props = {
 }
 
 function grid:bind()
+  self.bg = app.environment.grass
+  self.bg:setWrap('repeat', 'repeat')
+  self.quad = g.newQuad(0, 0, g.getWidth(), g.getHeight(), self.bg:getDimensions())
+
   love.update
     :subscribe(function()
       self:setState({
@@ -16,8 +20,8 @@ function grid:bind()
     :subscribe(function()
       local w, h = g.getDimensions()
 
-      g.setColor(35, 35, 35)
-      g.rectangle('fill', 0, 0, w, h)
+      g.setColor(255, 255, 255)
+      g.draw(self.bg, self.quad, 0, 0)
 
       if not self.state.debug then return end
 

@@ -69,6 +69,12 @@ end
 function actions.draw(self)
   return function()
     local props, state = app.muju.props, self.state
+
+    local image = app.muju.art.shadow
+    local scale = 70 / image:getWidth()
+    g.setColor(255, 255, 255, 120)
+    g.draw(image, state.position.x, state.position.y, 0, scale, scale / 2, image:getWidth() / 2, image:getHeight() / 2)
+
     g.setColor(255, 255, 255)
     state.animation:tick(lib.tick.delta)
     state.animation:draw(state.position.x, state.position.y)
