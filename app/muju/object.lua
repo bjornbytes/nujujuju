@@ -35,6 +35,13 @@ function muju:bind()
     :filter(f.eq('staff'))
     :subscribe(app.muju.actions.limp(self))
 
+  self.state.animation.events
+    :pluck('data', 'name')
+    :filter(f.eq('stop'))
+    :subscribe(function()
+      self.state.animation:set('idle')
+    end)
+
   love.update:subscribe(app.muju.actions.animate(self))
 
   for _, object in ipairs({'shrine', 'dirt'}) do

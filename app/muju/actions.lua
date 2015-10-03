@@ -44,7 +44,14 @@ function actions.animate(self)
     local props, state = app.muju.props, self.state
     local speed = math.sqrt((state.speed.x ^ 2) + (state.speed.y ^ 2)) / props.speed
     state.animation.speed = speed > .1 and speed or 1
-    state.animation:set(speed > .1 and 'walk' or 'idle')
+    local joystick = love.joystick.getJoysticks()[1]
+    if math.abs(joystick:getGamepadAxis('leftx')) > .5 or math.abs(joystick:getGamepadAxis('lefty')) > .5 then
+      state.animation:set('walk')
+      print('waka waka')
+    elseif state.animation.state == state.animation.config.states.walk and speed < 1 then
+      state.animation:set('stop')
+      print('stop')
+    end
     self:setState(state)
   end
 end

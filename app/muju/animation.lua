@@ -17,6 +17,11 @@ return {
       speed = 1.1
     },
 
+    stop = {
+      loop = true,
+      speed = 1.1
+    },
+
     summon = {
       speed = 1.85
     },

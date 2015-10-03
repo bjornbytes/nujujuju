@@ -73,4 +73,10 @@ function animation:set(name)
   self.animationState:setAnimationByName(0, name, self.state.loop)
 end
 
+function animation:add(name)
+  --if self.state == self.config.states[name] then return end
+  --self.state = self.config.states[name]
+  self.animationState:addAnimationByName(0, name, self.state.loop)
+end
+
 return animation
