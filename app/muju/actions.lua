@@ -36,6 +36,9 @@ function actions.limp(self)
     app.scene.particles:emit('dust', x, y, 25, function()
       return { direction = love.math.random() < .5 and math.pi or 0 }
     end)
+    local sound = love.audio.play('staff')
+    sound:setVolume(.5)
+    sound:setPitch(.9 + love.math.random() * .2)
   end
 end
 
