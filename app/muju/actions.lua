@@ -31,14 +31,16 @@ end
 function actions.limp(self)
   return function()
     local state = self.state
+
+    local sound = love.audio.play('staff')
+    sound:setVolume(.5)
+    sound:setPitch(.8 + love.math.random() * .6)
+
     local x = state.position.x + (state.animation.flipped and 40 or -40)
     local y = state.position.y
     app.scene.particles:emit('dust', x, y, 25, function()
       return { direction = love.math.random() < .5 and math.pi or 0 }
     end)
-    local sound = love.audio.play('staff')
-    sound:setVolume(.5)
-    sound:setPitch(.9 + love.math.random() * .2)
   end
 end
 
