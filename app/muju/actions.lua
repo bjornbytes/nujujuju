@@ -32,7 +32,7 @@ function actions.limp(self)
   return function()
     local state = self.state
 
-    local sound = love.audio.play('staff')
+    local sound = love.audio.play(app.muju.sounds.staff)
     sound:setVolume(.5)
     sound:setPitch(.8 + love.math.random() * .6)
 
