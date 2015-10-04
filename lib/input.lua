@@ -6,7 +6,8 @@ return love.update
       return {
         x = 0,
         y = 0,
-        shapeshift = false
+        shapeshift = false,
+        attack = false
       }
     end
 
@@ -30,14 +31,21 @@ return love.update
     end
 
     -- Shapeshift
-    local shapeshift = love.keyboard.isDown(' ')
+    local shapeshift = love.keyboard.isDown('e')
     if joystick then
-      shapeshift = joystick:isGamepadDown('a')
+      shapeshift = joystick:isGamepadDown('x')
+    end
+
+    -- Attack
+    local attack = love.keyboard.isDown(' ')
+    if joystick then
+      attack = joystick:isGamepadDown('a')
     end
 
     return {
       x = x,
       y = y,
-      shapeshift = shapeshift
+      shapeshift = shapeshift,
+      attack = attack
     }
   end)

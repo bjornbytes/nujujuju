@@ -49,9 +49,11 @@ function animation:draw(x, y)
   local skeleton = self.skeleton
   self:setPosition(x, y)
   skeleton.flipX = self.flipped
-  if self.backwards then skeleton.flipX = not skeleton.flipX end
+  if self.config.backwards then skeleton.flipX = not skeleton.flipX end
   self.animationState:apply(skeleton)
-  self.state = self.config.states[self.animationState.tracks[0].animation.name]
+  if self.animationState.tracks[0] then
+    self.state = self.config.states[self.animationState.tracks[0].animation.name]
+  end
   skeleton:updateWorldTransform()
   skeleton:draw()
 end

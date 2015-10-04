@@ -22,6 +22,11 @@ return {
       speed = .75
     },
 
+    attack = {
+      loop = false,
+      speed = 1
+    },
+
     summon = {
       speed = 1.85
     },

@@ -73,6 +73,7 @@ function scene.load(level)
 
   scene.particles = lib.particles.create():bind()
   scene.inspector = app.inspector
+  scene.hud = app.hud:new():bind()
 end
 
 return scene

@@ -53,18 +53,11 @@ function actions.canShapeshift(self)
 end
 
 function actions.animate(self)
-  return function()
+  return function(_, input)
     local props, state = app.muju.props, self.state
     local speed = math.sqrt((state.speed.x ^ 2) + (state.speed.y ^ 2)) / props.speed
-    state.animation.speed = speed > .1 and speed or 1
     state.animation.speed = 1
-    local joystick = love.joystick.getJoysticks()[1]
-    local moving
-    if joystick then
-      moving = math.abs(joystick:getGamepadAxis('leftx')) > .5 or math.abs(joystick:getGamepadAxis('lefty')) > .5
-    else
-      moving = love.keyboard.isDown('w', 'a', 's', 'd')
-    end
+    local moving = math.abs(input.x) > .5 or math.abs(input.y) > .5
     if moving then
       state.animation:set('walk')
     elseif state.animation.state == state.animation.config.states.walk and speed < 1 then

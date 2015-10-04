@@ -1,8 +1,9 @@
 return {
   scale = .32,
+  backwards = true,
   offset = {
     x = 0,
-    y = 0
+    y = 6
   },
   default = 'spawn',
   states = {

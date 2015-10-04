@@ -53,6 +53,15 @@ function muju:bind()
       self:setState(state)
     end)
 
+  lib.input
+    :pluck('attack')
+    :changes()
+    :filter(f.eq(true))
+    :subscribe(function()
+      self.state.animation:set('attack')
+      self.state.animation:add('idle')
+    end)
+
   love.update
     :map(function() return self.state end)
     :subscribe(function()
@@ -76,7 +85,9 @@ function muju:bind()
     :filter(f.eq('staff'))
     :subscribe(app.muju.actions.limp(self))
 
-  love.update:subscribe(app.muju.actions.animate(self))
+  love.update
+    :with(lib.input)
+    :subscribe(app.muju.actions.animate(self))
 
   for _, object in ipairs({'shrine', 'dirt', 'rock1', 'rock2', 'rock3', 'rock4', 'bush'}) do
     self:subscribeCollision(object, app.muju.actions.resolveCollision(self, app.scene.objects[object]))
