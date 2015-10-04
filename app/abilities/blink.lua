@@ -7,7 +7,10 @@ function blink:bind()
     :changes()
     :filter(f.eq(true))
     :subscribe(function()
-      print('blink')
+      app.scene.objects.muju:updateState(function(state)
+        state.position.x = state.position.x + 100 * (state.speed.x > 0 and 1 or -1)
+      end)
+
       self:updateState(function(state)
         state.timer = 1
       end)
