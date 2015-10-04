@@ -8,21 +8,31 @@ function editor:activate()
   self.hoverFactor = 0
   self.prevHoverFactor = self.hoverFactor
   self.valueSubject = lib.rx.Subject.create()
+  self.focusFactor = 0
+  self.prevFocusFactor = self.focusFactor
+  self.errorFactor = 0
+  self.prevErrorFactor = self.errorFactor
 end
 
 function editor:update()
   self.prevHoverFactor = self.hoverFactor
+  self.prevFocusFactor = self.focusFactor
+  self.prevErrorFactor = self.errorFactor
 
   local mx, my = love.mouse.getPosition()
 
   local hover = self:contains(mx, my)
   self.hoverFactor = math.lerp(self.hoverFactor, hover and 1 or 0, math.min(16 * lib.tick.rate, 1))
+  self.focusFactor = math.lerp(self.focusFactor, self:focused() and 1 or 0, math.min(16 * lib.tick.rate, 1))
+  self.errorFactor = math.lerp(self.errorFactor, 0, math.min(16 * lib.tick.rate, 1))
 end
 
 function editor:render()
   local x, y, w = self.geometry()
 
   local hoverFactor = math.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
+  local focusFactor = math.lerp(self.prevFocusFactor, self.focusFactor, lib.tick.accum / lib.tick.rate)
+  local errorFactor = math.lerp(self.prevErrorFactor, self.errorFactor, lib.tick.accum / lib.tick.rate)
 
   g.setFont(self.gooey.font)
   g.setColor(255, 255, 255, 180 + (75 * hoverFactor))
@@ -30,12 +40,33 @@ function editor:render()
 
   g.setColor(100, 200, 50)
   g.print(self.value, x + w - g.getFont():getWidth(self.value), y)
+
+  if errorFactor > 0 then
+    g.setColor(255, 100, 100, math.min(errorFactor, 1) * 255)
+    local y = y + g.getFont():getHeight() + .5
+    g.line(x, y, x + w, y)
+  elseif focusFactor * w > 1 then
+    g.setColor(255, 255, 255, 200)
+    local y = y + g.getFont():getHeight() + .5
+    g.line(x, y, x + w * focusFactor, y)
+  end
 end
 
 function editor:keypressed(key)
   if key == 'return' then
     if self:focused() then
-      self.valueSubject:onNext(self.value)
+      local old = self.valueSubject:getValue()
+
+      local try = function()
+        self.valueSubject:onNext(self.value)
+        love.update()
+      end
+
+      if not pcall(try) then
+        self.errorFactor = 8
+        self.value = old
+        self.valueSubject:onNext(old)
+      end
     end
     self.gooey:unfocus()
     love.keyboard:setKeyRepeat(false)

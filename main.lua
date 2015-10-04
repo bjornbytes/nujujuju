@@ -41,6 +41,10 @@ end
 
 function math.clamp(x, l, h) return math.min(math.max(x, l), h) end
 
+function math.round(x)
+  return math.floor(x + .5)
+end
+
 function table.copy(x)
   local t = type(x)
   if t ~= 'table' then return x end

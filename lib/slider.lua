@@ -31,14 +31,14 @@ function slider:update()
   end
 
   self.prevFactor = self.factor
-  self.factor = lume.lerp(self.factor, (value - self.min) / (self.max - self.min), math.min(16 * ls.tickrate, 1))
+  self.factor = math.lerp(self.factor, (value - self.min) / (self.max - self.min), math.min(16 * ls.tickrate, 1))
 
   self.prevScale = self.scale
-  self.scale = lume.lerp(self.scale, self.gooey.hot == self and 1.15 or 1, math.min(16 * ls.tickrate, 1))
+  self.scale = math.lerp(self.scale, self.gooey.hot == self and 1.15 or 1, math.min(16 * ls.tickrate, 1))
 
   self.prevHoverFactor = self.hoverFactor
   local hover = (not self.gooey.hot and self:containsBar(mx, my)) or self.gooey.hot == self
-  self.hoverFactor = lume.lerp(self.prevHoverFactor, hover and 1 or 0, math.min(16 * ls.tickrate, 1))
+  self.hoverFactor = math.lerp(self.prevHoverFactor, hover and 1 or 0, math.min(16 * ls.tickrate, 1))
 
   if hover then
     if not self.hoverDirty then
@@ -54,9 +54,9 @@ function slider:render()
   local u, v = ctx.u, ctx.v
   local x, y, w, r = unpack(self.geometry())
 
-  local factor = lume.lerp(self.prevFactor, self.factor, ls.accum / ls.tickrate)
-  local hoverFactor = lume.lerp(self.prevHoverFactor, self.hoverFactor, ls.accum / ls.tickrate)
-  local scale = lume.lerp(self.prevScale, self.scale, ls.accum / ls.tickrate)
+  local factor = math.lerp(self.prevFactor, self.factor, ls.accum / ls.tickrate)
+  local hoverFactor = math.lerp(self.prevHoverFactor, self.hoverFactor, ls.accum / ls.tickrate)
+  local scale = math.lerp(self.prevScale, self.scale, ls.accum / ls.tickrate)
   local radius = scale * r
 
   g.setFont('mesmerize', r * 1.4)
@@ -67,7 +67,7 @@ function slider:render()
 
   g.setColor(255, 255, 255, 40 + 80 * hoverFactor)
   g.setLineWidth(2)
-  g.line(lume.round(x) + .5, lume.round(y) + .5, x + w, y)
+  g.line(math.round(x) + .5, math.round(y) + .5, x + w, y)
   g.setLineWidth(1)
 
   g.setColor(30, 30, 30)
@@ -106,7 +106,7 @@ end
 function slider:setValue(value)
   local current = self.value:getValue()
   local old = currentValue
-  local new = lume.round(value, self.round)
+  local new = math.round(value, self.round)
   if new ~= current then
     self.value:onNext(new)
   end

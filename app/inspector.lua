@@ -15,13 +15,10 @@ function inspector:bind()
   self.gooey = lib.gooey.create():bind()
   self.dropdown = self.gooey:add(lib.dropdown, 'inspector.editing')
   self.dropdown.geometry = offset(6, 8, 100, 20)
-  self.dropdown.choices = {'muju'}
+  self.dropdown.choices = {'muju', 'shrine', 'dirt'}
   self.dropdown.padding = 6
   self.dropdown.label = 'subject'
-  self.dropdown.value = 'muju'
-
-  self.editing = lib.rx.Subject.create()
-  self.editors = self.editing:map(self.setupEditors(self))
+  self.components = self.dropdown.value:map(self.setupComponents(self))
 
   love.keypressed
     :filter(f.eq(' '))
@@ -31,14 +28,14 @@ function inspector:bind()
 
   love.mousemoved
     :pack()
-    :combine(self.editors)
+    :combine(self.components)
     :subscribe(self.updateCursor(self))
 
   love.draw
-    :with(self.editors)
+    :with(self.components)
     :subscribe(self.render(self))
 
-  self.editing:onNext('muju')
+  self.dropdown.value:onNext('muju')
 end
 
 function inspector:getTargetX()
@@ -55,29 +52,64 @@ end
 
 function inspector:updateCursor()
   local hand = love.mouse.getSystemCursor('hand')
-  return function(mouse, editors)
+  return function(mouse, components)
     local mx, my = unpack(mouse)
     local contains = false
     contains = contains or self.dropdown:contains(mx, my)
-    for i = 1, #editors do
-      contains = contains or editors[i]:contains(mx, my)
+    for i = 1, #components do
+      contains = contains or f.try(components[i].contains, components[i], mx, my)
     end
     love.mouse.setCursor(contains and hand or nil)
   end
 end
 
-function inspector:setupEditors()
+function inspector:setupComponents()
   return function(editing)
-    return table.map(table.keys(app[editing].props), function(prop, i)
-      local editor = self.gooey:add(lib.editor, 'prop.' .. prop)
-      editor.label = prop
-      editor.value = app[editing].props[prop]
-      editor.geometry = offset(8, 24 + 20 * i, self.props.width - 16)
-      editor.valueSubject:subscribe(function(newValue)
-        app[editing].props[prop] = tonumber(newValue) or newValue
+    if app[editing].editor then
+      local components = {}
+      local y = 44
+
+      for i = 1, #app[editing].editor.sections do
+        local section = app[editing].editor.sections[i]
+        local header = self.gooey:add(lib.label, 'prop.' .. section.title)
+        header.geometry = offset(8, y)
+        header.label = section.title
+        table.insert(components, header)
+
+        y = y + 20
+
+        for j = 1, #section do
+          local prop = section[j]
+          local editor = self.gooey:add(lib.editor, 'prop.' .. prop)
+          editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
+          editor.value = app[editing].props[prop]
+          editor.valueSubject:onNext(editor.value)
+          editor.geometry = offset(8, y, self.props.width - 16)
+          editor.valueSubject:subscribe(function(newValue)
+            app[editing].props[prop] = tonumber(newValue) or newValue
+          end)
+
+          y = y + 20
+          table.insert(components, editor)
+        end
+
+        y = y + 20
+      end
+
+      return components
+    else
+      return table.map(table.keys(app[editing].props), function(prop, i)
+        local editor = self.gooey:add(lib.editor, 'prop.' .. prop)
+        editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
+        editor.value = app[editing].props[prop]
+        editor.valueSubject:onNext(editor.value)
+        editor.geometry = offset(8, 24 + 20 * i, self.props.width - 16)
+        editor.valueSubject:subscribe(function(newValue)
+          app[editing].props[prop] = tonumber(newValue) or newValue
+        end)
+        return editor
       end)
-      return editor
-    end)
+    end
   end
 end
 
@@ -85,9 +117,6 @@ function inspector:render()
   return function(_, editors)
     local props, state = self.props, self.state
     local height = love.graphics.getHeight()
-    g.setColor(0, 0, 0, 60)
-    g.rectangle('fill', state.x, 0, props.width, height)
-    self.gooey:render(self.dropdown)
 
     if editors then
       g.setColor(255, 255, 255)
@@ -95,6 +124,12 @@ function inspector:render()
         self.gooey:render(editors[i])
       end
     end
+
+    g.setColor(0, 0, 0, 60)
+    g.rectangle('fill', state.x, 0, props.width, height)
+    self.gooey:render(self.dropdown)
+
+    return -1000
   end
 end
 

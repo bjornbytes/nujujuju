@@ -1,13 +1,13 @@
 local dirt = lib.object.create()
 
 function dirt:bind()
-  local xstart, ystart = self.state.x, self.state.y
+  local xstart, ystart = self.state.position.x, self.state.position.y
 
   love.update
     :subscribe(function()
       self:updateState(function(state)
-        state.x = math.lerp(state.x, xstart, 16 * lib.tick.rate)
-        state.y = math.lerp(state.y, ystart, 16 * lib.tick.rate)
+        state.position.x = math.lerp(state.position.x, xstart, 16 * lib.tick.rate)
+        state.position.y = math.lerp(state.position.y, ystart, 16 * lib.tick.rate)
       end)
     end)
 
@@ -17,9 +17,9 @@ function dirt:bind()
       local image = app.dirt.image
       local scale = app.grid.props.size / image:getWidth()
       g.setColor(255, 255, 255)
-      g.draw(image, state.x, state.y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
+      g.draw(image, state.position.x, state.position.y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
 
-      return -state.y
+      return -state.position.y
     end)
 
   return self

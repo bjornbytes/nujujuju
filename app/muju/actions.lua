@@ -9,11 +9,11 @@ function actions.move(self)
       local length = math.min(math.distance(0, 0, x, y), 1)
 
       if x == 0 and y == 0 then
-        state.speed.x = math.lerp(state.speed.x, 0, math.min(props.acceleration * lib.tick.rate, 1))
-        state.speed.y = math.lerp(state.speed.y, 0, math.min(props.acceleration * lib.tick.rate, 1))
+        state.speed.x = math.lerp(state.speed.x, 0, math.min(props.deceleration * lib.tick.rate, 1))
+        state.speed.y = math.lerp(state.speed.y, 0, math.min(props.deceleration * lib.tick.rate, 1))
       else
-        state.speed.x = math.lerp(state.speed.x, props.speed * math.cos(direction) * length, 10 * lib.tick.rate)
-        state.speed.y = math.lerp(state.speed.y, props.speed * math.sin(direction) * length, 10 * lib.tick.rate)
+        state.speed.x = math.lerp(state.speed.x, props.speed * math.cos(direction) * length, props.acceleration * lib.tick.rate)
+        state.speed.y = math.lerp(state.speed.y, props.speed * math.sin(direction) * length, props.acceleration * lib.tick.rate)
       end
 
       state.position.x = state.position.x + state.speed.x * lib.tick.rate
@@ -23,17 +23,18 @@ function actions.move(self)
 end
 
 function actions.footstep()
+  local props = app.muju.props
   local sound = love.audio.play(app.muju.sound['footstep' .. love.math.random(1, 2)])
-  sound:setVolume(.4)
+  sound:setVolume(props.footstepVolume)
   sound:setPitch(.9 + love.math.random() * .2)
 end
 
 function actions.limp(self)
   return function()
-    local state = self.state
+    local props, state = app.muju.props, self.state
 
     local sound = love.audio.play(app.muju.sound.staff)
-    sound:setVolume(.5)
+    sound:setVolume(props.staffVolume)
     sound:setPitch(.8 + love.math.random() * .6)
 
     local x = state.position.x + (state.animation.flipped and 40 or -40)
@@ -84,9 +85,16 @@ function actions.resolveCollision(self, other)
     end)
 
     return other:updateState(function(state)
-      state.x = math.lerp(state.x, state.x + dx / 2, 12 * lib.tick.rate)
-      state.y = math.lerp(state.y, state.y + dy / 2, 12 * lib.tick.rate)
+      state.position.x = math.lerp(state.position.x, state.position.x + dx / 2, 12 * lib.tick.rate)
+      state.position.y = math.lerp(state.position.y, state.position.y + dy / 2, 12 * lib.tick.rate)
     end)
+  end
+end
+
+function actions:tint(r, g, b)
+  for _, slot in pairs({'robebottom', 'torso', 'front_upper_arm', 'rear_upper_arm', 'front_bracer', 'rear_bracer'}) do
+    local slot = self.state.animation.skeleton:findSlot(slot)
+    slot.r, slot.g, slot.b = r, g, b
   end
 end
 

@@ -24,7 +24,10 @@ end
 function muju:bind()
   lib.input:subscribe(app.muju.actions.move(self))
 
-  self:tint(.5, .2, .7)
+  app.muju.actions.tint(self, .5, .2, .7)
+
+  self.abilities = lib.abilities.create()
+  self.abilities:add('blink')
 
   love.update
     :map(function() return self.state end)
@@ -67,20 +70,13 @@ function muju:bind()
   return self
 end
 
-function muju:tint(r, g, b)
-  for _, slot in pairs({'robebottom', 'torso', 'front_upper_arm', 'rear_upper_arm', 'front_bracer', 'rear_bracer'}) do
-    local slot = self.state.animation.skeleton:findSlot(slot)
-    slot.r, slot.g, slot.b = r, g, b
-  end
-end
-
 function muju:subscribeCollision(name, fn)
   local object = app.scene.objects[name]
   local myProps = app.muju.props
   local theirProps = app[name] and app[name].props or app.obstacle.props
   return love.update
     :map(function()
-      local self, other = self.state.position, object.state
+      local self, other = self.state.position, object.state.position
       local distance = math.distance(self.x, self.y, other.x, other.y)
       local direction = math.direction(self.x, self.y, other.x, other.y)
       return distance, direction

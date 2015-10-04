@@ -5,7 +5,7 @@ getmetatable(dropdown).__call = function()
 end
 
 function dropdown:activate()
-  self.value = nil
+  self.value = lib.rx.Subject.create(self.value)
   self.choices = self.choices or {}
   self.factor = 0
   self.prevFactor = self.factor
@@ -63,6 +63,7 @@ function dropdown:render()
   local factor = math.lerp(self.prevFactor, self.factor, lib.tick.accum / lib.tick.rate)
   local dropdownHeight = self:getdropdownHeight() * factor
   local font = g.setFont(self.gooey.font)
+  local value = self.value:getValue()
 
   g.setColor(255, 255, 255, 40 + (20 * hoverFactor))
   g.rectangle('fill', x, y, w, h)
@@ -87,7 +88,7 @@ function dropdown:render()
       hoverFactor = choiceHoverFactors[i]
     end
     local alpha = math.min(180 * factor + (75 * hoverFactor), 255)
-    if self.choices[i] == self.value then g.setColor(100, 200, 50, 255 * factor)
+    if self.choices[i] == value then g.setColor(100, 200, 50, 255 * factor)
     else g.setColor(220, 220, 220, alpha) end
     g.print(self.choices[i], x + self.padding, y + h * i + self.padding)
   end
@@ -96,7 +97,7 @@ function dropdown:render()
   g.print(self.label, x + self.padding, y + self.padding)
 
   g.setColor(100, 200, 50, 255)
-  g.print(self.value, x + w - self.padding - g.getFont():getWidth(self.value), y + self.padding)
+  g.print(value, x + w - self.padding - g.getFont():getWidth(value), y + self.padding)
 end
 
 function dropdown:mousepressed(mx, my, b)
@@ -122,8 +123,9 @@ function dropdown:mousereleased(mx, my, b)
 
       self.gooey:unfocus()
       if hit then
-        self.value = self.choices[hit] or self.value
-        --self:emit('change', {component = self})
+        if self.choices[hit] then
+          self.value:onNext(self.choices[hit])
+        end
         return true
       end
     end
