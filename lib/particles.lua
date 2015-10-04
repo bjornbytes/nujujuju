@@ -7,7 +7,7 @@ function particles.create()
 
   setmetatable(self, {__index = particles})
 
-  local particleList = {'dust'}
+  local particleList = {'dust', 'thujustep'}
   for i = 1, #particleList do
     local name = particleList[i]
     local particle = app.particles[name]
@@ -30,8 +30,8 @@ function particles:bind()
       g.setBlendMode(app.particles[code].blendMode or 'alpha')
       g.draw(system)
       g.setBlendMode('alpha')
-      return -800
     end
+    return -800
   end)
 
   return self

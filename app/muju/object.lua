@@ -75,12 +75,24 @@ function muju:bind()
     :filter(f.negate(f.eq(0)))
     :subscribe(app.muju.actions.flip(self))
 
-  self.state.animation.events
+  self.state.animations.thuju.events
+    :pluck('data', 'name')
+    :filter(f.eq('spawn'))
+    :subscribe(function()
+      local state = self.state
+      local x = state.position.x
+      local y = state.position.y
+      app.scene.particles:emit('thujustep', x, y, 30, function()
+        return { direction = love.math.random() < .5 and math.pi or 0 }
+      end)
+    end)
+
+  self.state.animations.muju.events
     :pluck('data', 'name')
     :filter(f.eq('step'))
     :subscribe(app.muju.actions.footstep)
 
-  self.state.animation.events
+  self.state.animations.muju.events
     :pluck('data', 'name')
     :filter(f.eq('staff'))
     :subscribe(app.muju.actions.limp(self))
