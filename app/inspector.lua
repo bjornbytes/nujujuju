@@ -120,6 +120,9 @@ function inspector:render()
     local props, state = self.props, self.state
     local height = love.graphics.getHeight()
 
+    g.setColor(0, 0, 0, 150)
+    g.rectangle('fill', state.x, 0, props.width, height)
+
     if editors then
       g.setColor(255, 255, 255)
       for i = 1, #editors do
@@ -127,8 +130,6 @@ function inspector:render()
       end
     end
 
-    g.setColor(0, 0, 0, 100)
-    g.rectangle('fill', state.x, 0, props.width, height)
     self.gooey:render(self.dropdown)
 
     return -10000
