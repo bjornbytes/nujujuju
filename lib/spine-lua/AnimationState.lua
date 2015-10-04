@@ -154,7 +154,7 @@ function AnimationState.new (data)
 
 	function self:clearTracks ()
 		for i,current in pairs(self.tracks) do
-			self.clearTrack(i)
+			self:clearTrack(i)
 		end
 		self.tracks = {}
 		self.trackCount = 0

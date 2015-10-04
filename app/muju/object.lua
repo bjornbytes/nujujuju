@@ -10,13 +10,19 @@ muju.state = function()
       x = 0,
       y = 0
     },
+    form = 'muju',
+    lastShapeshift = -math.huge,
     shuffle = love.audio.play(app.muju.sound.shuffle)
   }
 
   state.shuffle:setVolume(0)
   state.shuffle:setLooping(true)
 
-  state.animation = lib.animation.create(app.muju.spine, app.muju.animation)
+  state.animations = {}
+  state.animations.muju = lib.animation.create(app.muju.spine, app.muju.animation)
+  state.animations.thuju = lib.animation.create(app.thuju.spine, app.thuju.animation)
+
+  state.animation = state.animations.muju
 
   return state
 end
@@ -28,6 +34,24 @@ function muju:bind()
 
   self.abilities = lib.abilities.create()
   self.abilities:add('blink')
+
+  lib.input
+    :filter(app.muju.actions.canShapeshift(self))
+    :pluck('shapeshift')
+    :changes()
+    :filter(f.eq(true))
+    :subscribe(function()
+      local state = self.state
+      state.form = state.form == 'muju' and 'thuju' or 'muju'
+      state.animation = state.animations[state.form]
+      if state.form == 'thuju' then
+        state.animation:clear()
+        state.animation:reset('spawn')
+        state.animation:add('idle')
+      end
+      state.lastShapeshift = lib.tick.index
+      self:setState(state)
+    end)
 
   love.update
     :map(function() return self.state end)
@@ -51,13 +75,6 @@ function muju:bind()
     :pluck('data', 'name')
     :filter(f.eq('staff'))
     :subscribe(app.muju.actions.limp(self))
-
-  self.state.animation.events
-    :pluck('data', 'name')
-    :filter(f.eq('stop'))
-    :subscribe(function()
-      self.state.animation:set('idle')
-    end)
 
   love.update:subscribe(app.muju.actions.animate(self))
 

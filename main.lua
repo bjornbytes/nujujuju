@@ -100,6 +100,18 @@ function table.map(t, fn, iterator)
   return res
 end
 
+function table.get(t, path)
+  local pieces = {}
+  path:gsub('([^%.]+)', function(piece)
+    table.insert(pieces, piece)
+  end)
+  local result = t
+  for i = 1, #pieces do
+    result = result[pieces[i]]
+  end
+  return result
+end
+
 function g.drawCenter(image, size, x, y)
   local scale = size / image:getWidth()
   g.draw(image, x, y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)

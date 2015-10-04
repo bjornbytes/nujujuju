@@ -51,6 +51,7 @@ function animation:draw(x, y)
   skeleton.flipX = self.flipped
   if self.backwards then skeleton.flipX = not skeleton.flipX end
   self.animationState:apply(skeleton)
+  self.state = self.config.states[self.animationState.tracks[0].animation.name]
   skeleton:updateWorldTransform()
   skeleton:draw()
 end
@@ -67,16 +68,26 @@ function animation:setPosition(x, y)
   skeleton.y = y + (self.config.offset.y or 0)
 end
 
+function animation:reset(name)
+  self.state = self.config.states[name]
+  self:clear()
+  self.animationState:setAnimationByName(0, name, self.state.loop)
+end
+
 function animation:set(name)
+  if not self.config.states[name] then return end
   if self.state == self.config.states[name] then return end
   self.state = self.config.states[name]
   self.animationState:setAnimationByName(0, name, self.state.loop)
 end
 
 function animation:add(name)
-  --if self.state == self.config.states[name] then return end
-  --self.state = self.config.states[name]
-  self.animationState:addAnimationByName(0, name, self.state.loop)
+  if not self.config.states[name] then return end
+  self.animationState:addAnimationByName(0, name, self.config.states[name].loop)
+end
+
+function animation:clear()
+  self.animationState:clearTracks()
 end
 
 return animation

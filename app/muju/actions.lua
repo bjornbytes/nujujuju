@@ -45,6 +45,13 @@ function actions.limp(self)
   end
 end
 
+function actions.canShapeshift(self)
+  return function()
+    local props, state = app.muju.props, self.state
+    return lib.tick.index - state.lastShapeshift > props.shapeshiftCooldown / lib.tick.rate
+  end
+end
+
 function actions.animate(self)
   return function()
     local props, state = app.muju.props, self.state
@@ -60,10 +67,9 @@ function actions.animate(self)
     end
     if moving then
       state.animation:set('walk')
-      print('waka waka')
     elseif state.animation.state == state.animation.config.states.walk and speed < 1 then
       state.animation:set('stop')
-      print('stop')
+      state.animation:add('idle')
     end
     self:setState(state)
   end

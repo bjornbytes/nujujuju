@@ -21,7 +21,7 @@ function inspector:bind()
   self.components = self.dropdown.value:map(self.setupComponents(self))
 
   love.keypressed
-    :filter(f.eq(' '))
+    :filter(f.eq('`'))
     :subscribe(self.toggleActive(self))
 
   self:lerp('x', 16, self.getTargetX)
@@ -65,12 +65,13 @@ end
 
 function inspector:setupComponents()
   return function(editing)
-    if app[editing].editor then
+    local subject = table.get(app, editing)
+    if subject.editor then
       local components = {}
       local y = 44
 
-      for i = 1, #app[editing].editor.sections do
-        local section = app[editing].editor.sections[i]
+      for i = 1, #subject.editor.sections do
+        local section = subject.editor.sections[i]
         local header = self.gooey:add(lib.label, 'prop.' .. section.title)
         header.geometry = offset(8, y)
         header.label = section.title
@@ -82,11 +83,11 @@ function inspector:setupComponents()
           local prop = section[j]
           local editor = self.gooey:add(lib.editor, 'prop.' .. prop)
           editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
-          editor.value = app[editing].props[prop]
+          editor.value = subject.props[prop]
           editor.valueSubject:onNext(editor.value)
           editor.geometry = offset(8, y, self.props.width - 16)
           editor.valueSubject:subscribe(function(newValue)
-            app[editing].props[prop] = tonumber(newValue) or newValue
+            subject.props[prop] = tonumber(newValue) or newValue
           end)
 
           y = y + 20
@@ -98,14 +99,15 @@ function inspector:setupComponents()
 
       return components
     else
-      return table.map(table.keys(app[editing].props), function(prop, i)
+      local props = subject.props or subject
+      return table.map(table.keys(props), function(prop, i)
         local editor = self.gooey:add(lib.editor, 'prop.' .. prop)
         editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
-        editor.value = app[editing].props[prop]
+        editor.value = props[prop]
         editor.valueSubject:onNext(editor.value)
         editor.geometry = offset(8, 24 + 20 * i, self.props.width - 16)
         editor.valueSubject:subscribe(function(newValue)
-          app[editing].props[prop] = tonumber(newValue) or newValue
+          subject.props[prop] = tonumber(newValue) or newValue
         end)
         return editor
       end)

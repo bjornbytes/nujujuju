@@ -1,11 +1,16 @@
+local joystick = love.joystick.getJoysticks()[1]
+
 return love.update
   :map(function()
     if app.inspector.gooey.focused then
       return {
         x = 0,
-        y = 0
+        y = 0,
+        shapeshift = false
       }
     end
+
+    -- Movement
 
     local w = love.keyboard.isDown('w')
     local a = love.keyboard.isDown('a')
@@ -17,7 +22,6 @@ return love.update
     x = a and -1 or (d and 1 or 0)
     y = w and -1 or (s and 1 or 0)
 
-    local joystick = love.joystick.getJoysticks()[1]
     if joystick then
       x = joystick:getGamepadAxis('leftx')
       y = joystick:getGamepadAxis('lefty')
@@ -25,8 +29,15 @@ return love.update
       if math.abs(y) < .2 then y = 0 end
     end
 
+    -- Shapeshift
+    local shapeshift = love.keyboard.isDown(' ')
+    if joystick then
+      shapeshift = joystick:isGamepadDown('a')
+    end
+
     return {
       x = x,
-      y = y
+      y = y,
+      shapeshift = shapeshift
     }
   end)
