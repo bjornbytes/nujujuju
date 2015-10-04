@@ -68,6 +68,16 @@ function scene.load(level)
       }
     })
 
+    scene.decorations = {}
+    for i = 1, 10 do
+      table.insert(scene.decorations, app.environment.object:new({
+        image = app.environment[table.random({'beetle', 'crack1', 'flowers1', 'grasspatch1', 'grasspatch2', 'grasspatch3', 'grasspatch4', 'grasspatch5', 'grasspatch6', 'grasspatch7', 'mushroom1', 'mushroom2', 'mushroom3', 'mushroom4'})],
+        size = love.math.random(10, 30),
+        x = love.math.random(g.getWidth()),
+        y = love.math.random(g.getHeight())
+      }))
+    end
+
     scene.objects.muju = app.muju.object:new()
   end
 

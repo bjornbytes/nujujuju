@@ -23,23 +23,23 @@ function hud:bind()
         g.rectangle('fill', 20 + w * percent, 20, w * (1 - percent), g.getFont():getHeight() + 20)
       end
 
-      local x = 20
+      local y = 90
       local size = 40
       for i = 1, 3 do
         local ability = state.abilities.list[i]
 
         g.setColor(0, 0, 0, 40)
-        g.rectangle('fill', x, 90, size, size)
+        g.rectangle('fill', 20, y, size, size)
 
         if state.abilities.list[i] then
           g.setColor(255, 255, 255, 150 / ((f.try(ability.canUse, ability)) and 1 or 2))
-          g.rectangle('line', x, 90, size, size)
+          g.rectangle('line', 20, y, size, size)
         end
 
-        x = x + size + 10
+        y = y + size + 10
       end
 
-      return -10000
+      return -1000
     end)
 
   return self

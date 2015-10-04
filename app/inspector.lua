@@ -127,11 +127,11 @@ function inspector:render()
       end
     end
 
-    g.setColor(0, 0, 0, 60)
+    g.setColor(0, 0, 0, 100)
     g.rectangle('fill', state.x, 0, props.width, height)
     self.gooey:render(self.dropdown)
 
-    return -1000
+    return -10000
   end
 end
 

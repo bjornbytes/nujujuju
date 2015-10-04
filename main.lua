@@ -112,6 +112,10 @@ function table.get(t, path)
   return result
 end
 
+function table.random(t)
+  return t[love.math.random(1, #t)]
+end
+
 function g.drawCenter(image, size, x, y)
   local scale = size / image:getWidth()
   g.draw(image, x, y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)

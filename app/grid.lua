@@ -5,7 +5,7 @@ grid.props = {
 }
 
 function grid:bind()
-  self.bg = app.environment.dirt
+  self.bg = app.environment.grass
   self.bg:setWrap('repeat', 'repeat')
   self.quad = g.newQuad(0, 0, g.getWidth(), g.getHeight() * 2, self.bg:getDimensions())
 
