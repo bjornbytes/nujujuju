@@ -19,7 +19,7 @@ function scene.load(level)
     scene.objects.shrine = app.shrine.object:new({
       position = {
         x = app.grid.props.size * 6,
-        y = app.grid.props.size * 2
+        y = 300
       }
     })
 
