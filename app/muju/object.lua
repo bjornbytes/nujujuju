@@ -24,6 +24,9 @@ muju.state = function()
 
   state.animation = state.animations.muju
 
+  state.abilities = lib.abilities.create()
+  state.abilities:add('blink')
+
   return state
 end
 
@@ -31,9 +34,6 @@ function muju:bind()
   lib.input:subscribe(app.muju.actions.move(self))
 
   app.muju.actions.tint(self, .5, .2, .7)
-
-  self.abilities = lib.abilities.create()
-  self.abilities:add('blink')
 
   lib.input
     :filter(app.muju.actions.canShapeshift(self))

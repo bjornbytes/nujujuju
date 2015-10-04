@@ -9,9 +9,13 @@ function abilities.create()
 end
 
 function abilities:add(ability, position)
-  ability = app.abilities[ability]:new()
-  ability:bind()
-  self.list[position or (#self.list + 1)] = ability
+  position = position or (#self.list + 1)
+  ability = app.abilities[ability]:new({
+    position = position,
+    timer = 0
+  })
+
+  self.list[position] = ability
 end
 
 return abilities

@@ -7,12 +7,12 @@ return love.update
         x = 0,
         y = 0,
         shapeshift = false,
-        attack = false
+        attack = false,
+        spells = {false, false, false}
       }
     end
 
     -- Movement
-
     local w = love.keyboard.isDown('w')
     local a = love.keyboard.isDown('a')
     local s = love.keyboard.isDown('s')
@@ -42,10 +42,17 @@ return love.update
       attack = joystick:isGamepadDown('a')
     end
 
+    -- Spells
+    local spells = {}
+    for i = 1, 3 do
+      spells[i] = love.keyboard.isDown(tostring(i))
+    end
+
     return {
       x = x,
       y = y,
       shapeshift = shapeshift,
-      attack = attack
+      attack = attack,
+      spells = spells
     }
   end)
