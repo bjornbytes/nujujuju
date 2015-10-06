@@ -31,7 +31,7 @@ function inspector:bind()
     :combine(self.components)
     :subscribe(self.updateCursor(self))
 
-  love.draw
+  app.scene.view.hud
     :with(self.components)
     :subscribe(self.render(self))
 
@@ -120,7 +120,7 @@ function inspector:render()
     local props, state = self.props, self.state
     local height = love.graphics.getHeight()
 
-    g.setColor(0, 0, 0, 150)
+    g.setColor(35, 35, 35, 220)
     g.rectangle('fill', state.x, 0, props.width, height)
 
     if editors then

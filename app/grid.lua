@@ -9,7 +9,7 @@ function grid:bind()
   self.bg:setWrap('repeat', 'repeat')
   self.quad = g.newQuad(0, 0, g.getWidth(), g.getHeight() * 2, self.bg:getDimensions())
 
-  love.draw
+  app.scene.view.draw
     :subscribe(function()
       local w, h = g.getDimensions()
 

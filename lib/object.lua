@@ -5,8 +5,11 @@ function object.create()
 end
 
 function object:new(state)
+  local baseState = type(self.state) == 'function' and self.state() or self.state
+  state = table.merge(state, baseState)
+
   local instance = {
-    _state = lib.rx.Subject.create(f.try(state or self.state))
+    _state = lib.rx.Subject.create(state)
   }
 
   setmetatable(instance, {

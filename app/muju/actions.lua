@@ -79,14 +79,14 @@ end
 function actions.resolveCollision(self, other)
   return function(dx, dy)
     self:updateState(function(state)
-      state.position.x = math.lerp(state.position.x, state.position.x - dx, 8 * lib.tick.rate)
-      state.position.y = math.lerp(state.position.y, state.position.y - dy, 8 * lib.tick.rate)
+      state.position.x = math.lerp(state.position.x, state.position.x - dx / 2, 8 * lib.tick.rate)
+      state.position.y = math.lerp(state.position.y, state.position.y - dy / 2, 8 * lib.tick.rate)
     end)
 
-    --[[return other:updateState(function(state)
+    return other:updateState(function(state)
       state.position.x = math.lerp(state.position.x, state.position.x + dx / 2, 12 * lib.tick.rate)
       state.position.y = math.lerp(state.position.y, state.position.y + dy / 2, 12 * lib.tick.rate)
-    end)]]
+    end)
   end
 end
 

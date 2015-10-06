@@ -23,7 +23,7 @@ function particles.create()
 end
 
 function particles:bind()
-  love.draw:subscribe(function()
+  app.scene.view.draw:subscribe(function()
     g.setColor(255, 255, 255)
     for code, system in pairs(self.systems) do
       system:update(lib.tick.delta)

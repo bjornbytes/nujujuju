@@ -3,8 +3,8 @@ local muju = lib.object.create()
 muju.state = function()
   local state = {
     position = {
-      x = 400,
-      y = 300
+      x = app.scene.width / 2,
+      y = 301
     },
     speed = {
       x = 0,
@@ -101,11 +101,11 @@ function muju:bind()
     :with(lib.input)
     :subscribe(app.muju.actions.animate(self))
 
-  for _, object in ipairs({'shrine', 'dirt', 'rock1', 'rock2', 'rock3', 'rock4', 'bush'}) do
+  for _, object in ipairs({'shrine', 'dirt'}) do
     self:subscribeCollision(object, app.muju.actions.resolveCollision(self, app.scene.objects[object]))
   end
 
-  love.draw:subscribe(app.muju.actions.draw(self))
+  app.scene.view.draw:subscribe(app.muju.actions.draw(self))
 
   return self
 end

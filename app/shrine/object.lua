@@ -11,7 +11,7 @@ function shrine:bind()
       end)
     end)
 
-  love.draw
+  app.scene.view.draw
     :subscribe(function()
       local props, state = app.shrine.props, self.state
       local image = app.shrine.image
