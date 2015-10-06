@@ -1,7 +1,7 @@
 local patch = lib.object.create()
 
 patch.props = {
-  blob = app.environment.blob1
+  blob = app.environment.blob
 }
 
 function patch:bind()
