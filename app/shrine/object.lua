@@ -1,5 +1,7 @@
 local shrine = lib.object.create()
 
+shrine.config = app.shrine.config
+
 function shrine:bind()
   local xstart, ystart = self.position.x, self.position.y
 
@@ -11,9 +13,8 @@ function shrine:bind()
 
   app.scene.view.draw
     :subscribe(function()
-      local props = app.shrine.props
       local image = app.shrine.image
-      local scale = props.size / image:getWidth()
+      local scale = self.config.size / image:getWidth()
       g.setColor(255, 255, 255)
       g.draw(image, self.position.x, self.position.y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
 

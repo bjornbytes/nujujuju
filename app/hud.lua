@@ -1,6 +1,6 @@
 local hud = lib.object.create()
 
-hud.props = {
+hud.config = {
   font = fonts.existence(g.getHeight() * .05)
 }
 
@@ -8,8 +8,7 @@ function hud:bind()
   app.scene.view.hud
     :subscribe(function()
       local u, v = g.getDimensions()
-      local props = app.hud.props
-      g.setFont(props.font)
+      g.setFont(self.config.font)
       g.setColor(0, 0, 0, 40)
 
       local margin = .03 * v
@@ -21,9 +20,8 @@ function hud:bind()
       g.setColor(255, 255, 255)
       g.print('SHAPESHIFT', margin + padding, margin + padding)
 
-      local props = app.muju.props
       local muju = app.scene.objects.muju
-      local percent = math.clamp((lib.tick.index - muju.lastShapeshift) / (props.shapeshiftCooldown / lib.tick.rate), 0, 1)
+      local percent = math.clamp((lib.tick.index - muju.lastShapeshift) / (muju.config.shapeshiftCooldown / lib.tick.rate), 0, 1)
       if percent < 1 then
         g.setColor(0, 0, 0, 255 * (.5 - percent / 2))
         g.rectangle('fill', margin + w * percent, margin, w * (1 - percent), g.getFont():getHeight() + 2 * padding)

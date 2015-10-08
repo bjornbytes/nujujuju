@@ -1,5 +1,7 @@
 local muju = lib.object.create()
 
+muju.config = app.muju.config
+
 muju.state = function()
   local state = {
     position = {
@@ -62,9 +64,8 @@ function muju:bind()
 
   love.update
     :subscribe(function()
-      local props = app.muju.props
-      local speed = math.sqrt((self.speed.x ^ 2) + (self.speed.y ^ 2)) / props.speed
-      self.shuffle:setVolume(speed * props.shuffleVolume)
+      local speed = math.sqrt((self.speed.x ^ 2) + (self.speed.y ^ 2)) / self.config.speed
+      self.shuffle:setVolume(speed * self.config.shuffleVolume)
     end)
 
   love.update:subscribe(app.muju.actions.flip(self))
@@ -83,7 +84,7 @@ function muju:bind()
   self.animations.muju.events
     :pluck('data', 'name')
     :filter(f.eq('step'))
-    :subscribe(app.muju.actions.footstep)
+    :subscribe(app.muju.actions.footstep(self))
 
   self.animations.muju.events
     :pluck('data', 'name')
@@ -104,21 +105,18 @@ function muju:bind()
 end
 
 function muju:subscribeCollision(name, fn)
-  local object = app.scene.objects[name]
-  local myProps = app.muju.props
-  local theirProps = app[name] and app[name].props or app.obstacle.props
+  local other = app.scene.objects[name]
   return love.update
     :map(function()
-      local self, other = self.position, object.position
-      local distance = math.distance(self.x, self.y, other.x, other.y)
-      local direction = math.direction(self.x, self.y, other.x, other.y)
+      local distance = math.distance(self.position.x, self.position.y, other.position.x, other.position.y)
+      local direction = math.direction(self.position.x, self.position.y, other.position.x, other.position.y)
       return distance, direction
     end)
     :filter(function(distance, direction)
-      return distance < myProps.radius + theirProps.radius * math.abs(math.cos(direction))
+      return distance < self.config.radius + other.config.radius * math.abs(math.cos(direction))
     end)
     :map(function(distance, direction)
-      local delta = (myProps.radius + theirProps.radius) - distance
+      local delta = (self.config.radius + other.config.radius) - distance
       return delta * math.cos(direction), delta * math.sin(direction) * math.abs(math.cos(direction))
     end)
     :subscribe(fn)

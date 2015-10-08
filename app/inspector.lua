@@ -1,6 +1,6 @@
 local inspector = lib.object.create()
 
-inspector.props = {
+inspector.config = {
   width = 140
 }
 
@@ -41,7 +41,7 @@ function inspector:bind()
 end
 
 function inspector:getTargetX()
-  return self.active and 0 or -self.props.width
+  return self.active and 0 or -self.config.width
 end
 
 function inspector:toggleActive()
@@ -83,11 +83,11 @@ function inspector:setupComponents()
           local prop = section[j]
           local editor = self.gooey:add(lib.editor, 'prop.' .. prop)
           editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
-          editor.value = subject.props[prop]
+          editor.value = subject.config[prop]
           editor.valueSubject:onNext(editor.value)
-          editor.geometry = offset(8, y, self.props.width - 16)
+          editor.geometry = offset(8, y, self.config.width - 16)
           editor.valueSubject:subscribe(function(newValue)
-            subject.props[prop] = tonumber(newValue) or newValue
+            subject.config[prop] = tonumber(newValue) or newValue
           end)
 
           y = y + 20
@@ -99,15 +99,15 @@ function inspector:setupComponents()
 
       return components
     else
-      local props = subject.props or subject
-      return table.map(table.keys(props), function(prop, i)
-        local editor = self.gooey:add(lib.editor, 'prop.' .. prop)
+      local config = subject.config or subject
+      return table.map(table.keys(config), function(prop, i)
+        local editor = self.gooey:add(lib.editor, 'config.' .. prop)
         editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
-        editor.value = props[prop]
+        editor.value = config[prop]
         editor.valueSubject:onNext(editor.value)
-        editor.geometry = offset(8, 24 + 20 * i, self.props.width - 16)
+        editor.geometry = offset(8, 24 + 20 * i, self.config.width - 16)
         editor.valueSubject:subscribe(function(newValue)
-          subject.props[prop] = tonumber(newValue) or newValue
+          subject.config[prop] = tonumber(newValue) or newValue
         end)
         return editor
       end)
@@ -117,11 +117,10 @@ end
 
 function inspector:render()
   return function(_, editors)
-    local props = self.props
     local height = love.graphics.getHeight()
 
     g.setColor(35, 35, 35, 220)
-    g.rectangle('fill', self.x, 0, props.width, height)
+    g.rectangle('fill', self.x, 0, self.config.width, height)
 
     if editors then
       g.setColor(255, 255, 255)
@@ -139,5 +138,5 @@ end
 return inspector:new({
   active = false,
   editing = 'muju',
-  x = -inspector.props.width
+  x = -inspector.config.width
 })

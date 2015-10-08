@@ -3,16 +3,16 @@ local actions = {}
 function actions.move(self)
   return function(input)
     local x, y = input.x, input.y
-    local props = app.muju.props
+    local config = self.config
     local direction = math.atan2(y, x)
     local length = math.min(math.distance(0, 0, x, y), 1)
 
     if x == 0 and y == 0 then
-      self.speed.x = math.lerp(self.speed.x, 0, math.min(props.deceleration * lib.tick.rate, 1))
-      self.speed.y = math.lerp(self.speed.y, 0, math.min(props.deceleration * lib.tick.rate, 1))
+      self.speed.x = math.lerp(self.speed.x, 0, math.min(config.deceleration * lib.tick.rate, 1))
+      self.speed.y = math.lerp(self.speed.y, 0, math.min(config.deceleration * lib.tick.rate, 1))
     else
-      self.speed.x = math.lerp(self.speed.x, props.speed * math.cos(direction) * length, props.acceleration * lib.tick.rate)
-      self.speed.y = math.lerp(self.speed.y, props.speed * math.sin(direction) * length, props.acceleration * lib.tick.rate)
+      self.speed.x = math.lerp(self.speed.x, config.speed * math.cos(direction) * length, config.acceleration * lib.tick.rate)
+      self.speed.y = math.lerp(self.speed.y, config.speed * math.sin(direction) * length, config.acceleration * lib.tick.rate)
     end
 
     self.position.x = self.position.x + self.speed.x * lib.tick.rate
@@ -20,19 +20,18 @@ function actions.move(self)
   end
 end
 
-function actions.footstep()
-  local props = app.muju.props
-  local sound = love.audio.play(app.muju.sound['footstep' .. love.math.random(1, 2)])
-  sound:setVolume(props.footstepVolume)
-  sound:setPitch(.9 + love.math.random() * .2)
+function actions.footstep(self)
+  return function()
+    local sound = love.audio.play(app.muju.sound['footstep' .. love.math.random(1, 2)])
+    sound:setVolume(self.config.footstepVolume)
+    sound:setPitch(.9 + love.math.random() * .2)
+  end
 end
 
 function actions.limp(self)
   return function()
-    local props = app.muju.props
-
     local sound = love.audio.play(app.muju.sound.staff)
-    sound:setVolume(props.staffVolume)
+    sound:setVolume(self.config.staffVolume)
     sound:setPitch(.8 + love.math.random() * .6)
 
     local x = self.position.x + (self.animation.flipped and 40 or -40)
@@ -45,15 +44,13 @@ end
 
 function actions.canShapeshift(self)
   return function()
-    local props = app.muju.props
-    return lib.tick.index - self.lastShapeshift > props.shapeshiftCooldown / lib.tick.rate
+    return lib.tick.index - self.lastShapeshift > self.config.shapeshiftCooldown / lib.tick.rate
   end
 end
 
 function actions.animate(self)
   return function(_, input)
-    local props = app.muju.props
-    local speed = math.sqrt((self.speed.x ^ 2) + (self.speed.y ^ 2)) / props.speed
+    local speed = math.sqrt((self.speed.x ^ 2) + (self.speed.y ^ 2)) / self.config.speed
     self.animation.speed = 1
     local moving = math.abs(input.x) > .5 or math.abs(input.y) > .5
     if moving then
@@ -93,8 +90,6 @@ end
 
 function actions.draw(self)
   return function()
-    local props = app.muju.props
-
     local image = app.muju.art.shadow
     local scale = 70 / image:getWidth()
     g.setColor(255, 255, 255, 120)

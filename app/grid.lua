@@ -1,6 +1,6 @@
 local grid = lib.object.create()
 
-grid.props = {
+grid.config = {
   size = 55
 }
 
