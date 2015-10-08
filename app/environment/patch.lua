@@ -8,11 +8,7 @@ function patch:bind()
   self:initCanvas()
 
   app.context.view.draw
-    :subscribe(function()
-      g.setColor(255, 255, 255)
-      g.draw(self.canvas, self.x, self.y, self.angle, 1, .5, self.canvas:getWidth() / 2, self.canvas:getHeight() / 2)
-      return -10
-    end)
+    :subscribe(self:wrap(self.draw))
 end
 
 function patch:initCanvas()
@@ -32,6 +28,13 @@ function patch:initCanvas()
   g.setBlendMode('alpha')
 
   g.setCanvas()
+end
+
+function patch:draw()
+  local canvas = self.canvas
+  g.setColor(255, 255, 255)
+  g.draw(canvas, self.x, self.y, self.angle, 1, .5, canvas:getWidth() / 2, canvas:getHeight() / 2)
+  return -10
 end
 
 return patch
