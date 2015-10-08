@@ -1,25 +1,23 @@
 local dirt = lib.object.create()
 
 function dirt:bind()
-  local xstart, ystart = self.state.position.x, self.state.position.y
+  local xstart, ystart = self.position.x, self.position.y
 
   love.update
     :subscribe(function()
-      self:updateState(function(state)
-        state.position.x = math.lerp(state.position.x, xstart, 16 * lib.tick.rate)
-        state.position.y = math.lerp(state.position.y, ystart, 16 * lib.tick.rate)
-      end)
+      self.position.x = math.lerp(self.position.x, xstart, 16 * lib.tick.rate)
+      self.position.y = math.lerp(self.position.y, ystart, 16 * lib.tick.rate)
     end)
 
   app.scene.view.draw
     :subscribe(function()
-      local props, state = app.dirt.props, self.state
+      local props = app.dirt.props
       local image = app.dirt.image
       local scale = props.size / image:getWidth()
       g.setColor(255, 255, 255)
-      g.draw(image, state.position.x, state.position.y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
+      g.draw(image, self.position.x, self.position.y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
 
-      return -state.position.y
+      return -self.position.y
     end)
 
   return self

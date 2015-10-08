@@ -21,8 +21,9 @@ function hud:bind()
       g.setColor(255, 255, 255)
       g.print('SHAPESHIFT', margin + padding, margin + padding)
 
-      local props, state = app.muju.props, app.scene.objects.muju.state
-      local percent = math.clamp((lib.tick.index - state.lastShapeshift) / (props.shapeshiftCooldown / lib.tick.rate), 0, 1)
+      local props = app.muju.props
+      local muju = app.scene.objects.muju
+      local percent = math.clamp((lib.tick.index - muju.lastShapeshift) / (props.shapeshiftCooldown / lib.tick.rate), 0, 1)
       if percent < 1 then
         g.setColor(0, 0, 0, 255 * (.5 - percent / 2))
         g.rectangle('fill', margin + w * percent, margin, w * (1 - percent), g.getFont():getHeight() + 2 * padding)
@@ -31,12 +32,12 @@ function hud:bind()
       local y = 2 * margin + g.getFont():getHeight() + 2 * padding
       local size = .06 * v
       for i = 1, 3 do
-        local ability = state.abilities.list[i]
+        local ability = muju.abilities.list[i]
 
         g.setColor(0, 0, 0, 40)
         g.rectangle('fill', margin, y, size, size)
 
-        if state.abilities.list[i] then
+        if muju.abilities.list[i] then
           g.setColor(255, 255, 255, 150 / ((f.try(ability.canUse, ability)) and 1 or 2))
           g.rectangle('line', margin, y, size, size)
         end

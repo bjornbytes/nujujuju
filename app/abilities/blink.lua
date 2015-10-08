@@ -3,31 +3,26 @@ local blink = lib.object.create()
 function blink:bind()
   lib.input
     :filter(f.self(self.canUse, self))
-    :pluck('spells', self.state.position)
+    :pluck('spells', self.position)
     :changes()
     :filter(f.eq(true))
     :subscribe(function()
-      app.scene.objects.muju:updateState(function(state)
-        state.position.x = state.position.x + 100 * (state.speed.x > 0 and 1 or -1)
-      end)
+      local muju = app.scene.objects.muju
+      muju.position.x = muju.position.x + 100 * (muju.speed.x > 0 and 1 or -1)
 
-      self:updateState(function(state)
-        state.timer = 1
-      end)
+      self.timer = 1
     end)
 
   love.update
     :subscribe(function()
-      self:updateState(function(state)
-        state.timer = state.timer - math.min(state.timer, lib.tick.rate)
-      end)
+      self.timer = self.timer - math.min(self.timer, lib.tick.rate)
     end)
 
   return self
 end
 
 function blink:canUse()
-  return self.state.timer == 0
+  return self.timer == 0
 end
 
 return blink

@@ -8,7 +8,7 @@ function inspector:bind()
   function offset(x, ...)
     local rest = {...}
     return function()
-      return self.state.x + x, unpack(rest)
+      return self.x + x, unpack(rest)
     end
   end
 
@@ -24,7 +24,9 @@ function inspector:bind()
     :filter(f.eq('`'))
     :subscribe(self.toggleActive(self))
 
-  self:lerp('x', 16, self.getTargetX)
+  love.update:subscribe(function()
+    self.x = math.lerp(self.x, self:getTargetX(), 16 * lib.tick.rate)
+  end)
 
   love.mousemoved
     :pack()
@@ -39,14 +41,12 @@ function inspector:bind()
 end
 
 function inspector:getTargetX()
-  return self.state.active and 0 or -self.props.width
+  return self.active and 0 or -self.props.width
 end
 
 function inspector:toggleActive()
   return function()
-    self:updateState(function(state)
-      state.active = not state.active
-    end)
+    self.active = not self.active
   end
 end
 
@@ -117,11 +117,11 @@ end
 
 function inspector:render()
   return function(_, editors)
-    local props, state = self.props, self.state
+    local props = self.props
     local height = love.graphics.getHeight()
 
     g.setColor(35, 35, 35, 220)
-    g.rectangle('fill', state.x, 0, props.width, height)
+    g.rectangle('fill', self.x, 0, props.width, height)
 
     if editors then
       g.setColor(255, 255, 255)

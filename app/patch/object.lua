@@ -9,26 +9,26 @@ function patch:bind()
 
   app.scene.view.draw
     :subscribe(function()
-      local props, state = patch.props, self.state
+      local props = patch.props
       g.setColor(255, 255, 255)
-      g.draw(state.canvas, state.x, state.y, state.angle, 1, .5, state.canvas:getWidth() / 2, state.canvas:getHeight() / 2)
+      g.draw(self.canvas, self.x, self.y, self.angle, 1, .5, self.canvas:getWidth() / 2, self.canvas:getHeight() / 2)
     end)
 end
 
 function patch:initCanvas()
-  local props, state = patch.props, self.state
+  local props = patch.props
 
-  state.canvas = g.newCanvas(512, 512)
-  g.setCanvas(self.state.canvas)
+  self.canvas = g.newCanvas(512, 512)
+  g.setCanvas(self.canvas)
 
   g.setColor(255, 255, 255)
-  local image = state.texture
-  local scale = state.canvas:getWidth() / image:getWidth()
-  g.draw(self.state.texture, 0, 0, 0, scale, scale)
+  local image = self.texture
+  local scale = self.canvas:getWidth() / image:getWidth()
+  g.draw(self.texture, 0, 0, 0, scale, scale)
 
   g.setBlendMode('subtractive')
   image = props.blob
-  scale = state.canvas:getWidth() / image:getWidth()
+  scale = self.canvas:getWidth() / image:getWidth()
   g.setColor(255, 255, 255, 255)
   g.draw(image, 0, 0, 0, scale, scale)
   g.setBlendMode('alpha')

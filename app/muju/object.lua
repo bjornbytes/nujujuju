@@ -41,16 +41,14 @@ function muju:bind()
     :changes()
     :filter(f.eq(true))
     :subscribe(function()
-      local state = self.state
-      state.form = state.form == 'muju' and 'thuju' or 'muju'
-      state.animation = state.animations[state.form]
-      if state.form == 'thuju' then
-        state.animation:clear()
-        state.animation:reset('spawn')
-        state.animation:add('idle')
+      self.form = self.form == 'muju' and 'thuju' or 'muju'
+      self.animation = self.animations[self.form]
+      if self.form == 'thuju' then
+        self.animation:clear()
+        self.animation:reset('spawn')
+        self.animation:add('idle')
       end
-      state.lastShapeshift = lib.tick.index
-      self:setState(state)
+      self.lastShapeshift = lib.tick.index
     end)
 
   lib.input
@@ -58,41 +56,36 @@ function muju:bind()
     :changes()
     :filter(f.eq(true))
     :subscribe(function()
-      self.state.animation:set('attack')
-      self.state.animation:add('idle')
+      self.animation:set('attack')
+      self.animation:add('idle')
     end)
 
   love.update
-    :map(function() return self.state end)
     :subscribe(function()
-      local props, state = app.muju.props, self.state
-      local speed = math.sqrt((state.speed.x ^ 2) + (state.speed.y ^ 2)) / props.speed
-      state.shuffle:setVolume(speed * props.shuffleVolume)
+      local props = app.muju.props
+      local speed = math.sqrt((self.speed.x ^ 2) + (self.speed.y ^ 2)) / props.speed
+      self.shuffle:setVolume(speed * props.shuffleVolume)
     end)
 
-  love.update:map(function() return self.state end)
-    :pluck('speed', 'x')
-    :filter(f.negate(f.eq(0)))
-    :subscribe(app.muju.actions.flip(self))
+  love.update:subscribe(app.muju.actions.flip(self))
 
-  self.state.animations.thuju.events
+  self.animations.thuju.events
     :pluck('data', 'name')
     :filter(f.eq('spawn'))
     :subscribe(function()
-      local state = self.state
-      local x = state.position.x
-      local y = state.position.y
+      local x = self.position.x
+      local y = self.position.y
       app.scene.particles:emit('thujustep', x, y, 30, function()
         return { direction = love.math.random() < .5 and math.pi or 0 }
       end)
     end)
 
-  self.state.animations.muju.events
+  self.animations.muju.events
     :pluck('data', 'name')
     :filter(f.eq('step'))
     :subscribe(app.muju.actions.footstep)
 
-  self.state.animations.muju.events
+  self.animations.muju.events
     :pluck('data', 'name')
     :filter(f.eq('staff'))
     :subscribe(app.muju.actions.limp(self))
@@ -116,7 +109,7 @@ function muju:subscribeCollision(name, fn)
   local theirProps = app[name] and app[name].props or app.obstacle.props
   return love.update
     :map(function()
-      local self, other = self.state.position, object.state.position
+      local self, other = self.position, object.position
       local distance = math.distance(self.x, self.y, other.x, other.y)
       local direction = math.direction(self.x, self.y, other.x, other.y)
       return distance, direction
