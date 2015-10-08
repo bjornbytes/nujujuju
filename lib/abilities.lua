@@ -1,12 +1,8 @@
-local abilities = {}
+local abilities = lib.object.create()
 
-function abilities.create()
-  local self = {
-    list = {}
-  }
-
-  return setmetatable(self, {__index = abilities})
-end
+abilities.state = {
+  list = {}
+}
 
 function abilities:add(ability, position)
   position = position or (#self.list + 1)

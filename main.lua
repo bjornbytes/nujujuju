@@ -18,7 +18,7 @@ f = lib.funk
 g = love.graphics
 require 'lib/util'
 
-app.scene.load('overgrowth')
+app.context.load('overgrowth')
 
 love.keypressed
   :filter(f.eq('escape'))

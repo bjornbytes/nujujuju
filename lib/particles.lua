@@ -1,15 +1,18 @@
-local particles = {}
+local particles = lib.object.create()
 
-function particles.create()
-  local self = {
+particles.config = {
+  list = {'dust', 'thujustep'}
+}
+
+particles.state = function()
+  return {
     systems = {}
   }
+end
 
-  setmetatable(self, {__index = particles})
-
-  local particleList = {'dust', 'thujustep'}
-  for i = 1, #particleList do
-    local name = particleList[i]
+function particles:bind()
+  for i = 1, #self.config.list do
+    local name = self.config.list[i]
     local particle = app.particles[name]
     local system = g.newParticleSystem(particle.image, particle.max or 1024)
     system:setOffset(particle.image:getWidth() / 2, particle.image:getHeight() / 2)
@@ -19,11 +22,7 @@ function particles.create()
     end
   end
 
-  return self
-end
-
-function particles:bind()
-  app.scene.view.draw:subscribe(function()
+  app.context.view.draw:subscribe(function()
     g.setColor(255, 255, 255)
     for code, system in pairs(self.systems) do
       system:update(lib.tick.delta)

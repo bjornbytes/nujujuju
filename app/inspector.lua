@@ -1,142 +1,51 @@
 local inspector = lib.object.create()
 
+inspector:include(lib.inspector)
+
 inspector.config = {
-  width = 140
+  width = 140,
+  objects = {'muju', 'shrine', 'dirt'},
+  initialObject = 'muju'
 }
 
-function inspector:bind()
-  function offset(x, ...)
-    local rest = {...}
-    return function()
-      return self.x + x, unpack(rest)
-    end
-  end
+inspector.state = function()
+  local state = {
+    active = false,
+    editing = 'muju',
+    x = -inspector.config.width,
+    hand = love.mouse.getSystemCursor('hand'),
+    gooey = lib.gooey.controller:new()
+  }
 
-  self.gooey = lib.gooey.create():bind()
-  self.dropdown = self.gooey:add(lib.dropdown, 'inspector.editing')
-  self.dropdown.geometry = offset(6, 8, 100, 20)
-  self.dropdown.choices = {'muju', 'shrine', 'dirt'}
+  state.dropdown = state.gooey:add(lib.gooey.dropdown, 'inspector.editing')
+
+  return state
+end
+
+function inspector:bind()
+  self.dropdown.geometry = self:createOffsetFunction(6, 8, 100, 20)
+  self.dropdown.choices = self.config.objects
   self.dropdown.padding = 6
   self.dropdown.label = 'subject'
-  self.components = self.dropdown.value:map(self.setupComponents(self))
+  self.components = self.dropdown.value:map(self:wrap(self.setupComponents))
 
   love.keypressed
     :filter(f.eq('`'))
-    :subscribe(self.toggleActive(self))
+    :subscribe(self:wrap(self.toggleActive))
 
-  love.update:subscribe(function()
-    self.x = math.lerp(self.x, self:getTargetX(), 16 * lib.tick.rate)
-  end)
+  love.update
+    :subscribe(self:wrap(self.smoothX))
 
   love.mousemoved
     :pack()
     :combine(self.components)
-    :subscribe(self.updateCursor(self))
+    :subscribe(self:wrap(self.updateCursor))
 
-  app.scene.view.hud
+  app.context.view.hud
     :with(self.components)
-    :subscribe(self.render(self))
+    :subscribe(self:wrap(self.draw))
 
-  self.dropdown.value:onNext('muju')
+  self.dropdown.value:onNext(self.config.initialObject)
 end
 
-function inspector:getTargetX()
-  return self.active and 0 or -self.config.width
-end
-
-function inspector:toggleActive()
-  return function()
-    self.active = not self.active
-  end
-end
-
-function inspector:updateCursor()
-  local hand = love.mouse.getSystemCursor('hand')
-  return function(mouse, components)
-    local mx, my = unpack(mouse)
-    local contains = false
-    contains = contains or self.dropdown:contains(mx, my)
-    for i = 1, #components do
-      contains = contains or f.try(components[i].contains, components[i], mx, my)
-    end
-    love.mouse.setCursor(contains and hand or nil)
-  end
-end
-
-function inspector:setupComponents()
-  return function(editing)
-    local subject = table.get(app, editing)
-    if subject.editor then
-      local components = {}
-      local y = 44
-
-      for i = 1, #subject.editor.sections do
-        local section = subject.editor.sections[i]
-        local header = self.gooey:add(lib.label, 'prop.' .. section.title)
-        header.geometry = offset(8, y)
-        header.label = section.title
-        table.insert(components, header)
-
-        y = y + 20
-
-        for j = 1, #section do
-          local prop = section[j]
-          local editor = self.gooey:add(lib.editor, 'prop.' .. prop)
-          editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
-          editor.value = subject.config[prop]
-          editor.valueSubject:onNext(editor.value)
-          editor.geometry = offset(8, y, self.config.width - 16)
-          editor.valueSubject:subscribe(function(newValue)
-            subject.config[prop] = tonumber(newValue) or newValue
-          end)
-
-          y = y + 20
-          table.insert(components, editor)
-        end
-
-        y = y + 20
-      end
-
-      return components
-    else
-      local config = subject.config or subject
-      return table.map(table.keys(config), function(prop, i)
-        local editor = self.gooey:add(lib.editor, 'config.' .. prop)
-        editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
-        editor.value = config[prop]
-        editor.valueSubject:onNext(editor.value)
-        editor.geometry = offset(8, 24 + 20 * i, self.config.width - 16)
-        editor.valueSubject:subscribe(function(newValue)
-          subject.config[prop] = tonumber(newValue) or newValue
-        end)
-        return editor
-      end)
-    end
-  end
-end
-
-function inspector:render()
-  return function(_, editors)
-    local height = love.graphics.getHeight()
-
-    g.setColor(35, 35, 35, 220)
-    g.rectangle('fill', self.x, 0, self.config.width, height)
-
-    if editors then
-      g.setColor(255, 255, 255)
-      for i = 1, #editors do
-        self.gooey:render(editors[i])
-      end
-    end
-
-    self.gooey:render(self.dropdown)
-
-    return -10000
-  end
-end
-
-return inspector:new({
-  active = false,
-  editing = 'muju',
-  x = -inspector.config.width
-})
+return inspector

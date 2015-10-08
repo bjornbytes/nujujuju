@@ -1,7 +1,7 @@
-local ability = {}
+local spell = {}
 
-function ability:canUse()
-  return true
+function spell:decayTimer()
+  self.timer = self.timer - math.min(self.timer, lib.tick.rate)
 end
 
-return ability
+return spell

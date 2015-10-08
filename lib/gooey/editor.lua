@@ -1,4 +1,4 @@
-local editor = setmetatable({}, {__index = lib.component})
+local editor = setmetatable({}, {__index = lib.gooey.component})
 
 getmetatable(editor).__call = function()
   return setmetatable({}, {__index = editor})
@@ -33,6 +33,8 @@ function editor:render()
   local hoverFactor = math.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
   local focusFactor = math.lerp(self.prevFocusFactor, self.focusFactor, lib.tick.accum / lib.tick.rate)
   local errorFactor = math.lerp(self.prevErrorFactor, self.errorFactor, lib.tick.accum / lib.tick.rate)
+
+  x = x + math.round(4 * hoverFactor)
 
   g.setFont(self.gooey.font)
   g.setColor(255, 255, 255, 180 + (75 * hoverFactor))

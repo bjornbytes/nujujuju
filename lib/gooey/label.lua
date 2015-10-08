@@ -1,4 +1,4 @@
-local label = setmetatable({}, {__index = lib.component})
+local label = setmetatable({}, {__index = lib.gooey.component})
 
 getmetatable(label).__call = function()
   return setmetatable({}, {__index = label})

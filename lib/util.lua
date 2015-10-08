@@ -59,6 +59,7 @@ end
 
 function table.filter(t, fn, iterator)
   iterator = iterator or pairs
+  if type(fn) == 'string' then fn = f.key(fn) end
   local res = {}
   for k, v in iterator(t) do
     if fn(v, k) then
@@ -108,7 +109,9 @@ function table.merge(t1, t2)
   return t2
 end
 
-function g.drawCenter(image, size, x, y)
+function g.drawCenter(image, size, x, y, a, sx, sy)
   local scale = size / image:getWidth()
-  g.draw(image, x, y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
+  sx = sx or 1
+  sy = sy or 1
+  g.draw(image, x, y, a, scale * sx, scale * sy, image:getWidth() / 2, image:getHeight() / 2)
 end

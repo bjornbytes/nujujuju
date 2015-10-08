@@ -2,7 +2,7 @@ local joystick = love.joystick.getJoysticks()[1]
 
 return love.update
   :map(function()
-    if app.inspector.gooey.focused then
+    if app.context.inspector.gooey.focused then
       return {
         x = 0,
         y = 0,

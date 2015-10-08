@@ -1,16 +1,17 @@
 local patch = lib.object.create()
 
 patch.config = {
-  blob = app.environment.blob
+  blob = app.environment.art.blob
 }
 
 function patch:bind()
   self:initCanvas()
 
-  app.scene.view.draw
+  app.context.view.draw
     :subscribe(function()
       g.setColor(255, 255, 255)
       g.draw(self.canvas, self.x, self.y, self.angle, 1, .5, self.canvas:getWidth() / 2, self.canvas:getHeight() / 2)
+      return -10
     end)
 end
 

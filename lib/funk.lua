@@ -66,4 +66,11 @@ function funk.self(f, self)
   end
 end
 
+-- funk key fresh
+function funk.key(key)
+  return function(t)
+    return t[key]
+  end
+end
+
 return funk

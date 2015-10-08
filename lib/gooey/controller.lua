@@ -1,13 +1,13 @@
-local gooey = {}
+local gooey = lib.object.create()
 
 gooey.font = fonts['04B_03'](8)
 
-function gooey.create()
-  local self = {
+gooey.state = function()
+  return {
+    font = fonts['04B_03'](8),
     components = {},
     focused = nil
   }
-  return setmetatable(self, {__index = gooey})
 end
 
 function gooey:bind()

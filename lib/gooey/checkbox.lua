@@ -1,4 +1,4 @@
-local checkbox = setmetatable({}, {__index = lib.component})
+local checkbox = setmetatable({}, {__index = lib.gooey.component})
 
 getmetatable(checkbox).__call = function()
   return setmetatable({}, {__index = checkbox})

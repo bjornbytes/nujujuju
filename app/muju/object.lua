@@ -1,11 +1,13 @@
 local muju = lib.object.create()
 
+muju:include(lib.muju)
+
 muju.config = app.muju.config
 
 muju.state = function()
   local state = {
     position = {
-      x = app.scene.width / 2,
+      x = app.context.scene.width / 2,
       y = 301
     },
     speed = {
@@ -26,100 +28,60 @@ muju.state = function()
 
   state.animation = state.animations.muju
 
-  state.abilities = lib.abilities.create()
+  state.abilities = lib.abilities:new()
   state.abilities:add('blink')
 
   return state
 end
 
 function muju:bind()
-  lib.input:subscribe(app.muju.actions.move(self))
-
-  app.muju.actions.tint(self, .5, .2, .7)
+  self:tint(.5, .2, .7) 
 
   lib.input
-    :filter(app.muju.actions.canShapeshift(self))
+    :subscribe(self:wrap(self.move))
+
+  lib.input
+    :filter(self:wrap(self.canShapeshift))
     :pluck('shapeshift')
     :changes()
     :filter(f.eq(true))
-    :subscribe(function()
-      self.form = self.form == 'muju' and 'thuju' or 'muju'
-      self.animation = self.animations[self.form]
-      if self.form == 'thuju' then
-        self.animation:clear()
-        self.animation:reset('spawn')
-        self.animation:add('idle')
-      end
-      self.lastShapeshift = lib.tick.index
-    end)
+    :subscribe(self:wrap(self.shapeshift))
 
   lib.input
     :pluck('attack')
     :changes()
     :filter(f.eq(true))
-    :subscribe(function()
-      self.animation:set('attack')
-      self.animation:add('idle')
-    end)
+    :subscribe(self:wrap(self.attack))
+
+  lib.input
+    :subscribe(self:wrap(self.animate))
 
   love.update
-    :subscribe(function()
-      local speed = math.sqrt((self.speed.x ^ 2) + (self.speed.y ^ 2)) / self.config.speed
-      self.shuffle:setVolume(speed * self.config.shuffleVolume)
-    end)
+    :subscribe(self:wrap(self.flipAnimation))
 
-  love.update:subscribe(app.muju.actions.flip(self))
+  love.update
+    :subscribe(self:wrap(self.setShuffleVolume))
 
   self.animations.thuju.events
     :pluck('data', 'name')
     :filter(f.eq('spawn'))
-    :subscribe(function()
-      local x = self.position.x
-      local y = self.position.y
-      app.scene.particles:emit('thujustep', x, y, 30, function()
-        return { direction = love.math.random() < .5 and math.pi or 0 }
-      end)
-    end)
+    :subscribe(self:wrap(lib.thuju.createSpawnParticles))
 
   self.animations.muju.events
     :pluck('data', 'name')
     :filter(f.eq('step'))
-    :subscribe(app.muju.actions.footstep(self))
+    :subscribe(self:wrap(self.eventFootstep))
 
   self.animations.muju.events
     :pluck('data', 'name')
     :filter(f.eq('staff'))
-    :subscribe(app.muju.actions.limp(self))
+    :subscribe(self:wrap(self.eventLimp))
 
-  love.update
-    :with(lib.input)
-    :subscribe(app.muju.actions.animate(self))
-
-  for _, object in ipairs({'shrine', 'dirt'}) do
-    self:subscribeCollision(object, app.muju.actions.resolveCollision(self, app.scene.objects[object]))
+  for _, object in pairs(table.filter(app.context.objects, 'solid')) do
+    self:resolveCollisionsWith(object)
   end
 
-  app.scene.view.draw:subscribe(app.muju.actions.draw(self))
-
-  return self
-end
-
-function muju:subscribeCollision(name, fn)
-  local other = app.scene.objects[name]
-  return love.update
-    :map(function()
-      local distance = math.distance(self.position.x, self.position.y, other.position.x, other.position.y)
-      local direction = math.direction(self.position.x, self.position.y, other.position.x, other.position.y)
-      return distance, direction
-    end)
-    :filter(function(distance, direction)
-      return distance < self.config.radius + other.config.radius * math.abs(math.cos(direction))
-    end)
-    :map(function(distance, direction)
-      local delta = (self.config.radius + other.config.radius) - distance
-      return delta * math.cos(direction), delta * math.sin(direction) * math.abs(math.cos(direction))
-    end)
-    :subscribe(fn)
+  app.context.view.draw:subscribe(self:wrap(self.draw))
 end
 
 return muju

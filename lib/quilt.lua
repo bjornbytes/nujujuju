@@ -1,37 +1,39 @@
 local quilt = {}
 
-function quilt:init()
-  self.threads = {}
-  self.delays = {}
+function quilt.init()
+  quilt.threads = {}
+  quilt.delays = {}
+
+  love.update:subscribe(quilt.update)
 end
 
-function quilt:add(thread)
-  self.threads[thread] = coroutine.create(thread)
-  self.delays[thread] = 0
+function quilt.add(thread)
+  quilt.threads[thread] = coroutine.create(thread)
+  quilt.delays[thread] = 0
   return thread
 end
 
-function quilt:remove(thread)
-  self.threads[thread] = nil
+function quilt.remove(thread)
+  quilt.threads[thread] = nil
   return thread
 end
 
-function quilt:reset(thread)
-  self.delays[thread] = 0
+function quilt.reset(thread)
+  quilt.delays[thread] = 0
   return thread
 end
 
-function quilt:update(dt)
-  for thread, cr in pairs(self.threads) do
-    if self.delays[thread] <= dt then
+function quilt.update()
+  for thread, cr in pairs(quilt.threads) do
+    if quilt.delays[thread] <= lib.tick.rate then
       local _, delay = coroutine.resume(cr)
-      self.delays[thread] = delay or 0
+      quilt.delays[thread] = delay or 0
 
       if coroutine.status(cr) == 'dead' then
-        self:remove(thread)
+        quilt:remove(thread)
       end
     else
-      self.delays[thread] = self.delays[thread] - dt
+      quilt.delays[thread] = quilt.delays[thread] - lib.tick.rate
     end
   end
 end

@@ -1,4 +1,4 @@
-local dropdown = setmetatable({}, {__index = lib.component})
+local dropdown = setmetatable({}, {__index = lib.gooey.component})
 
 getmetatable(dropdown).__call = function()
   return setmetatable({}, {__index = dropdown})

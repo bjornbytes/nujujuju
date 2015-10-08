@@ -1,4 +1,4 @@
-local slider = setmetatable({}, {__index = lib.component})
+local slider = setmetatable({}, {__index = lib.gooey.component})
 
 getmetatable(slider).__call = function()
   return setmetatable({}, {__index = slider})
