@@ -16,6 +16,8 @@ muju.state = function()
     },
     form = 'muju',
     lastShapeshift = -math.huge,
+    health = 5,
+    juju = 3,
     shuffle = love.audio.play(app.muju.sound.shuffle)
   }
 
@@ -35,7 +37,7 @@ muju.state = function()
 end
 
 function muju:bind()
-  self:tint(.5, .2, .7) 
+  self:tint(.5, .2, .7)
 
   lib.input
     :subscribe(self:wrap(self.move))

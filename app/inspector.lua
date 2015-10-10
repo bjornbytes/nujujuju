@@ -4,7 +4,7 @@ inspector:include(lib.inspector)
 
 inspector.config = {
   width = 140,
-  objects = {'muju', 'shrine', 'dirt'},
+  objects = {'muju', 'buildings.shrine', 'buildings.dirt'},
   initialObject = 'muju'
 }
 

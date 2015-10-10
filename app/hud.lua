@@ -16,8 +16,10 @@ function hud:bind()
     :subscribe(function()
       g.setFont(self.font)
 
-      self:drawShapeshiftCooldown()
-      self:drawAbilities()
+      --self:drawShapeshiftCooldown()
+      --self:drawAbilities()
+      self:drawPlayerHealthbar()
+      self:drawPlayerJuju()
 
       return -1000
     end)

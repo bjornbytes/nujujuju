@@ -44,4 +44,43 @@ function hud:drawAbilities(u, v)
   end
 end
 
+function hud:drawPlayerHealthbar()
+  local u, v = self.u, self.v
+  local padding = .005 * v
+  local muju = app.context.objects.muju
+  local icon = app.art.juju
+  local size = .06 * v
+  local scale = size / icon:getWidth()
+  local x, y = .02 * v, .02 * v
+
+  g.setColor(255, 255, 255)
+  g.draw(icon, x, y, 0, scale, scale)
+
+  local segmentWidth = .04 * v
+  local segmentHeight = .02 * v
+  local totalWidth = (2 * padding) + (5 * segmentWidth) + ((5 - 1) * padding)
+  local totalHeight = (2 * padding) + segmentHeight
+
+  g.setColor(0, 0, 0, 100)
+  g.rectangle('fill', x + size + (.02 * v), y, totalWidth, totalHeight)
+
+  g.setColor(200, 50, 50, 200)
+  for i = 1, 5 do
+    g.rectangle('fill', x + size + (.02 * v) + padding + (segmentWidth + padding) * (i - 1), y + padding, segmentWidth, segmentHeight)
+  end
+
+  -- draw health icon
+  -- draw frame
+  -- draw bars
+end
+
+function hud:drawPlayerJuju()
+  local u, v = self.u, self.v
+  local muju = app.context.objects.muju
+
+  -- draw juju icon
+  -- draw frame
+  -- draw bars
+end
+
 return hud
