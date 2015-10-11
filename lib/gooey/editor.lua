@@ -74,6 +74,20 @@ function editor:keypressed(key)
     love.keyboard:setKeyRepeat(false)
   elseif key == 'backspace' and self:focused() then
     self.value = self.value:sub(1, -2)
+  elseif (key == 'up' or key == 'down') and not self:focused() and self:contains(love.mouse.getPosition()) and tonumber(self.value) then
+    local decimals = tostring(self.value):match('%.([0-9]+)')
+    decimals = decimals and #decimals or 0
+    local precision = 1 / 10 ^ (decimals)
+    local sign = key == 'up' and 1 or -1
+    self.value = self.value + precision * sign
+    self.valueSubject:onNext(self.value)
+    love.keyboard.setKeyRepeat(true)
+  end
+end
+
+function editor:keyreleased(key)
+  if not self:focused() and (key == 'up' or key == 'down') then
+    love.keyboard.setKeyRepeat(false)
   end
 end
 
