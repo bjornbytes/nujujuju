@@ -85,6 +85,15 @@ function view:doDraw()
   g.setCanvas()
   g.setColor(255, 255, 255)
   g.draw(source)
+
+  local fr = self.frame
+  local fx, fy, fw, fh = fr.x, fr.y, fr.width, fr.height
+
+  g.setColor(0, 0, 0)
+  g.rectangle('fill', 0, 0, w, fy)
+  g.rectangle('fill', 0, 0, fx, h)
+  g.rectangle('fill', 0, fy + fh, w, h - (fy + fh))
+  g.rectangle('fill', fx + fw, 0, w - (fx + fw), h)
 end
 
 function view:doHud()

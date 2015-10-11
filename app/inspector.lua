@@ -23,7 +23,7 @@ inspector.state = function()
 end
 
 function inspector:bind()
-  self.dropdown.geometry = self:createOffsetFunction(6, 8, 100, 20)
+  self.dropdown.geometry = self:createOffsetFunction(6, 8, self.config.width - 16, 20)
   self.dropdown.choices = self.config.objects
   self.dropdown.padding = 6
   self.dropdown.label = 'subject'

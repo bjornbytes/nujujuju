@@ -96,21 +96,26 @@ function muju:resolveCollisionsWith(other)
     :map(function()
       local distance = math.distance(self.position.x, self.position.y, other.position.x, other.position.y)
       local direction = math.direction(self.position.x, self.position.y, other.position.x, other.position.y)
-      return distance, direction
+      local a, b = other.config.radius, other.config.radius / other.config.perspective
+      local r = (a * b) / math.sqrt((b * math.cos(direction)) ^ 2 + (a * math.sin(direction)) ^ 2)
+      local ex = other.position.x + math.cos(direction + math.pi) * r
+      local ey = other.position.y + math.sin(direction + math.pi) * r
+      return distance, direction, a, b, r, ex, ey
     end)
-    :filter(function(distance, direction)
-      return distance < self.config.radius + other.config.radius * math.abs(math.cos(direction))
+    :filter(function(distance, direction, a, b, r, ex, ey)
+      return math.distance(ex, ey, self.position.x, self.position.y) < self.config.radius
     end)
-    :map(function(distance, direction)
-      local delta = (self.config.radius + other.config.radius) - distance
-      return delta * math.cos(direction), delta * math.sin(direction) * math.abs(math.cos(direction))
+    :map(function(distance, direction, a, b, r, ex, ey)
+      local dis = self.config.radius - (math.distance(self.position.x, self.position.y, ex, ey))
+      local dir = math.direction(self.position.x, self.position.y, other.position.x, other.position.y)
+      return dis * math.cos(dir), dis * math.sin(dir)
     end)
     :subscribe(function(dx, dy)
-      self.position.x = math.lerp(self.position.x, self.position.x - dx / 2, 8 * lib.tick.rate)
-      self.position.y = math.lerp(self.position.y, self.position.y - dy / 2, 8 * lib.tick.rate)
+      self.position.x = math.lerp(self.position.x, self.position.x - dx / 2, 1)
+      self.position.y = math.lerp(self.position.y, self.position.y - dy / 2, 1)
 
-      other.position.x = math.lerp(other.position.x, other.position.x + dx / 2, 12 * lib.tick.rate)
-      other.position.y = math.lerp(other.position.y, other.position.y + dy / 2, 12 * lib.tick.rate)
+      other.position.x = math.lerp(other.position.x, other.position.x + dx / 2, 1)
+      other.position.y = math.lerp(other.position.y, other.position.y + dy / 2, 1)
     end)
 end
 
@@ -123,6 +128,12 @@ function muju:draw()
   g.setColor(255, 255, 255)
   self.animation:tick(lib.tick.delta)
   self.animation:draw(self.position.x, self.position.y)
+
+  if app.context.inspector.active then
+    g.setLineWidth(2)
+    g.setColor(255, 255, 255, 50)
+    g.circle('line', self.position.x, self.position.y, self.config.radius, 64)
+  end
 
   return -self.position.y
 end

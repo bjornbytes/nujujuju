@@ -22,6 +22,13 @@ function obstacle:draw()
 
   g.setColor(255, 255, 255)
   g.drawCenter(self.image, self.config.size, self.position.x, self.position.y)
+
+  if app.context.inspector.active then
+    g.setLineWidth(2)
+    g.setColor(255, 255, 255, 50)
+    g.ellipse('line', self.position.x, self.position.y, self.config.radius, self.config.radius / self.config.perspective, 0, 32)
+  end
+
   return -self.position.y
 end
 
