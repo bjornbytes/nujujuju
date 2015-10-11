@@ -101,6 +101,7 @@ function editor:mousereleased(mx, my, b)
     else
       love.keyboard:setKeyRepeat(false)
       self.gooey:unfocus()
+      self.value = self.valueSubject:getValue()
     end
   end
 end
