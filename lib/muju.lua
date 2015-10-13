@@ -100,15 +100,15 @@ function muju:resolveCollisionsWith(other)
       local r = (a * b) / math.sqrt((b * math.cos(direction)) ^ 2 + (a * math.sin(direction)) ^ 2)
       local ex = other.position.x + math.cos(direction + math.pi) * r
       local ey = other.position.y + math.sin(direction + math.pi) * r
-      return distance, direction, a, b, r, ex, ey
+      local overlap = self.config.radius - (math.distance(self.position.x, self.position.y, ex, ey))
+      return distance, direction, a, b, r, ex, ey, overlap
     end)
-    :filter(function(distance, direction, a, b, r, ex, ey)
+    :filter(function(distance, direction, a, b, r, ex, ey, overlap)
       return math.distance(ex, ey, self.position.x, self.position.y) < self.config.radius
     end)
-    :map(function(distance, direction, a, b, r, ex, ey)
-      local dis = self.config.radius - (math.distance(self.position.x, self.position.y, ex, ey))
+    :map(function(distance, direction, a, b, r, ex, ey, overlap)
       local dir = math.direction(self.position.x, self.position.y, other.position.x, other.position.y)
-      return dis * math.cos(dir), dis * math.sin(dir)
+      return overlap * math.cos(dir), overlap * math.sin(dir)
     end)
     :subscribe(function(dx, dy)
       self.position.x = math.lerp(self.position.x, self.position.x - dx / 2, 1)

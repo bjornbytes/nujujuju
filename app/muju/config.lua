@@ -4,6 +4,8 @@ return {
   deceleration = 10,
   radius = 20,
 
+  maxHealth = 5,
+  maxJuju = 5,
   shapeshiftCooldown = 3,
 
   shuffleVolume = .2,

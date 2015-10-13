@@ -10,16 +10,15 @@ hud.config = {
 
 function hud:bind()
   self.u, self.v = g.getDimensions()
-  self.font = self.config.font(self.v * .05)
+  self.font = self.config.font(self.v * .015)
 
   app.context.view.hud
     :subscribe(function()
       g.setFont(self.font)
 
-      --self:drawShapeshiftCooldown()
-      --self:drawAbilities()
       self:drawPlayerHealthbar()
       self:drawPlayerJuju()
+      self:drawBuildingUI()
 
       return -1000
     end)
