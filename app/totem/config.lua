@@ -1,0 +1,3 @@
+return {
+  maxTime = 25
+}

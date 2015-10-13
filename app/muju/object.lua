@@ -16,9 +16,10 @@ muju.state = function()
     },
     form = 'muju',
     lastShapeshift = -math.huge,
-    health = 5,
+    health = 3,
     juju = 3,
-    shuffle = love.audio.play(app.muju.sound.shuffle)
+    shuffle = love.audio.play(app.muju.sound.shuffle),
+    building = nil
   }
 
   state.shuffle:setVolume(0)
@@ -58,11 +59,20 @@ function muju:bind()
   lib.input
     :subscribe(self:wrap(self.animate))
 
+  lib.input
+    :pluck('building')
+    :changes()
+    :filter(f.eq(true))
+    :subscribe(self:wrap(self.interactWithBuilding))
+
   love.update
     :subscribe(self:wrap(self.flipAnimation))
 
   love.update
     :subscribe(self:wrap(self.setShuffleVolume))
+
+  love.update
+    :subscribe(self:wrap(self.setActiveBuilding))
 
   self.animations.thuju.events
     :pluck('data', 'name')
@@ -79,7 +89,7 @@ function muju:bind()
     :filter(f.eq('staff'))
     :subscribe(self:wrap(self.eventLimp))
 
-  for _, object in pairs(table.filter(app.context.objects, 'solid')) do
+  for _, object in pairs(table.filter(app.context.objects, 'isSolid')) do
     self:resolveCollisionsWith(object)
   end
 

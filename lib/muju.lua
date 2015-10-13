@@ -54,6 +54,12 @@ function muju:animate(input)
   end
 end
 
+function muju:interactWithBuilding()
+  if self.building and self.building:canInteractWith(self) then
+    self.building:interact()
+  end
+end
+
 function muju:flipAnimation()
   local x = self.speed.x
   if x ~= 0 then
@@ -64,6 +70,24 @@ end
 function muju:setShuffleVolume()
   local speed = math.sqrt((self.speed.x ^ 2) + (self.speed.y ^ 2)) / self.config.speed
   self.shuffle:setVolume(speed * self.config.shuffleVolume)
+end
+
+function muju:setActiveBuilding()
+  self.building = nil
+  local buildings = table.filter(app.context.objects, 'isBuilding')
+  for _, building in pairs(buildings) do
+    local distance = math.distance(self.position.x, self.position.y, building.position.x, building.position.y)
+    local direction = math.direction(self.position.x, self.position.y, building.position.x, building.position.y)
+    local a, b = building.config.radius, building.config.radius / building.config.perspective
+    local r = (a * b) / math.sqrt((b * math.cos(direction)) ^ 2 + (a * math.sin(direction)) ^ 2)
+    local ex = building.position.x + math.cos(direction + math.pi) * r
+    local ey = building.position.y + math.sin(direction + math.pi) * r
+    local overlap = self.config.radius - (math.distance(self.position.x, self.position.y, ex, ey))
+    if overlap > -1 then
+      self.building = building
+      return
+    end
+  end
 end
 
 function muju:eventFootstep()
@@ -117,6 +141,11 @@ function muju:resolveCollisionsWith(other)
       other.position.x = math.lerp(other.position.x, other.position.x + dx / 2, 1)
       other.position.y = math.lerp(other.position.y, other.position.y + dy / 2, 1)
     end)
+end
+
+function muju:eatMushroom()
+  self.health = math.min(self.health + self.config.healthPerShruju, self.config.maxHealth)
+  self.juju = math.min(self.juju + self.config.jujuPerShruju, self.config.maxJuju)
 end
 
 function muju:draw()

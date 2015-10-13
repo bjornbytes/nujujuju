@@ -1,7 +1,7 @@
 local obstacle = {}
 
-function obstacle:setSolid()
-  self.solid = true
+function obstacle:setIsSolid()
+  self.isSolid = true
 end
 
 function obstacle:setStartPosition()

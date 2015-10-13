@@ -6,6 +6,8 @@ return {
 
   maxHealth = 5,
   maxJuju = 5,
+  healthPerShruju = 1,
+  jujuPerShruju = 2,
   shapeshiftCooldown = 3,
 
   shuffleVolume = .2,

@@ -157,7 +157,7 @@ function view:convertZ(z)
 end
 
 function view:three(x, y, z)
-  local sx, sy = math.lerp(self.prevx, self.x, ls.accum / lib.tick.rate), math.lerp(self.prevy, self.y, ls.accum / lib.tick.rate)
+  local sx, sy = math.lerp(self.prevx, self.x, lib.tick.accum / lib.tick.rate), math.lerp(self.prevy, self.y, lib.tick.accum / lib.tick.rate)
   z = self:convertZ(z)
   return x - (z * ((sx + self.width / 2 - x) / 500)), y - (z * ((sy + self.height / 2 - y) / 500))
 end
@@ -178,7 +178,7 @@ function view:worldPoint(x, y)
 end
 
 function view:screenPoint(x, y)
-  local vx, vy = math.lerp(self.prevx, self.x, ls.accum / lib.tick.rate), math.lerp(self.prevy, self.y, ls.accum / lib.tick.rate)
+  local vx, vy = math.lerp(self.prevx, self.x, lib.tick.accum / lib.tick.rate), math.lerp(self.prevy, self.y, lib.tick.accum / lib.tick.rate)
   x = (x - vx) * self.scale
   if y then y = (y - vy) * self.scale end
   return x, y

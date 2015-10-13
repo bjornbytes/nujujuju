@@ -6,6 +6,7 @@ return love.update
       return {
         x = 0,
         y = 0,
+        building = false,
         shapeshift = false,
         attack = false,
         spells = {false, false, false}
@@ -30,10 +31,16 @@ return love.update
       if math.abs(y) < .2 then y = 0 end
     end
 
-    -- Shapeshift
-    local shapeshift = love.keyboard.isDown('e')
+    -- Building
+    local building = love.keyboard.isDown('e')
     if joystick then
-      shapeshift = joystick:isGamepadDown('x')
+      building = joystick:isGamepadDown('x')
+    end
+
+    -- Shapeshift
+    local shapeshift = love.keyboard.isDown('q')
+    if joystick then
+      shapeshift = joystick:isGamepadDown('y')
     end
 
     -- Attack
@@ -51,6 +58,7 @@ return love.update
     return {
       x = x,
       y = y,
+      building = building,
       shapeshift = shapeshift,
       attack = attack,
       spells = spells

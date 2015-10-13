@@ -47,8 +47,8 @@ function hud:drawBuildingUI()
   local u, v = self.u, self.v
   local muju = app.context.objects.muju
 
-  for = i, #context.objects do
-
+  for _, building in pairs(table.filter(app.context.objects, 'isBuilding')) do
+    building:drawUI(u, v)
   end
 end
 

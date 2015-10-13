@@ -15,8 +15,14 @@ overgrowth.objects = {
   },
   { 'buildings.dirt',
     position = {
-      x = w / 2 - 100,
-      y = h / 2
+      x = w / 2 - 200,
+      y = h / 2 - 200
+    }
+  },
+  { 'buildings.dirt',
+    position = {
+      x = w / 2 - 200,
+      y = h / 2 + 200
     }
   },
   { 'buildings.shrine',
