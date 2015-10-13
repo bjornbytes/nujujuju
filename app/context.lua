@@ -7,6 +7,7 @@ function context.load(scene)
   context.particles = lib.particles:new()
   context.hud = app.hud:new()
   context.inspector = app.inspector:new()
+  context.timeline = app.timeline:new()
 
   context.objects = {}
 

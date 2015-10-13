@@ -12,6 +12,12 @@ function editor:activate()
   self.prevFocusFactor = self.focusFactor
   self.errorFactor = 0
   self.prevErrorFactor = self.errorFactor
+
+  if tonumber(self.value) then
+    local decimals = tostring(self.value):match('%.([0-9]+)')
+    decimals = decimals and #decimals or 0
+    self.precision = 1 / 10 ^ (decimals)
+  end
 end
 
 function editor:update()
@@ -43,13 +49,19 @@ function editor:render()
   g.setColor(100, 200, 50)
   g.print(self.value, x + w - g.getFont():getWidth(self.value), y)
 
-  if errorFactor > 0 then
+  if self.value == '' then
+    g.setColor(255, 255, 255, 80)
+    g.print(self.valueSubject:getValue(), x + w - g.getFont():getWidth(self.valueSubject:getValue()), y)
+  end
+
+  g.setLineWidth(1)
+  if errorFactor > .01 then
     g.setColor(255, 100, 100, math.min(errorFactor, 1) * 255)
-    local y = y + g.getFont():getHeight() + .5
+    local y = math.round(y + g.getFont():getHeight()) + .5
     g.line(x, y, x + w, y)
   elseif focusFactor * w > 1 then
     g.setColor(255, 255, 255, 200)
-    local y = y + g.getFont():getHeight() + .5
+    local y = math.round(y + g.getFont():getHeight()) + .5
     g.line(x, y, x + w * focusFactor, y)
   end
 end
@@ -62,9 +74,10 @@ function editor:keypressed(key)
       local try = function()
         self.valueSubject:onNext(self.value)
         love.update()
+        love.draw()
       end
 
-      if not pcall(try) then
+      if self.value == '' or not pcall(try) then
         self.errorFactor = 8
         self.value = old
         self.valueSubject:onNext(old)
@@ -126,11 +139,7 @@ function editor:contains(mx, my)
 end
 
 function editor:increment(sign)
-  if not tonumber(self.value) then return end
-  local decimals = tostring(self.value):match('%.([0-9]+)')
-  decimals = decimals and #decimals or 0
-  local precision = 1 / 10 ^ (decimals)
-  self.value = self.value + precision * sign
+  self.value = self.value + self.precision * sign
   self.valueSubject:onNext(self.value)
   love.keyboard.setKeyRepeat(true)
 end

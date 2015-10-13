@@ -9,11 +9,12 @@ end
 
 function inspector:toggleActive()
   self.active = not self.active
+  lib.flux.to(self, .3, {x = self.active and 0 or -self.config.width}):ease('quartout')
 end
 
 function inspector:smoothX()
   local targetX = self.active and 0 or -self.config.width
-  self.x = math.lerp(self.x, targetX, 16 * lib.tick.rate)
+  --self.x = math.lerp(self.x, targetX, 16 * lib.tick.rate)
 end
 
 function inspector:updateCursor(mouse, components)
@@ -43,9 +44,8 @@ function inspector:setupComponents(editing)
 
       for j = 1, #section do
         local prop = section[j]
-        local editor = self.gooey:add(lib.gooey.editor, 'config.' .. editing .. '.' .. prop)
+        local editor = self.gooey:add(lib.gooey.editor, 'config.' .. editing .. '.' .. prop, {value = subject.config[prop]})
         editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
-        editor.value = subject.config[prop]
         editor.valueSubject:onNext(editor.value)
         editor.geometry = self:createOffsetFunction(8, y, self.config.width - 16)
         editor.valueSubject:subscribe(function(newValue)
@@ -63,9 +63,8 @@ function inspector:setupComponents(editing)
   else
     local config = subject.config or subject
     return table.map(table.keys(config), function(prop, i)
-      local editor = self.gooey:add(lib.gooey.editor, 'config.' .. editing .. '.' .. prop)
+      local editor = self.gooey:add(lib.gooey.editor, 'config.' .. editing .. '.' .. prop, {value = config[prop]})
       editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
-      editor.value = config[prop]
       editor.valueSubject:onNext(editor.value)
       editor.geometry = self:createOffsetFunction(8, 24 + 20 * i, self.config.width - 16)
       editor.valueSubject:subscribe(function(newValue)
@@ -77,10 +76,16 @@ function inspector:setupComponents(editing)
 end
 
 function inspector:draw(_, editors)
-  local height = love.graphics.getHeight()
+  local u, v = g.getDimensions()
+  local x = self.x
+  local width = self.config.width
+  if x > 0 then
+    width = width + x
+    x = 0
+  end
 
   g.setColor(35, 35, 35, 220)
-  g.rectangle('fill', self.x, 0, self.config.width, height)
+  g.rectangle('fill', x, 0, width, v)
 
   if editors then
     g.setColor(255, 255, 255)

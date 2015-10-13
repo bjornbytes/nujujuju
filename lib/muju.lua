@@ -119,6 +119,7 @@ end
 
 function muju:eventAttack()
   local enemy = app.context.objects.enemy
+  if not enemy then return end
   local animationDirectionSign = self.animation.flipped and -1 or 1
   local closeEnough = math.distance(self.position.x, self.position.y, enemy.position.x, enemy.position.y) < (self.config.radius + enemy.config.radius) * self.config.staffHitboxThreshold
   local atSameLevel = math.abs(self.position.y - enemy.position.y) < self.config.staffYPositionThreshold

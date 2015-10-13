@@ -11,6 +11,7 @@ function math.sign(x)
 end
 
 function math.inside(px, py, rx, ry, rw, rh) return px >= rx and px <= rx + rw and py >= ry and py <= ry + rh end
+function math.insideCircle(px, py, cx, cy, r) return math.distance(px, py, cx, cy) <= r end
 
 function math.distance(x1, y1, x2, y2)
   return math.sqrt((y2 - y1) ^ 2 + (x2 - x1) ^ 2)

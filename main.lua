@@ -20,6 +20,10 @@ require 'lib/util'
 
 app.context.load('overgrowth')
 
+love.update:subscribe(function()
+  lib.flux.update(lib.tick.rate)
+end)
+
 love.keypressed
   :filter(f.eq('escape'))
   :subscribe(love.event.quit)

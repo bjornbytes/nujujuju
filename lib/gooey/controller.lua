@@ -70,7 +70,7 @@ end
 
 function gooey:add(class, code, vars)
   local component = class()
-  --table.merge(vars, component, true)
+  table.merge(vars, component)
   component.code = code
   component.gooey = self
   f.try(component.activate, component)
