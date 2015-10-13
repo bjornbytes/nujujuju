@@ -8,6 +8,8 @@ return {
   maxJuju = 5,
   jujuTrickleRate = 5,
   staffDamage = 1,
+  staffHitboxThreshold = 1.5,
+  staffYPositionThreshold = 30,
   healthPerShruju = 1,
   jujuPerShruju = 1,
 

@@ -4,7 +4,7 @@ return {
       'speed', 'acceleration', 'deceleration', 'radius'
     },
     { title = 'stats',
-      'maxHealth', 'maxJuju', 'staffDamage', 'healthPerShruju', 'jujuPerShruju', 'jujuTrickleRate'
+      'maxHealth', 'maxJuju', 'staffDamage', 'healthPerShruju', 'jujuPerShruju', 'jujuTrickleRate', 'staffHitboxThreshold', 'staffYPositionThreshold'
     },
     { title = 'spells',
       'shapeshiftCooldown', 'shapeshiftCost'
