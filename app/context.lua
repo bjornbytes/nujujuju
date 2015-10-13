@@ -10,6 +10,13 @@ function context.load(scene)
 
   context.objects = {}
 
+  context.objects.enemy = app.enemy.object:new({
+    position = {
+      x = 500,
+      y = 500
+    }
+  })
+
   for _, entry in ipairs(context.scene.objects) do
     local path = entry[1]
     entry[1] = nil

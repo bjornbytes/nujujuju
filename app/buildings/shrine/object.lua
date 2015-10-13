@@ -33,6 +33,7 @@ function shrine:bind()
         self.isSummoned = true
         self.isSummoning = false
         self.totem = app.totem.object:new({
+          shrine = self,
           position = {
             x = self.position.initial.x,
             y = self.position.initial.y
@@ -58,10 +59,17 @@ function shrine:interact()
   end
 end
 
+function shrine:resetTotem()
+  if self.totem then
+    self.totem = nil
+    self.isSummoned = false
+  end
+end
+
 function shrine:drawUI(u, v)
   local x, y = app.context.view:screenPoint(self.position.initial.x, self.position.initial.y)
 
-  if app.context.objects.muju.building == self and not self.isSummoning and not self.isSummoned then
+  if app.context.objects.muju.nearbyBuilding == self and not self.isSummoning and not self.isSummoned then
     local font = app.context.hud.font
     local y = y - .05 * v
     local str = 'Build totem?'

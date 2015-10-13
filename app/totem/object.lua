@@ -14,6 +14,7 @@ function totem:bind()
       self.time = math.max(self.time - lib.tick.rate, 0)
       if self.time == 0 then
         self:unbind()
+        self.shrine:resetTotem()
       end
     end)
 

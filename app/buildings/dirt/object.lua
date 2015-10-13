@@ -57,7 +57,7 @@ end
 function dirt:drawUI(u, v)
   local x, y = app.context.view:screenPoint(self.position.initial.x, self.position.initial.y)
 
-  if app.context.objects.muju.building == self and not self.isGrowing and not self.isGrown then
+  if app.context.objects.muju.nearbyBuilding == self and not self.isGrowing and not self.isGrown then
     local font = app.context.hud.font
     local y = y - .05 * v
     local str = 'Grow Shruju?'

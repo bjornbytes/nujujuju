@@ -19,6 +19,7 @@ function hud:bind()
       self:drawPlayerHealthbar()
       self:drawPlayerJuju()
       self:drawBuildingUI()
+      self:drawEnemyUI()
 
       return -1000
     end)

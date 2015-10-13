@@ -19,7 +19,7 @@ function muju:move(input)
 end
 
 function muju:canShapeshift()
-  return lib.tick.index - self.lastShapeshift > self.config.shapeshiftCooldown / lib.tick.rate
+  return lib.tick.index - self.lastShapeshift > self.config.shapeshiftCooldown / lib.tick.rate and self.juju >= self.config.shapeshiftCost
 end
 
 function muju:shapeshift()
@@ -33,6 +33,7 @@ function muju:shapeshift()
   end
 
   self.lastShapeshift = lib.tick.index
+  self:spendJuju(self.config.shapeshiftCost)
 end
 
 function muju:attack()
@@ -55,8 +56,8 @@ function muju:animate(input)
 end
 
 function muju:interactWithBuilding()
-  if self.building and self.building:canInteractWith(self) then
-    self.building:interact()
+  if self.nearbyBuilding and self.nearbyBuilding:canInteractWith(self) then
+    self.nearbyBuilding:interact()
   end
 end
 
@@ -73,7 +74,7 @@ function muju:setShuffleVolume()
 end
 
 function muju:setActiveBuilding()
-  self.building = nil
+  self.nearbyBuilding = nil
   local buildings = table.filter(app.context.objects, 'isBuilding')
   for _, building in pairs(buildings) do
     local distance = math.distance(self.position.x, self.position.y, building.position.x, building.position.y)
@@ -84,9 +85,17 @@ function muju:setActiveBuilding()
     local ey = building.position.y + math.sin(direction + math.pi) * r
     local overlap = self.config.radius - (math.distance(self.position.x, self.position.y, ex, ey))
     if overlap > -1 then
-      self.building = building
+      self.nearbyBuilding = building
       return
     end
+  end
+end
+
+function muju:jujuTrickle()
+  self.jujuTrickleTimer = math.max(self.jujuTrickleTimer - lib.tick.rate, 0)
+  if self.jujuTrickleTimer == 0 then
+    self.jujuTrickleTimer = self.config.jujuTrickleRate
+    self.juju = math.min(self.juju + 1, self.config.maxJuju)
   end
 end
 
@@ -106,6 +115,17 @@ function muju:eventLimp()
   app.context.particles:emit('dust', x, y, 25, function()
     return { direction = love.math.random() < .5 and math.pi or 0 }
   end)
+end
+
+function muju:eventAttack()
+  if true then--collision with enemy
+    local enemy = app.context.objects.enemy
+    enemy:hurt(self.config.staffDamage)
+    enemy:push({
+      force = 6,
+      direction = math.direction(self.position.x, self.position.y, enemy.position.x, enemy.position.y)
+    })
+  end
 end
 
 function muju:tint(r, g, b)
@@ -146,6 +166,10 @@ end
 function muju:eatMushroom()
   self.health = math.min(self.health + self.config.healthPerShruju, self.config.maxHealth)
   self.juju = math.min(self.juju + self.config.jujuPerShruju, self.config.maxJuju)
+end
+
+function muju:spendJuju(amount)
+  self.juju = self.juju - amount
 end
 
 function muju:draw()

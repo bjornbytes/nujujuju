@@ -76,7 +76,9 @@ function view:doDraw()
   g.setCanvas(source)
 
   for i = 1, #subject.observers do
-    subject.observers[i].depth = subject.observers[i]:onNext() or 0
+    if subject.observers[i] then
+      subject.observers[i].depth = subject.observers[i]:onNext() or 0
+    end
   end
 
   g.setCanvas()
@@ -106,7 +108,9 @@ function view:doHud()
   end)
 
   for i = 1, #subject.observers do
-    subject.observers[i].depth = subject.observers[i]:onNext() or 0
+    if subject.observers[i] then
+      subject.observers[i].depth = subject.observers[i]:onNext() or 0
+    end
   end
 end
 

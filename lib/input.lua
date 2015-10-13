@@ -14,10 +14,10 @@ return love.update
     end
 
     -- Movement
-    local w = love.keyboard.isDown('w')
-    local a = love.keyboard.isDown('a')
-    local s = love.keyboard.isDown('s')
-    local d = love.keyboard.isDown('d')
+    local w = love.keyboard.isDown('w', 'up')
+    local a = love.keyboard.isDown('a', 'left')
+    local s = love.keyboard.isDown('s', 'down')
+    local d = love.keyboard.isDown('d', 'right')
 
     local x, y
 

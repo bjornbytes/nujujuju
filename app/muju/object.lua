@@ -19,7 +19,8 @@ muju.state = function()
     health = 3,
     juju = 3,
     shuffle = love.audio.play(app.muju.sound.shuffle),
-    building = nil
+    nearbyBuilding = nil,
+    jujuTrickleTimer = 0
   }
 
   state.shuffle:setVolume(0)
@@ -74,6 +75,9 @@ function muju:bind()
   love.update
     :subscribe(self:wrap(self.setActiveBuilding))
 
+  love.update
+    :subscribe(self:wrap(self.jujuTrickle))
+
   self.animations.thuju.events
     :pluck('data', 'name')
     :filter(f.eq('spawn'))
@@ -88,6 +92,11 @@ function muju:bind()
     :pluck('data', 'name')
     :filter(f.eq('staff'))
     :subscribe(self:wrap(self.eventLimp))
+
+  self.animations.muju.events
+    :pluck('data', 'name')
+    :filter(f.eq('attack'))
+    :subscribe(self:wrap(self.eventAttack))
 
   for _, object in pairs(table.filter(app.context.objects, 'isSolid')) do
     self:resolveCollisionsWith(object)

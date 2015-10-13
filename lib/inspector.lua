@@ -43,7 +43,7 @@ function inspector:setupComponents(editing)
 
       for j = 1, #section do
         local prop = section[j]
-        local editor = self.gooey:add(lib.gooey.editor, 'prop.' .. editing .. '.' .. prop)
+        local editor = self.gooey:add(lib.gooey.editor, 'config.' .. editing .. '.' .. prop)
         editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
         editor.value = subject.config[prop]
         editor.valueSubject:onNext(editor.value)

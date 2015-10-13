@@ -12,6 +12,16 @@ function object:wrap(fn)
   return f.self(fn, self)
 end
 
+function object:dispose(subscriptions)
+  self._subscriptions = subscriptions
+end
+
+function object:unbind()
+  for i = 1, #self._subscriptions do
+    self._subscriptions[i]()
+  end
+end
+
 function object:new(state)
   local baseState = type(self.state) == 'function' and self.state() or self.state
   state = table.merge(state, baseState)
