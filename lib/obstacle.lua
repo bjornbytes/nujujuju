@@ -4,21 +4,21 @@ function obstacle:setIsSolid()
   self.isSolid = true
 end
 
-function obstacle:setStartPosition()
-  self.position.initial = {
-    x = self.position.x,
-    y = self.position.y
+function obstacle:setAnchor(x, y)
+  self.position.anchor = {
+    x = x or self.position.x,
+    y = y or self.position.y
   }
 end
 
 function obstacle:revertToStartPosition()
-  self.position.x = math.lerp(self.position.x, self.position.initial.x, 16 * lib.tick.rate)
-  self.position.y = math.lerp(self.position.y, self.position.initial.y, 16 * lib.tick.rate)
+  self.position.x = math.lerp(self.position.x, self.position.anchor.x, 16 * lib.tick.rate)
+  self.position.y = math.lerp(self.position.y, self.position.anchor.y, 16 * lib.tick.rate)
 end
 
 function obstacle:draw()
   g.setColor(255, 255, 255, 120)
-  g.drawCenter(app.art.shadow, 70, self.position.initial.x, self.position.initial.y, 0, 1, .5)
+  g.drawCenter(app.art.shadow, 70, self.position.anchor.x, self.position.anchor.y, 0, 1, .5)
 
   g.setColor(255, 255, 255)
   g.drawCenter(self.image, self.config.size, self.position.x, self.position.y)

@@ -31,6 +31,8 @@ function context.load(scene)
       table.insert(context.objects, instance)
     end
   end
+
+  context.positioner = app.positioner:new({object = context.objects.muju})
 end
 
 return context

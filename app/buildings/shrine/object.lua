@@ -16,7 +16,7 @@ shrine.state = function()
 end
 
 function shrine:bind()
-  self:setStartPosition()
+  self:setAnchor()
   self:setIsSolid()
   self:setIsBuilding()
 
@@ -35,8 +35,8 @@ function shrine:bind()
         self.totem = app.totem.object:new({
           shrine = self,
           position = {
-            x = self.position.initial.x,
-            y = self.position.initial.y
+            x = self.position.anchor.x,
+            y = self.position.anchor.y
           }
         })
       end
@@ -67,7 +67,7 @@ function shrine:resetTotem()
 end
 
 function shrine:drawUI(u, v)
-  local x, y = app.context.view:screenPoint(self.position.initial.x, self.position.initial.y)
+  local x, y = app.context.view:screenPoint(self.position.anchor.x, self.position.anchor.y)
 
   if app.context.objects.muju.nearbyBuilding == self and not self.isSummoning and not self.isSummoned then
     local font = app.context.hud.font

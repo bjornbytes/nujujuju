@@ -15,7 +15,7 @@ dirt.state = function()
 end
 
 function dirt:bind()
-  self:setStartPosition()
+  self:setAnchor()
   self:setIsSolid()
   self:setIsBuilding()
 
@@ -55,7 +55,7 @@ function dirt:interact()
 end
 
 function dirt:drawUI(u, v)
-  local x, y = app.context.view:screenPoint(self.position.initial.x, self.position.initial.y)
+  local x, y = app.context.view:screenPoint(self.position.anchor.x, self.position.anchor.y)
 
   if app.context.objects.muju.nearbyBuilding == self and not self.isGrowing and not self.isGrown then
     local font = app.context.hud.font
