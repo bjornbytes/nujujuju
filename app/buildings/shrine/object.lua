@@ -60,6 +60,10 @@ function shrine:interact()
   end
 end
 
+function shrine:canTarget()
+  return self.totem
+end
+
 function shrine:resetTotem()
   if self.totem then
     self.totem = nil

@@ -4,7 +4,7 @@ function entity:closest(source, ...)
   local getEntries = {
     building = function(source, result)
       table.each(table.filter(app.context.objects, 'isBuilding'), function(building)
-        if source ~= building then
+        if source ~= building and building:canTarget() then
           table.insert(result, {building, lib.entity.distance(source, building)})
         end
       end)

@@ -85,6 +85,11 @@ function muju:bind()
     :filter(f.eq('spawn'))
     :subscribe(self:wrap(lib.thuju.createSpawnParticles))
 
+  self.animations.thuju.events
+    :pluck('data', 'name')
+    :filter(f.eq('attack'))
+    :subscribe(self:wrap(self.eventAttack))
+
   self.animations.muju.events
     :pluck('data', 'name')
     :filter(f.eq('step'))

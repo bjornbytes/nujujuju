@@ -122,9 +122,9 @@ function muju:eventAttack()
   if not enemy then return end
   local animationDirectionSign = self.animation.flipped and -1 or 1
   local closeEnough = math.distance(self.position.x, self.position.y, enemy.position.x, enemy.position.y) < (self.config.radius + enemy.config.radius) * self.config.staffHitboxThreshold
-  local atSameLevel = math.abs(self.position.y - enemy.position.y) < self.config.staffYPositionThreshold
+  local verticallyCloseEnough = math.abs(self.position.y - enemy.position.y) < self.config.staffYPositionThreshold
   local facingTheRightWay = animationDirectionSign == math.sign(self.position.x - enemy.position.x)
-  if closeEnough and atSameLevel and facingTheRightWay then
+  if closeEnough and verticallyCloseEnough and facingTheRightWay then
     enemy:hurt(self.config.staffDamage)
     enemy:push({
       force = 6,

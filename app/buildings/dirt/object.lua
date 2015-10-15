@@ -55,6 +55,10 @@ function dirt:interact()
   end
 end
 
+function dirt:canTarget()
+  return self.isGrown
+end
+
 function dirt:drawUI(u, v)
   local x, y = app.context.view:screenPoint(self.position.anchor.x, self.position.anchor.y)
 
