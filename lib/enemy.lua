@@ -1,5 +1,9 @@
 local enemy = {}
 
+function enemy:setIsEnemy()
+  self.isEnemy = true
+end
+
 function enemy:draw()
   local image = app.art.shadow
   local scale = 70 / image:getWidth()
@@ -51,6 +55,10 @@ function enemy:hurt(amount)
   if self.health <= 0 then
     self:unbind()
   end
+end
+
+function enemy:attack()
+  self.animation:set('attack')
 end
 
 return enemy

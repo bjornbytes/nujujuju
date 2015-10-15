@@ -165,12 +165,27 @@ function muju:resolveCollisionsWith(other)
 
       other.position.x = math.lerp(other.position.x, other.position.x + dx / 2, 1)
       other.position.y = math.lerp(other.position.y, other.position.y + dy / 2, 1)
+
+      if other.isEnemy then
+        self:hurt(1)
+      end
     end)
 end
 
 function muju:eatMushroom()
   self.health = math.min(self.health + self.config.healthPerShruju, self.config.maxHealth)
   self.juju = math.min(self.juju + self.config.jujuPerShruju, self.config.maxJuju)
+end
+
+function muju:hurt(amount)
+  if lib.tick.index - self.lastHurt < self.config.hurtGrace / lib.tick.rate then return end
+  self.health = math.max(self.health - amount, 0)
+  if self.health == 0 then
+    print('you lose')
+    love.event.quit()
+  else
+    self.lastHurt = lib.tick.index
+  end
 end
 
 function muju:spendJuju(amount)
@@ -185,7 +200,9 @@ function muju:draw()
 
   g.setColor(255, 255, 255)
   self.animation:tick(lib.tick.delta)
-  self.animation:draw(self.position.x, self.position.y)
+  if lib.tick.index - self.lastHurt > self.config.hurtGrace / lib.tick.rate or math.floor(lib.tick.index / (.25 / lib.tick.rate)) % 2 == 0 then
+    self.animation:draw(self.position.x, self.position.y)
+  end
 
   if app.context.inspector.active then
     g.setLineWidth(2)

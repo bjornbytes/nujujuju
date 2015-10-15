@@ -378,6 +378,18 @@ function Observable:first()
   return self:take(1)
 end
 
+--- Returns a new Observable that transforms values produced by the original into Observables using
+-- the supplied transformation function and produces values from the resulting Observable.
+function Observable:flatMapLatest(transformer)
+  return Observable.create(function(observer)
+    local current = nil
+
+    local function onNext(...)
+
+    end
+  end)
+end
+
 --- Returns a new Observable that subscribes to the Observables produced by the original and
 -- produces their values.
 -- @returns {Observable}

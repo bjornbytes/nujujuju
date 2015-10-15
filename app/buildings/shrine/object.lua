@@ -8,6 +8,7 @@ shrine.image = app.buildings.shrine.image
 
 shrine.state = function()
   return {
+    team = 'player',
     isSummoning = false,
     isSummoned = false,
     summonTimer = 0,

@@ -14,6 +14,7 @@ setmetatable(_G, {
 
 require 'lib/rx-love'
 lib.tick.init()
+lib.quilt.init()
 f = lib.funk
 g = love.graphics
 require 'lib/util'

@@ -13,9 +13,10 @@ function quilt.add(thread)
   return thread
 end
 
-function quilt.remove(thread)
+function quilt.remove(thread, ...)
+  if not thread then return end
   quilt.threads[thread] = nil
-  return thread
+  return quilt.remove(...)
 end
 
 function quilt.reset(thread)
@@ -30,7 +31,7 @@ function quilt.update()
       quilt.delays[thread] = delay or 0
 
       if coroutine.status(cr) == 'dead' then
-        quilt:remove(thread)
+        quilt.remove(thread)
       end
     else
       quilt.delays[thread] = quilt.delays[thread] - lib.tick.rate

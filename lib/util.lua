@@ -74,6 +74,16 @@ function table.filter(t, fn, iterator)
   return res
 end
 
+function table.each(t, fn, iterator)
+  iterator = iterator or pairs
+  if type(fn) == 'string' then fn = f.method(fn) end
+  for k, v in iterator(t) do
+    if fn(v, k) then
+      return
+    end
+  end
+end
+
 function table.map(t, fn, iterator)
   iterator = iterator or pairs
   local res = {}

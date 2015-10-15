@@ -73,4 +73,10 @@ function funk.key(key)
   end
 end
 
+function funk.method(key)
+  return function(t)
+    return t[key](t)
+  end
+end
+
 return funk

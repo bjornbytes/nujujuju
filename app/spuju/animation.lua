@@ -1,5 +1,5 @@
 return {
-  scale = .75,
+  scale = .6,
   offset = {
     x = 0,
     y = -8
@@ -18,12 +18,12 @@ return {
 
     walk = {
       loop = true,
-      speed = 1.5
+      speed = .7
     },
 
     attack = {
       loop = true,
-      speed = 1
+      speed = .25
     },
 
     fear = {

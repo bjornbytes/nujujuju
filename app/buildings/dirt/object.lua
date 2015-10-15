@@ -8,6 +8,7 @@ dirt.image = app.buildings.dirt.image
 
 dirt.state = function()
   return {
+    team = 'player',
     isGrowing = false,
     isGrown = false,
     growTimer = 0

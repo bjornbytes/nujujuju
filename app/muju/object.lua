@@ -6,6 +6,7 @@ muju.config = app.muju.config
 
 muju.state = function()
   local state = {
+    team = 'player',
     position = {
       x = app.context.scene.width / 2,
       y = 301
@@ -16,6 +17,7 @@ muju.state = function()
     },
     form = 'muju',
     lastShapeshift = -math.huge,
+    lastHurt = -math.huge,
     health = 3,
     juju = 3,
     shuffle = love.audio.play(app.muju.sound.shuffle),
