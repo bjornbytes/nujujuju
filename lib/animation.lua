@@ -34,12 +34,21 @@ function animation.create(spine, config)
   self.speed = 1
   self.flipped = false
 
-  self:set(self.config.default)
+  self:resetTo(self.config.default)
 
   self.events = lib.rx.Subject.create()
 
   self.animationState.onEvent = function(_, event)
     self.events:onNext(event)
+  end
+
+  self.animationState.onEnd = function(track)
+    local name = self.animationState.tracks[track].animation.name
+    local state = self.config.states[name]
+    state.active = false
+    if state.next then
+      self:set(state.next)
+    end
   end
 
   return self
@@ -51,16 +60,23 @@ function animation:draw(x, y)
   skeleton.flipX = self.flipped
   if self.config.backwards then skeleton.flipX = not skeleton.flipX end
   self.animationState:apply(skeleton)
-  if self.animationState.tracks[0] then
-    self.state = self.config.states[self.animationState.tracks[0].animation.name]
-  end
   skeleton:updateWorldTransform()
   skeleton:draw()
 end
 
 function animation:tick(delta)
   delta = delta or lib.tick.rate
-  self.animationState:update(delta * (self.state.speed or 1) * self.speed)
+
+  self.animationState.timeScale = self.speed
+  for i = 0, self.animationState.trackCount do
+    local track = self.animationState.tracks[i]
+    if track then
+      local state = self.config.states[track.animation.name]
+      self.animationState.tracks[i].timeScale = state.speed
+    end
+  end
+
+  self.animationState:update(delta)
   self.animationState:apply(self.skeleton)
 end
 
@@ -70,22 +86,25 @@ function animation:setPosition(x, y)
   skeleton.y = y + (self.config.offset.y or 0)
 end
 
-function animation:reset(name)
-  self.state = self.config.states[name]
-  self:clear()
-  self.animationState:setAnimationByName(0, name, self.state.loop)
+function animation:resetTo(name)
+  local state = self.config.states[name]
+  if state then
+    self:clear()
+    local track = state.track or 0
+    local loop = state.loop
+    state.active = true
+    self.animationState:setAnimationByName(track, name, loop)
+  end
 end
 
 function animation:set(name)
-  if not self.config.states[name] then return end
-  if self.state == self.config.states[name] then return end
-  self.state = self.config.states[name]
-  self.animationState:setAnimationByName(0, name, self.state.loop)
-end
-
-function animation:add(name)
-  if not self.config.states[name] then return end
-  self.animationState:addAnimationByName(0, name, self.config.states[name].loop)
+  local state = self.config.states[name]
+  if state and not state.active then
+    local track = state.track or 0
+    local loop = state.loop
+    state.active = true
+    self.animationState:setAnimationByName(track, name, loop)
+  end
 end
 
 function animation:clear()

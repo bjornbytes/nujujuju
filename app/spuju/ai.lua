@@ -18,11 +18,13 @@ function ai:bind()
     self.state = 'move'
     while true do
       self:chooseDirection()
-      coroutine.yield(2)
+      coroutine.yield(1)
     end
   end
 
   self.threads.attack = function()
+    lib.quilt.remove(self.threads.scan)
+
     self.state = 'windup'
     coroutine.yield(.75)
     self.direction = owner:directionTo(app.context.objects.muju)
@@ -30,17 +32,20 @@ function ai:bind()
 
     self.state = 'attack'
     coroutine.yield(.4)
-    lib.quilt.remove(self.threads.attack)
+
     lib.quilt.add(self.threads.move)
+    coroutine.yield(2)
+
+    lib.quilt.add(self.threads.scan)
   end
 
   self.threads.scan = function()
     while true do
-      if self.state == 'move' and owner:isInRangeOf(app.context.objects.muju) then
+      if owner:isInRangeOf(app.context.objects.muju) then
         lib.quilt.remove(self.threads.move)
         lib.quilt.add(self.threads.attack)
       end
-      coroutine.yield()
+      coroutine.yield(.5)
     end
   end
 

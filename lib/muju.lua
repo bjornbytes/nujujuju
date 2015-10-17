@@ -28,7 +28,7 @@ function muju:shapeshift()
 
   if self.form == 'thuju' then
     self.animation:clear()
-    self.animation:reset('spawn')
+    self.animation:resetTo('spawn')
     self.animation:add('idle')
   end
 
@@ -38,7 +38,6 @@ end
 
 function muju:attack()
   self.animation:set('attack')
-  self.animation:add('idle')
 end
 
 function muju:animate(input)
@@ -49,9 +48,8 @@ function muju:animate(input)
 
   if moving then
     self.animation:set('walk')
-  elseif self.animation.state == self.animation.config.states.walk and speed < 1 then
+  elseif self.animation.config.states.walk.active and speed < 1 then
     self.animation:set('stop')
-    self.animation:add('idle')
   end
 end
 

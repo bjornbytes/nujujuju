@@ -18,13 +18,14 @@ return {
     },
 
     stop = {
-      loop = false,
-      speed = .75
+      speed = .75,
+      next = 'idle'
     },
 
     attack = {
       loop = false,
-      speed = 1
+      speed = 1,
+      track = 1
     },
 
     summon = {
