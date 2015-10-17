@@ -7,16 +7,17 @@ function context.load(scene)
   context.particles = lib.particles:new()
   context.hud = app.hud:new()
   context.inspector = app.inspector:new()
-  context.timeline = app.timeline:new()
+  context.timeline = app.timeline.object:new()
+  context.timelineUI = app.timeline.ui:new()
 
   context.objects = {}
 
-  context.objects.enemy = app.enemy.object:new({
+  --[[context.objects.enemy = app.enemy.object:new({
     position = {
       x = 500,
       y = 500
     }
-  })
+  })]]
 
   for _, entry in ipairs(context.scene.objects) do
     local path = entry[1]
@@ -32,7 +33,7 @@ function context.load(scene)
     end
   end
 
-  context.positioner = app.positioner:new({object = context.objects.muju})
+  --context.positioner = app.positioner:new({object = context.objects.muju})
 end
 
 return context
