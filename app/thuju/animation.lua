@@ -9,7 +9,8 @@ return {
   states = {
 
     spawn = {
-      speed = .75
+      speed = .75,
+      next = 'idle'
     },
 
     idle = {
@@ -23,8 +24,9 @@ return {
     },
 
     attack = {
-      loop = true,
-      speed = 1
+      loop = false,
+      speed = 1,
+      track = 1
     },
 
     taunt = {

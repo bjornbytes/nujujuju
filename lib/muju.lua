@@ -29,7 +29,6 @@ function muju:shapeshift()
   if self.form == 'thuju' then
     self.animation:clear()
     self.animation:resetTo('spawn')
-    self.animation:add('idle')
   end
 
   self.lastShapeshift = lib.tick.index
