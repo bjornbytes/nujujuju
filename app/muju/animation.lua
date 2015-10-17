@@ -14,7 +14,7 @@ return {
 
     walk = {
       loop = true,
-      speed = 1.1
+      length = .6
     },
 
     stop = {

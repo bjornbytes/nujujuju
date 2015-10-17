@@ -71,8 +71,14 @@ function animation:tick(delta)
   for i = 0, self.animationState.trackCount do
     local track = self.animationState.tracks[i]
     if track then
-      local state = self.config.states[track.animation.name]
-      self.animationState.tracks[i].timeScale = state.speed
+      local animation = track.animation
+      local state = self.config.states[animation.name]
+      if state.length then
+        local speed = animation.duration / state.length
+        self.animationState.tracks[i].timeScale = speed
+      else
+        self.animationState.tracks[i].timeScale = state.speed or 1
+      end
     end
   end
 
