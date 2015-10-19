@@ -153,3 +153,8 @@ function g.ellipse(mode, x, y, a, b, phi, points)
 
   love.graphics.polygon(mode, coords)
 end
+
+function g.white(alpha)
+  g.setColor(255, 255, 255, alpha)
+  return g
+end

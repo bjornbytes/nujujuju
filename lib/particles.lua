@@ -23,7 +23,7 @@ function particles:bind()
   end
 
   app.context.view.draw:subscribe(function()
-    g.setColor(255, 255, 255)
+    g.white()
     for code, system in pairs(self.systems) do
       system:update(lib.tick.delta)
       g.setBlendMode(app.particles[code].blendMode or 'alpha')

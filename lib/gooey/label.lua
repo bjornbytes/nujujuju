@@ -8,7 +8,7 @@ function label:render()
   local x, y = self.geometry()
 
   g.setFont(self.gooey.font)
-  g.setColor(255, 255, 255)
+  g.white()
   g.print(self.label, x, y)
 end
 

@@ -88,7 +88,7 @@ function inspector:draw(_, editors)
   g.rectangle('fill', x, 0, width, v)
 
   if editors then
-    g.setColor(255, 255, 255)
+    g.white()
     for i = 1, #editors do
       self.gooey:render(editors[i])
     end

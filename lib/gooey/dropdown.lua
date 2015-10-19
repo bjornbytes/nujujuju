@@ -65,18 +65,18 @@ function dropdown:render()
   local font = g.setFont(self.gooey.font)
   local value = self.value:getValue()
 
-  g.setColor(255, 255, 255, 40 + (20 * hoverFactor))
+  g.white(40 + (20 * hoverFactor))
   g.rectangle('fill', x, y, w, h)
 
   g.setColor(0, 0, 0, 255 * factor)
   g.rectangle('fill', x, y + h, w, dropdownHeight)
 
   if hoverIndex and hoverIndex > 0 then
-    g.setColor(255, 255, 255, 30 * choiceHoverFactors[hoverIndex])
+    g.white(30 * choiceHoverFactors[hoverIndex])
     g.rectangle('fill', x, y + h * hoverIndex, w, h)
   end
 
-  --[[g.setColor(255, 255, 255, 255)
+  --[[g.white()
   g.rectangle('line', lume.round(x) + .5, lume.round(y) + .5, w, h)]]
 
   for i = 1, #self.choices do

@@ -50,7 +50,7 @@ function button:render()
   local active = hover and love.mouse.isDown('l') and self.gooey.hot == self
 
   -- button
-  g.setColor(255, 255, 255, 40)
+  g.white(40)
   g.rectangle('fill', x, y, w, h)
 
   local fade = math.lerp(self.prevHoverFade, self.hoverFade, lib.tick.accum / lib.tick.rate)
@@ -70,13 +70,13 @@ function button:render()
       self.hoverDistance = math.max(d(mx, my, x, y), d(mx, my, x + w, y), d(mx, my, x, y + h), d(mx, my, x + w, y + h))
     end
 
-    g.setColor(255, 255, 255)
+    g.white()
     g.setStencil(function()
       g.rectangle('fill', x, y, w, h)
     end)
 
     local factor = math.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
-    g.setColor(255, 255, 255, 40 * (1 - fade))
+    g.white(40 * (1 - fade))
     g.setBlendMode('alpha')
     g.circle('fill', self.hoverX, self.hoverY, factor * self.hoverDistance)
     g.setBlendMode('alpha')
@@ -95,7 +95,7 @@ function button:render()
   local textHeight = g.getFont():getHeight()
   g.setColor(0, 0, 0, 100)
   g.print(text, x + w / 2 + 1 - textWidth / 2, y + h / 2 + 1 - textHeight / 2)
-  g.setColor(255, 255, 255)
+  g.white()
   g.print(text, x + w / 2 - textWidth / 2, y + h / 2 - textHeight / 2)
 end
 

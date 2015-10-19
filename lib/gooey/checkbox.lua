@@ -46,14 +46,14 @@ function checkbox:render()
   else g.setColor(0, 0, 0, 100) end
   g.circle('fill', x, y, radius, 20)
 
-  g.setColor(255, 255, 255, 80 + (self.value and 170 or 0))
+  g.white(80 + (self.value and 170 or 0))
   if self.value then g.setColor(100, 200, 50) end
   g.setLineWidth(2) -- vary this based on size or antialias it
   g.circle('line', x, y, radius, 40)
   g.setLineWidth(1)
 
   g.setFont(self.gooey.font)
-  g.setColor(255, 255, 255, 180 + (75 * factor))
+  g.white(180 + (75 * factor))
   g.print(self.label, x + r + self.padding, y - g.getFont():getHeight() / 2)
 end
 

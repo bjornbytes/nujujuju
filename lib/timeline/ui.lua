@@ -34,7 +34,7 @@ function ui:draw()
       g.line(xx, y, xx, y + h)
     end
 
-    g.setColor(255, 255, 255)
+    g.white()
     local val = math.clamp(i, min, max)
     local str = string.format('%02d', math.floor(val / 60)) .. ':' .. string.format('%02d', val % 60)
     local width = font:getWidth(str)
@@ -47,7 +47,7 @@ function ui:draw()
         pos = nx - width - 4
       end
 
-      g.setColor(255, 255, 255, math.clamp((pos + width - x) / width, 0, 1) * 255)
+      g.white(math.clamp((pos + width - x) / width, 0, 1) * 255)
       g.print(str, pos, y)
     elseif xx > x + w then
       local n = math.floor(max / 60) * 60
@@ -57,7 +57,7 @@ function ui:draw()
         pos = nx + width + 4
       end
 
-      g.setColor(255, 255, 255, (1 - math.clamp((pos - (x + w - width)) / width, 0, 1)) * 255)
+      g.white((1 - math.clamp((pos - (x + w - width)) / width, 0, 1)) * 255)
       g.print(str, pos, y)
     else
       g.print(str, pos, y)

@@ -1,5 +1,18 @@
 local hud = {}
 
+function hud:drawBlood()
+  local u, v = self.u, self.v
+  local muju = app.context.objects.muju
+
+  local alpha = math.clamp(1 - ((lib.tick.index - (muju.lastHurt + (.3 / lib.tick.rate))) * lib.tick.rate), 0, 1)
+  if alpha > .01 then
+    g.white(alpha * 180)
+    local image = app.art.hudBlood
+    local scale = image:getWidth() / u
+    g.draw(image, 0, 0, 0, scale, scale)
+  end
+end
+
 function hud:drawPlayerHealthbar()
   local u, v = self.u, self.v
   local muju = app.context.objects.muju
@@ -17,7 +30,7 @@ function hud:drawPlayerHealthbar()
   g.setFont(self.font)
   g.setColor(0, 0, 0)
   g.print(str, .02 * v + width / 2 - self.font:getWidth(str) / 2 + 1, .02 * v + height / 2 - self.font:getHeight() / 2 + 1)
-  g.setColor(255, 255, 255)
+  g.white()
   g.print(str, .02 * v + width / 2 - self.font:getWidth(str) / 2, .02 * v + height / 2 - self.font:getHeight() / 2)
 end
 
@@ -39,7 +52,7 @@ function hud:drawPlayerJuju()
   g.setFont(self.font)
   g.setColor(0, 0, 0)
   g.print(str, .02 * v + width / 2 - self.font:getWidth(str) / 2 + 1, y + height / 2 - self.font:getHeight() / 2 + 1)
-  g.setColor(255, 255, 255)
+  g.white()
   g.print(str, .02 * v + width / 2 - self.font:getWidth(str) / 2, y + height / 2 - self.font:getHeight() / 2)
 end
 

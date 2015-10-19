@@ -60,12 +60,12 @@ function slider:render()
   local scale = math.lerp(self.prevScale, self.scale, lib.tick.accum / lib.tick.rate)
   local radius = scale * r
 
-  g.setColor(255, 255, 255)
+  g.white()
   g.setFont(self.gooey.font)
   g.print(self.label, x, y - self.gooey.font:getHeight())
   g.print(self.valueSubject:getValue(), x + w - self.gooey.font:getWidth(self.valueSubject:getValue()), y - self.gooey.font:getHeight())
 
-  g.setColor(255, 255, 255, 40 + 80 * hoverFactor)
+  g.white(40 + 80 * hoverFactor)
   g.setLineWidth(2)
   g.line(math.round(x) + .5, math.round(y) + .5, x + w, y)
   g.setLineWidth(1)

@@ -43,14 +43,14 @@ function editor:render()
   x = x + math.round(4 * hoverFactor)
 
   g.setFont(self.gooey.font)
-  g.setColor(255, 255, 255, 180 + (75 * hoverFactor))
+  g.white(180 + (75 * hoverFactor))
   g.print(self.label, x, y)
 
   g.setColor(100, 200, 50)
   g.print(self.value, x + w - g.getFont():getWidth(self.value), y)
 
   if self.value == '' then
-    g.setColor(255, 255, 255, 80)
+    g.white(80)
     g.print(self.valueSubject:getValue(), x + w - g.getFont():getWidth(self.valueSubject:getValue()), y)
   end
 
@@ -60,7 +60,7 @@ function editor:render()
     local y = math.round(y + g.getFont():getHeight()) + .5
     g.line(x, y, x + w, y)
   elseif focusFactor * w > 1 then
-    g.setColor(255, 255, 255, 200)
+    g.white(200)
     local y = math.round(y + g.getFont():getHeight()) + .5
     g.line(x, y, x + w * focusFactor, y)
   end

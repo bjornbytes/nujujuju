@@ -15,7 +15,7 @@ function patch:initCanvas()
   self.canvas = g.newCanvas(512, 512)
   g.setCanvas(self.canvas)
 
-  g.setColor(255, 255, 255)
+  g.white()
   local image = self.texture
   local scale = self.canvas:getWidth() / image:getWidth()
   g.draw(self.texture, 0, 0, 0, scale, scale)
@@ -23,7 +23,7 @@ function patch:initCanvas()
   g.setBlendMode('subtractive')
   image = self.config.blob
   scale = self.canvas:getWidth() / image:getWidth()
-  g.setColor(255, 255, 255, 255)
+  g.white()
   g.draw(image, 0, 0, 0, scale, scale)
   g.setBlendMode('alpha')
 
@@ -32,7 +32,7 @@ end
 
 function patch:draw()
   local canvas = self.canvas
-  g.setColor(255, 255, 255)
+  g.white()
   g.draw(canvas, self.x, self.y, self.angle, 1, .5, canvas:getWidth() / 2, canvas:getHeight() / 2)
   return -10
 end

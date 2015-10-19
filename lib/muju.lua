@@ -171,10 +171,10 @@ end
 function muju:draw()
   local image = app.art.shadow
   local scale = 70 / image:getWidth()
-  g.setColor(255, 255, 255, 120)
+  g.white(120)
   g.draw(image, self.position.x, self.position.y, 0, scale, scale / 2, image:getWidth() / 2, image:getHeight() / 2)
 
-  g.setColor(255, 255, 255)
+  g.white()
   self.animation:tick(lib.tick.delta)
   if lib.tick.index - self.lastHurt > self.config.hurtGrace / lib.tick.rate or math.floor(lib.tick.index / (.25 / lib.tick.rate)) % 2 == 0 then
     self.animation:draw(self.position.x, self.position.y)
@@ -182,7 +182,7 @@ function muju:draw()
 
   if app.context.inspector.active then
     g.setLineWidth(2)
-    g.setColor(255, 255, 255, 50)
+    g.white(50)
     g.circle('line', self.position.x, self.position.y, self.config.radius, 64)
   end
 

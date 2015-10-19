@@ -7,16 +7,16 @@ end
 function enemy:draw()
   local image = app.art.shadow
   local scale = 70 / image:getWidth()
-  g.setColor(255, 255, 255, 120)
+  g.white(120)
   g.draw(image, self.position.x, self.position.y, 0, scale, scale / 2, image:getWidth() / 2, image:getHeight() / 2)
 
-  g.setColor(255, 255, 255)
+  g.white()
   self.animation:tick(lib.tick.delta)
   self.animation:draw(self.position.x, self.position.y)
 
   if app.context.inspector.active then
     g.setLineWidth(2)
-    g.setColor(255, 255, 255, 50)
+    g.white(50)
     g.ellipse('line', self.position.x, self.position.y, self.config.radius, self.config.radius / self.config.perspective, 0, 32)
   end
 
@@ -29,7 +29,7 @@ function enemy:drawUI(u, v)
   local str = self.health
   g.setColor(0, 0, 0)
   g.print(str, x - font:getWidth(str) / 2 + 1, y - .1 * v - font:getHeight() + 1)
-  g.setColor(255, 255, 255)
+  g.white()
   g.print(str, x - font:getWidth(str) / 2, y - .1 * v - font:getHeight())
 end
 

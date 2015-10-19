@@ -85,7 +85,7 @@ function view:doDraw()
   g.pop()
 
   g.setCanvas()
-  g.setColor(255, 255, 255)
+  g.white()
   g.draw(source)
 
   local fr = self.frame

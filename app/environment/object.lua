@@ -15,7 +15,7 @@ function environment:bind()
   app.context.view.draw
     :subscribe(function()
       local background = self.config.background
-      g.setColor(255, 255, 255)
+      g.white()
       g.draw(background.image, self.quad, 0, 0, 0, 1, 1 / background.perspective)
     end)
 end

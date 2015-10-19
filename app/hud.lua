@@ -16,6 +16,7 @@ function hud:bind()
     :subscribe(function()
       g.setFont(self.font)
 
+      self:drawBlood()
       self:drawPlayerHealthbar()
       self:drawPlayerJuju()
       self:drawBuildingUI()

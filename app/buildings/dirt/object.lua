@@ -72,7 +72,7 @@ function dirt:drawUI(u, v)
     local padding = 4
     g.setColor(0, 0, 0, 180)
     g.rectangle('fill', x - w / 2 - padding, y - h / 2 - padding, w + 2 * padding, h + 2 * padding)
-    g.setColor(255, 255, 255)
+    g.white()
     g.print(str, x - font:getWidth(str) / 2, y - font:getHeight() / 2)
   end
 
@@ -88,7 +88,7 @@ function dirt:drawUI(u, v)
 
     if self.isGrowing or self.isGrown then
       local font = app.context.hud.font
-      g.setColor(255, 255, 255)
+      g.white()
       g.setFont(font)
       local str = self.isGrowing and 'Growing shruju...' or 'Shruju ready!'
       g.print(str, x - font:getWidth(str) / 2, y + .02 * v)

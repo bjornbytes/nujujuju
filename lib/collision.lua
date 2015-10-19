@@ -52,7 +52,7 @@ function collision:bind()
 
   app.context.view.draw
     :subscribe(function()
-      g.setColor(255, 255, 255, 100)
+      g.white(100)
       local w, h = app.context.scene.width, app.context.scene.height
 
       for x = 0, w, self.config.size do
