@@ -47,7 +47,7 @@ function muju:animate(input)
 
   if moving then
     self.animation:set('walk')
-  elseif self.animation.config.states.walk.active and speed < 1 then
+  elseif self.animation.states.walk.active and speed < 1 then
     self.animation:set('stop')
   end
 end
@@ -124,7 +124,7 @@ function muju:eventAttack()
       enemy:hurt(self.config.staffDamage)
       enemy:push({
         force = 6,
-        direction = math.direction(self.position.x, self.position.y, enemy.position.x, enemy.position.y)
+        direction = self:directionTo(enemy)
       })
     end
   end)
@@ -181,9 +181,10 @@ function muju:draw()
   end
 
   if app.context.inspector.active then
-    g.setLineWidth(2)
-    g.white(50)
+    g.setLineWidth(3)
+    g.white(30)
     g.circle('line', self.position.x, self.position.y, self.config.radius, 64)
+    g.setLineWidth(1)
   end
 
   return -self.position.y

@@ -31,7 +31,7 @@ return {
     },
 
     death = {
-      speed = .8
+      length = 1
     }
   }
 }

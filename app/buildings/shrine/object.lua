@@ -9,9 +9,6 @@ shrine.image = app.buildings.shrine.image
 shrine.state = function()
   return {
     team = 'player',
-    isSummoning = false,
-    isSummoned = false,
-    summonTimer = 0,
     totem = nil
   }
 end
@@ -26,25 +23,6 @@ function shrine:bind()
   love.update
     :subscribe(self:wrap(self.revertToStartPosition))
 
-  love.update
-    :filter(function()
-      return self.isSummoning
-    end)
-    :subscribe(function()
-      self.summonTimer = math.max(self.summonTimer - lib.tick.rate, 0)
-      if self.summonTimer == 0 then
-        self.isSummoned = true
-        self.isSummoning = false
-        self.totem = app.totem.object:new({
-          shrine = self,
-          position = {
-            x = self.position.anchor.x,
-            y = self.position.anchor.y
-          }
-        })
-      end
-    end)
-
   app.context.view.draw
     :subscribe(self:wrap(self.draw))
 
@@ -52,31 +30,28 @@ function shrine:bind()
 end
 
 function shrine:canInteractWith(player)
-  return player.form == 'muju' and (not self.isSummoned and not self.isSummoning)
+  return player.form == 'muju' and not self.totem and player.juju >= self.config.jujuCost
 end
 
 function shrine:interact()
-  if not self.isSummoning and not self.isSummoned then
-    self.isSummoning = true
-    self.summonTimer = self.config.summonTime
-  end
-end
-
-function shrine:canTarget()
-  return self.totem
+  app.context.objects.muju:spendJuju(self.config.jujuCost)
+  self.totem = app.totem.object:new({
+    shrine = self,
+    position = {
+      x = self.position.anchor.x,
+      y = self.position.anchor.y
+    }
+  })
 end
 
 function shrine:resetTotem()
-  if self.totem then
-    self.totem = nil
-    self.isSummoned = false
-  end
+  self.totem = nil
 end
 
 function shrine:drawUI(u, v)
   local x, y = app.context.view:screenPoint(self.position.anchor.x, self.position.anchor.y)
 
-  if app.context.objects.muju.nearbyBuilding == self and not self.isSummoning and not self.isSummoned then
+  if app.context.objects.muju.nearbyBuilding == self and self:canInteractWith(app.context.objects.muju) then
     local font = app.context.hud.font
     local y = y - .05 * v
     local str = 'Build totem?'
@@ -86,29 +61,6 @@ function shrine:drawUI(u, v)
     g.rectangle('fill', x - w / 2 - padding, y - h / 2 - padding, w + 2 * padding, h + 2 * padding)
     g.white()
     g.print(str, x - font:getWidth(str) / 2, y - font:getHeight() / 2)
-  end
-
-  if self.isSummoning or (self.isSummoned and self.totem) then
-    local percent = 1 - (self.summonTimer / self.config.summonTime)
-    if self.isSummoned then
-      percent = (self.totem.time / self.totem.config.maxTime)
-    end
-    local width = .1 * v
-    local height = .02 * v
-    local y = y - .06 * v
-    g.setColor(0, 0, 0, 60)
-    g.rectangle('fill', x - width / 2, y - height / 2, width, height)
-    g.setColor(self.isSummoning and {255, 255, 255, 60} or {100, 255, 100, 60})
-    g.rectangle('fill', x - width / 2, y - height / 2, (width * percent), height)
-  end
-
-  if self.isSummoning or self.isSummoned then
-    local y = y - .06 * v
-    local font = app.context.hud.font
-    g.white()
-    g.setFont(font)
-    local str = self.isSummoning and 'Building totem...' or 'Totem active!'
-    g.print(str, x - font:getWidth(str) / 2, y + .02 * v)
   end
 end
 

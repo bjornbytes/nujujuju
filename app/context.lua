@@ -20,14 +20,22 @@ function context.load(scene)
     local object = table.get(app, path .. '.object') or table.get(app, path)
     local instance = object:new(entry)
 
+    context.objects[instance] = instance
+
     if entry.key then
+      instance._key = entry.key
       context.objects[entry.key] = instance
-    else
-      table.insert(context.objects, instance)
     end
   end
 
   --context.positioner = app.positioner:new({object = context.objects.muju})
+end
+
+function context:removeObject(object)
+  self.objects[object] = nil
+  if object._key then
+    self.objects[object._key] = nil
+  end
 end
 
 return context

@@ -52,7 +52,9 @@ function collision:bind()
 
   app.context.view.draw
     :subscribe(function()
-      g.white(100)
+      if not app.context.inspector.active then return end
+
+      g.white(10)
       local w, h = app.context.scene.width, app.context.scene.height
 
       for x = 0, w, self.config.size do

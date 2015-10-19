@@ -1,11 +1,11 @@
 local entity = {}
 
-function entity:closest(source, ...)
+function entity.closest(source, ...)
   local getEntries = {
     building = function(source, result)
       table.each(table.filter(app.context.objects, 'isBuilding'), function(building)
         if source ~= building and building:canTarget() then
-          table.insert(result, {building, lib.entity.distance(source, building)})
+          table.insert(result, {building, lib.entity.distanceTo(source, building)})
         end
       end)
     end,
@@ -13,7 +13,7 @@ function entity:closest(source, ...)
     enemy = function(source, result)
       table.each(table.filter(app.context.objects, 'isEnemy'), function(enemy)
         if source ~= enemy then
-          table.insert(result, {enemy, lib.entity.distance(source, enemy)})
+          table.insert(result, {enemy, lib.entity.distanceTo(source, enemy)})
         end
       end)
     end,
@@ -21,7 +21,7 @@ function entity:closest(source, ...)
     player = function(source, result)
       local player = app.context.objects.muju
       if source ~= player then
-        table.insert(result, {player, lib.entity.distance(source, player)})
+        table.insert(result, {player, lib.entity.distanceTo(source, player)})
       end
     end
   }
@@ -29,7 +29,6 @@ function entity:closest(source, ...)
   local kinds = {...}
   local targets = {}
   table.each(kinds, function(kind) getEntries[kind](source, targets) end)
-  local targets = halp(source, ...)
   table.sort(targets, function(a, b) return a[2] < b[2] end)
   if targets[1] then return unpack(targets[1]) end
   return nil

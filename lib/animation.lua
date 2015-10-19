@@ -26,6 +26,8 @@ function animation.create(spine, config)
     return spine.image
   end
 
+  self.states = table.copy(self.config.states)
+
   self.animationStateData = lib.spine.AnimationStateData.new(self.skeletonData)
   self.animationState = lib.spine.AnimationState.new(self.animationStateData)
 
@@ -44,7 +46,7 @@ function animation.create(spine, config)
 
   self.animationState.onEnd = function(track)
     local name = self.animationState.tracks[track].animation.name
-    local state = self.config.states[name]
+    local state = self.states[name]
     state.active = false
     if state.next then
       self:set(state.next)
@@ -71,7 +73,7 @@ function animation:tick(delta)
     local track = self.animationState.tracks[i]
     if track then
       local animation = track.animation
-      local state = self.config.states[animation.name]
+      local state = self.states[animation.name]
       if state.length then
         local speed = animation.duration / state.length
         self.animationState.tracks[i].timeScale = speed
@@ -92,7 +94,7 @@ function animation:setPosition(x, y)
 end
 
 function animation:resetTo(name)
-  local state = self.config.states[name]
+  local state = self.states[name]
   if state then
     self:clear()
     local track = state.track or 0
@@ -103,7 +105,7 @@ function animation:resetTo(name)
 end
 
 function animation:set(name)
-  local state = self.config.states[name]
+  local state = self.states[name]
   if state and not state.active then
     local track = state.track or 0
     local loop = state.loop

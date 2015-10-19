@@ -3,5 +3,5 @@ return {
   shape = 'ellipse',
   size = 80,
   perspective = 3,
-  growTime = 15
+  growTime = 20
 }

@@ -12,12 +12,13 @@ function timeline:bind()
     :subscribe(function()
       self.time = self.time + lib.tick.rate
       if self.events[1] and self.events[1].time <= self.time then
-        table.insert(app.context.objects, app.enemy.object:new({
+        local enemy = app.enemy.object:new({
           position = {
             x = 800,
             y = 600
           }
-        }))
+        })
+        app.context.objects[enemy] = enemy
         table.remove(self.events, 1)
       end
     end)

@@ -24,9 +24,10 @@ function obstacle:draw()
   g.drawCenter(self.image, self.config.size, self.position.x, self.position.y)
 
   if app.context.inspector.active then
-    g.setLineWidth(2)
-    g.white(50)
+    g.setLineWidth(3)
+    g.white(30)
     g.ellipse('line', self.position.x, self.position.y, self.config.radius, self.config.radius / self.config.perspective, 0, 32)
+    g.setLineWidth(1)
   end
 
   return -self.position.y

@@ -18,6 +18,7 @@ function enemy:draw()
     g.setLineWidth(2)
     g.white(50)
     g.ellipse('line', self.position.x, self.position.y, self.config.radius, self.config.radius / self.config.perspective, 0, 32)
+    g.setLineWidth(1)
   end
 
   return -self.position.y + 3
@@ -34,6 +35,7 @@ function enemy:drawUI(u, v)
 end
 
 function enemy:updatePushes()
+  if self:isDead() then return end
   for i = #self.pushes, 1, -1 do
     local push = self.pushes[i]
     local force, direction = push.force, push.direction
@@ -47,18 +49,29 @@ function enemy:updatePushes()
 end
 
 function enemy:push(push)
+  if self:isDead() then return end
   table.insert(self.pushes, push)
 end
 
 function enemy:hurt(amount)
+  if self:isDead() then return end
   self.health = self.health - amount
   if self.health <= 0 then
-    self:unbind()
+    lib.quilt.add(function()
+      self.ai:unbind()
+      self.animation:set('death')
+      coroutine.yield(1)
+      self:unbind()
+    end)
   end
 end
 
 function enemy:attack()
   self.animation:set('attack')
+end
+
+function enemy:isDead()
+  return self.animation.states.death.active
 end
 
 return enemy

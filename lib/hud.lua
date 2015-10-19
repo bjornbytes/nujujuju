@@ -65,7 +65,6 @@ end
 
 function hud:drawEnemyUI()
   local u, v = self.u, self.v
-  if app.context.objects.enemy then app.context.objects.enemy:drawUI(u, v) end
 end
 
 return hud

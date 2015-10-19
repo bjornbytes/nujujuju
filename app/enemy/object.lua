@@ -42,9 +42,8 @@ function enemy:bind()
 end
 
 function enemy:unbind()
-  app.context.objects.enemy = nil
-  self.ai:unbind()
   app.context.collision:remove(self)
+  app.context:removeObject(self)
   return lib.object.unbind(self)
 end
 
