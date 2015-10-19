@@ -79,4 +79,25 @@ function entity:adjustSpeedToVector(length, direction, smooth)
   return self.speed
 end
 
+function entity:isEscaped()
+  if self.config.shape == 'circle' or self.config.shape == 'ellipse' then
+    local r = self.config.radius
+    local x, y = self.position.x, self.position.y
+    local w, h = app.context.scene.width, app.context.scene.height
+    local x1, y1, x2, y2 = x - r, y - r, x + r, y + r
+    return x1 < 0 or y1 < 0 or x2 > w or y2 > h
+  end
+  return false
+end
+
+function entity:enclose()
+  if self.config.shape == 'circle' or self.config.shape == 'ellipse' then
+    local r = self.config.radius
+    local x, y = self.position.x, self.position.y
+    local w, h = app.context.scene.width, app.context.scene.height
+    self.position.x = math.clamp(x, r, w - r)
+    self.position.y = math.clamp(y, r, h - r)
+  end
+end
+
 return entity

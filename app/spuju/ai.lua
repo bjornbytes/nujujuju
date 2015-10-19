@@ -41,7 +41,12 @@ function ai:bind()
 
   self.threads.scan = function()
     while true do
-      if owner:isInRangeOf(app.context.objects.muju) then
+      local dir = math.abs(owner:directionTo(app.context.objects.muju) % math.pi)
+      if dir > math.pi / 2 then
+        dir = math.abs(dir - math.pi)
+      end
+
+      if owner:isInRangeOf(app.context.objects.muju) and dir < .25 then
         lib.quilt.remove(self.threads.move)
         lib.quilt.add(self.threads.attack)
       end

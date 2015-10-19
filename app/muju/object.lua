@@ -1,6 +1,7 @@
 local muju = lib.object.create()
 
 muju:include(lib.muju)
+muju:include(lib.entity)
 
 muju.config = app.muju.config
 
@@ -18,7 +19,7 @@ muju.state = function()
     form = 'muju',
     lastShapeshift = -math.huge,
     lastHurt = -math.huge,
-    health = 3,
+    health = 5,
     juju = 3,
     shuffle = love.audio.play(app.muju.sound.shuffle),
     nearbyBuilding = nil,
@@ -80,6 +81,9 @@ function muju:bind()
   love.update
     :subscribe(self:wrap(self.jujuTrickle))
 
+  love.update
+    :subscribe(self:wrap(self.enclose))
+
   self.animations.thuju.events
     :pluck('data', 'name')
     :filter(f.eq('spawn'))
@@ -108,12 +112,7 @@ function muju:bind()
   self.collisions = app.context.collision:add(self)
 
   self.collisions
-    :subscribe(function(other, dx, dy)
-      other.position.x = other.position.x + dx / 2
-      other.position.y = other.position.y + dy / 2
-      self.position.x = self.position.x - dx / 2
-      self.position.y = self.position.y - dy / 2
-    end)
+    :subscribe(self:wrap(self.onCollision))
 
   app.context.view.draw:subscribe(self:wrap(self.draw))
 end

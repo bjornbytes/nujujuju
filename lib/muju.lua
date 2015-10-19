@@ -130,6 +130,17 @@ function muju:eventAttack()
   end)
 end
 
+function muju:onCollision(other, dx, dy)
+  other.position.x = other.position.x + dx / 2
+  other.position.y = other.position.y + dy / 2
+  self.position.x = self.position.x - dx / 2
+  self.position.y = self.position.y - dy / 2
+
+  if other.isEnemy then
+    self:hurt(1)
+  end
+end
+
 function muju:tint(r, g, b)
   for _, slot in pairs({'robebottom', 'torso', 'front_upper_arm', 'rear_upper_arm', 'front_bracer', 'rear_bracer'}) do
     local slot = self.animation.skeleton:findSlot(slot)

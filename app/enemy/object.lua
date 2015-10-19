@@ -33,6 +33,9 @@ function enemy:bind()
     love.update
       :subscribe(self:wrap(self.updatePushes)),
 
+    love.update
+      :subscribe(self:wrap(self.enclose)),
+
     app.context.view.draw
       :subscribe(self:wrap(self.draw))
   })
