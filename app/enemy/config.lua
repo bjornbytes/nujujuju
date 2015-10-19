@@ -3,5 +3,6 @@ return {
   perspective = 2,
   maxHealth = 3,
   range = 180,
-  speed = 40
+  speed = 40,
+  shape = 'ellipse'
 }

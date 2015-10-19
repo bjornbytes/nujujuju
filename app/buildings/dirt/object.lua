@@ -20,6 +20,8 @@ function dirt:bind()
   self:setIsSolid()
   self:setIsBuilding()
 
+  app.context.collision:add(self)
+
   love.update
     :subscribe(self:wrap(self.revertToStartPosition))
 

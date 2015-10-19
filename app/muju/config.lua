@@ -19,5 +19,7 @@ return {
 
   shuffleVolume = .2,
   footstepVolume = .5,
-  staffVolume = .5
+  staffVolume = .5,
+
+  shape = 'circle'
 }

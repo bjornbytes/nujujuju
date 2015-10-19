@@ -64,6 +64,7 @@ function ui:bind()
   local originalTime
 
   mousepress
+    :filter(self:wrap(self.contains))
     :tap(function(x)
       originalTime = self.time
       dx = x
@@ -81,7 +82,7 @@ function ui:bind()
 
   mouserelease
     :subscribe(function(x)
-      if math.abs(x - dx) < 3 then
+      if dx and math.abs(x - dx) < 3 then
         app.context.timeline:addEvent({
           time = self:timeAtPosition(x)
         })

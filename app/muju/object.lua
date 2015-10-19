@@ -105,9 +105,15 @@ function muju:bind()
     :filter(f.eq('attack'))
     :subscribe(self:wrap(self.eventAttack))
 
-  for _, object in pairs(table.filter(app.context.objects, 'isSolid')) do
-    self:resolveCollisionsWith(object)
-  end
+  self.collisions = app.context.collision:add(self)
+
+  self.collisions
+    :subscribe(function(other, dx, dy)
+      other.position.x = other.position.x + dx / 2
+      other.position.y = other.position.y + dy / 2
+      self.position.x = self.position.x - dx / 2
+      self.position.y = self.position.y - dy / 2
+    end)
 
   app.context.view.draw:subscribe(self:wrap(self.draw))
 end

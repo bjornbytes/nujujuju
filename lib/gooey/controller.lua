@@ -1,6 +1,10 @@
 local gooey = lib.object.create()
 
 gooey.font = fonts['04B_03'](8)
+gooey.cursors = {
+  default = nil,
+  hand = love.mouse.getSystemCursor('hand')
+}
 
 gooey.state = function()
   return {

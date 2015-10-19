@@ -13,7 +13,6 @@ inspector.state = function()
     active = false,
     editing = 'muju',
     x = -inspector.config.width,
-    hand = love.mouse.getSystemCursor('hand'),
     gooey = lib.gooey.controller:new(),
     timeline = {
       active = false,

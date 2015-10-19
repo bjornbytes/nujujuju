@@ -27,6 +27,8 @@ function enemy:bind()
 
   self.animation:set('idle')
 
+  app.context.collision:add(self)
+
   self:dispose({
     love.update
       :subscribe(self:wrap(self.updatePushes)),
@@ -39,6 +41,7 @@ end
 function enemy:unbind()
   app.context.objects.enemy = nil
   self.ai:unbind()
+  app.context.collision:remove(self)
   return lib.object.unbind(self)
 end
 

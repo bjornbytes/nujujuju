@@ -115,19 +115,19 @@ function muju:eventLimp()
 end
 
 function muju:eventAttack()
-  local enemy = app.context.objects.enemy
-  if not enemy then return end
-  local animationDirectionSign = self.animation.flipped and -1 or 1
-  local closeEnough = math.distance(self.position.x, self.position.y, enemy.position.x, enemy.position.y) < (self.config.radius + enemy.config.radius) * self.config.staffHitboxThreshold
-  local verticallyCloseEnough = math.abs(self.position.y - enemy.position.y) < self.config.staffYPositionThreshold
-  local facingTheRightWay = animationDirectionSign == math.sign(self.position.x - enemy.position.x)
-  if closeEnough and verticallyCloseEnough and facingTheRightWay then
-    enemy:hurt(self.config.staffDamage)
-    enemy:push({
-      force = 6,
-      direction = math.direction(self.position.x, self.position.y, enemy.position.x, enemy.position.y)
-    })
-  end
+  table.each(table.filter(app.context.objects, 'isEnemy'), function(enemy)
+    local animationDirectionSign = self.animation.flipped and -1 or 1
+    local closeEnough = math.distance(self.position.x, self.position.y, enemy.position.x, enemy.position.y) < (self.config.radius + enemy.config.radius) * self.config.staffHitboxThreshold
+    local verticallyCloseEnough = math.abs(self.position.y - enemy.position.y) < self.config.staffYPositionThreshold
+    local facingTheRightWay = animationDirectionSign == math.sign(self.position.x - enemy.position.x)
+    if closeEnough and verticallyCloseEnough and facingTheRightWay then
+      enemy:hurt(self.config.staffDamage)
+      enemy:push({
+        force = 6,
+        direction = math.direction(self.position.x, self.position.y, enemy.position.x, enemy.position.y)
+      })
+    end
+  end)
 end
 
 function muju:tint(r, g, b)
@@ -135,38 +135,6 @@ function muju:tint(r, g, b)
     local slot = self.animation.skeleton:findSlot(slot)
     slot.r, slot.g, slot.b = r, g, b
   end
-end
-
-function muju:resolveCollisionsWith(other)
-  return love.update
-    :map(function()
-      local distance = math.distance(self.position.x, self.position.y, other.position.x, other.position.y)
-      local direction = math.direction(self.position.x, self.position.y, other.position.x, other.position.y)
-      local a, b = other.config.radius, other.config.radius / other.config.perspective
-      local r = (a * b) / math.sqrt((b * math.cos(direction)) ^ 2 + (a * math.sin(direction)) ^ 2)
-      local ex = other.position.x + math.cos(direction + math.pi) * r
-      local ey = other.position.y + math.sin(direction + math.pi) * r
-      local overlap = self.config.radius - (math.distance(self.position.x, self.position.y, ex, ey))
-      return distance, direction, a, b, r, ex, ey, overlap
-    end)
-    :filter(function(distance, direction, a, b, r, ex, ey, overlap)
-      return math.distance(ex, ey, self.position.x, self.position.y) < self.config.radius
-    end)
-    :map(function(distance, direction, a, b, r, ex, ey, overlap)
-      local dir = math.direction(self.position.x, self.position.y, other.position.x, other.position.y)
-      return overlap * math.cos(dir), overlap * math.sin(dir)
-    end)
-    :subscribe(function(dx, dy)
-      self.position.x = math.lerp(self.position.x, self.position.x - dx / 2, 1)
-      self.position.y = math.lerp(self.position.y, self.position.y - dy / 2, 1)
-
-      other.position.x = math.lerp(other.position.x, other.position.x + dx / 2, 1)
-      other.position.y = math.lerp(other.position.y, other.position.y + dy / 2, 1)
-
-      if other.isEnemy then
-        self:hurt(1)
-      end
-    end)
 end
 
 function muju:eatMushroom()
