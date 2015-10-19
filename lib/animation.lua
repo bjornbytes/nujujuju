@@ -59,7 +59,6 @@ function animation:draw(x, y)
   self:setPosition(x, y)
   skeleton.flipX = self.flipped
   if self.config.backwards then skeleton.flipX = not skeleton.flipX end
-  self.animationState:apply(skeleton)
   skeleton:updateWorldTransform()
   skeleton:draw()
 end
