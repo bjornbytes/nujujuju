@@ -33,7 +33,7 @@ return {
     },
 
     death = {
-      speed = .7
+      length = 1
     },
 
     resurrect = {

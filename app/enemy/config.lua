@@ -1,8 +1,9 @@
 return {
   radius = 30,
   perspective = 2,
-  maxHealth = 3,
+  maxHealth = 2,
   range = 180,
-  speed = 40,
-  shape = 'ellipse'
+  speed = 60,
+  shape = 'ellipse',
+  hurtFlash = .06
 }

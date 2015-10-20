@@ -12,7 +12,8 @@ enemy.state = function()
     kind = 'spuju',
     health = app.enemy.config.maxHealth,
     animation = lib.animation.create(app.spuju.spine, app.spuju.animation),
-    pushes = {}
+    pushes = {},
+    lastHurt = -math.huge
   }
 
   return state
@@ -37,7 +38,10 @@ function enemy:bind()
       :subscribe(self:wrap(self.enclose)),
 
     app.context.view.draw
-      :subscribe(self:wrap(self.draw))
+      :subscribe(self:wrap(self.draw)),
+
+    app.context.view.hud
+      :subscribe(self:wrap(self.hud))
   })
 end
 

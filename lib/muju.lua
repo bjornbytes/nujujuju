@@ -40,6 +40,8 @@ function muju:attack()
 end
 
 function muju:animate(input)
+  if self.dead then return end
+
   self.animation.speed = 1
 
   local moving = math.abs(input.x) > .5 or math.abs(input.y) > .5
@@ -123,7 +125,7 @@ function muju:eventAttack()
     if closeEnough and verticallyCloseEnough and facingTheRightWay then
       enemy:hurt(self.config.staffDamage)
       enemy:push({
-        force = 6,
+        force = 6 + (enemy:isDead() and 6 or 0),
         direction = self:directionTo(enemy)
       })
     end
@@ -136,7 +138,7 @@ function muju:onCollision(other, dx, dy)
   self.position.x = self.position.x - dx / 2
   self.position.y = self.position.y - dy / 2
 
-  if other.isEnemy then
+  if other.isEnemy and not other:isDead() then
     self:hurt(1)
   end
 end
@@ -154,11 +156,19 @@ function muju:eatMushroom()
 end
 
 function muju:hurt(amount)
-  if lib.tick.index - self.lastHurt < self.config.hurtGrace / lib.tick.rate then return end
+  if self.dead or lib.tick.index - self.lastHurt < self.config.hurtGrace / lib.tick.rate then return end
   self.health = math.max(self.health - amount, 0)
+  app.context.view:screenshake(.1)
   if self.health == 0 then
-    print('you lose')
-    love.event.quit()
+    self.dead = true
+    lib.quilt.add(function()
+      self.animation:set('death')
+      lib.tick.scale = .4
+      coroutine.yield(1)
+      lib.flux.to(lib.tick, 1, {scale = 1})
+      coroutine.yield(2)
+      love.event.quit()
+    end)
   else
     self.lastHurt = lib.tick.index
   end
@@ -176,7 +186,14 @@ function muju:draw()
 
   g.white()
   self.animation:tick(lib.tick.delta)
-  if lib.tick.index - self.lastHurt > self.config.hurtGrace / lib.tick.rate or math.floor(lib.tick.index / (.25 / lib.tick.rate)) % 2 == 0 then
+  local timeSinceLastHurt = (lib.tick.index - self.lastHurt) * lib.tick.rate
+  if timeSinceLastHurt < self.config.hurtFlash then
+    self.animation:draw(self.position.x, self.position.y)
+    g.setShader(app.shaders.colorize)
+    app.shaders.colorize:send('color', {.75, .2, .2, 1})
+    self.animation:draw(self.position.x, self.position.y)
+    g.setShader()
+  elseif timeSinceLastHurt > self.config.hurtGrace or math.floor(lib.tick.index / (.25 / lib.tick.rate)) % 2 == 0 then
     self.animation:draw(self.position.x, self.position.y)
   end
 

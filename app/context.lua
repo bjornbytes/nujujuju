@@ -8,7 +8,9 @@ function context.load(scene)
   context.hud = app.hud:new()
   context.inspector = app.inspector:new()
   context.collision = lib.collision:new()
-  context.timeline = app.timeline.object:new()
+  context.timeline = app.timeline.object:new({
+    events = context.scene.events or {}
+  })
   context.timelineUI = app.timeline.ui:new()
 
   context.objects = {}

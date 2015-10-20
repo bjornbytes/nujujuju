@@ -59,7 +59,7 @@ function view:update()
 
   self:contain()
 
-  self.shake = math.lerp(self.shake, 0, 8 * lib.tick.rate)
+  self.shake = math.max(self.shake - lib.tick.rate, 0)
 end
 
 function view:doDraw()
@@ -205,16 +205,17 @@ function view:frameMouseY()
 end
 
 function view:screenshake(amount)
-  if self.shake > amount then self.shake = self.shake + (amount / 2) end
-  self.shake = amount
+  self.shake = math.max(self.shake, amount)
 end
 
 function view:worldPush()
   local x, y, s = unpack(table.interpolate({self.prevx, self.prevy, self.prevscale}, {self.x, self.y, self.scale}, lib.tick.accum / lib.tick.rate))
-  local shakex = 1 - (2 * love.math.noise(self.shake + x + lib.tick.accum))
-  local shakey = 1 - (2 * love.math.noise(self.shake + y + lib.tick.accum))
-  x = x + (shakex * self.shake)
-  y = y + (shakey * self.shake)
+  if self.shake > .01 then
+    local shakex = -1 + love.math.random() * 2
+    local shakey = -1 + love.math.random() * 2
+    x = x + (shakex * 5)
+    y = y + (shakey * 5)
+  end
 
   g.push()
   g.translate(self.frame.x, self.frame.y)

@@ -63,8 +63,4 @@ function hud:drawBuildingUI()
   end
 end
 
-function hud:drawEnemyUI()
-  local u, v = self.u, self.v
-end
-
 return hud

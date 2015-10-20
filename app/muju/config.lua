@@ -5,9 +5,10 @@ return {
   radius = 20,
 
   maxHealth = 5,
-  hurtGrace = 3,
+  hurtGrace = 2,
+  hurtFlash = .06,
   maxJuju = 5,
-  jujuTrickleRate = 5,
+  jujuTrickleRate = 10,
   staffDamage = 1,
   staffHitboxThreshold = 1.7,
   staffYPositionThreshold = 45,

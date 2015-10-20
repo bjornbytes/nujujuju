@@ -27,8 +27,12 @@ end
 function quilt.update()
   for thread, cr in pairs(quilt.threads) do
     if quilt.delays[thread] <= lib.tick.rate then
-      local _, delay = coroutine.resume(cr)
+      local success, delay = coroutine.resume(cr)
       quilt.delays[thread] = delay or 0
+
+      if not success then
+        error(delay)
+      end
 
       if coroutine.status(cr) == 'dead' then
         quilt.remove(thread)

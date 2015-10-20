@@ -2,8 +2,7 @@ local timeline = lib.object.create()
 
 timeline.state = function()
   return {
-    time = 0,
-    events = {}
+    time = 0
   }
 end
 

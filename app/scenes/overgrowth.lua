@@ -40,4 +40,21 @@ overgrowth.objects = {
   }
 }
 
+overgrowth.events = {
+  { time = 5 },
+  { time = 5 },
+  { time = 5 },
+
+  { time = 14 },
+  { time = 15 },
+  { time = 16 },
+  { time = 17 },
+
+  { time = 25 },
+  { time = 30 },
+  { time = 30 },
+  { time = 30 },
+  { time = 30 }
+}
+
 return overgrowth

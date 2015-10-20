@@ -23,7 +23,8 @@ muju.state = function()
     juju = 3,
     shuffle = love.audio.play(app.muju.sound.shuffle),
     nearbyBuilding = nil,
-    jujuTrickleTimer = 0
+    jujuTrickleTimer = 0,
+    dead = false
   }
 
   state.shuffle:setVolume(0)
