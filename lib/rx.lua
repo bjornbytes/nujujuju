@@ -1124,10 +1124,8 @@ end
 function Subject:onNext(...)
   self.value = {...}
 
-  for i = 1, #self.observers do
-    if self.observers[i] then
-      self.observers[i]:onNext(...)
-    end
+  for i = #self.observers, 1, -1 do
+    self.observers[i]:onNext(...)
   end
 end
 
