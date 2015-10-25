@@ -28,3 +28,10 @@ end)
 love.keypressed
   :filter(f.eq('escape'))
   :subscribe(love.event.quit)
+
+love.keypressed
+  :filter(f.eq('r'))
+  :subscribe(function()
+    app.context.unload()
+    app.context.load('overgrowth')
+  end)

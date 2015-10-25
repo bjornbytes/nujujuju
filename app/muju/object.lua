@@ -45,75 +45,79 @@ end
 function muju:bind()
   self:tint(.5, .2, .7)
 
-  lib.input
-    :subscribe(self:wrap(self.move))
+  self:dispose({
+    lib.input
+      :subscribe(self:wrap(self.move)),
 
-  lib.input
-    :filter(self:wrap(self.canShapeshift))
-    :pluck('shapeshift')
-    :changes()
-    :filter(f.eq(true))
-    :subscribe(self:wrap(self.shapeshift))
+    lib.input
+      :filter(self:wrap(self.canShapeshift))
+      :pluck('shapeshift')
+      :changes()
+      :filter(f.eq(true))
+      :subscribe(self:wrap(self.shapeshift)),
 
-  lib.input
-    :pluck('attack')
-    :changes()
-    :filter(f.eq(true))
-    :subscribe(self:wrap(self.attack))
+    lib.input
+      :pluck('attack')
+      :changes()
+      :filter(f.eq(true))
+      :subscribe(self:wrap(self.attack)),
 
-  lib.input
-    :subscribe(self:wrap(self.animate))
+    lib.input
+      :subscribe(self:wrap(self.animate)),
 
-  lib.input
-    :pluck('building')
-    :changes()
-    :filter(f.eq(true))
-    :subscribe(self:wrap(self.interactWithBuilding))
+    lib.input
+      :pluck('building')
+      :changes()
+      :filter(f.eq(true))
+      :subscribe(self:wrap(self.interactWithBuilding)),
 
-  love.update
-    :subscribe(self:wrap(self.flipAnimation))
+    love.update
+      :subscribe(self:wrap(self.flipAnimation)),
 
-  love.update
-    :subscribe(self:wrap(self.setShuffleVolume))
+    love.update
+      :subscribe(self:wrap(self.setShuffleVolume)),
 
-  love.update
-    :subscribe(self:wrap(self.setActiveBuilding))
+    love.update
+      :subscribe(self:wrap(self.setActiveBuilding)),
 
-  love.update
-    :subscribe(self:wrap(self.jujuTrickle))
+    love.update
+      :subscribe(self:wrap(self.jujuTrickle)),
 
-  love.update
-    :subscribe(self:wrap(self.enclose))
+    love.update
+      :subscribe(self:wrap(self.enclose)),
 
-  self.animations.thuju.events
-    :pluck('data', 'name')
-    :filter(f.eq('spawn'))
-    :subscribe(self:wrap(lib.thuju.createSpawnParticles))
+    self.animations.thuju.events
+      :pluck('data', 'name')
+      :filter(f.eq('spawn'))
+      :subscribe(self:wrap(lib.thuju.createSpawnParticles)),
 
-  self.animations.thuju.events
-    :pluck('data', 'name')
-    :filter(f.eq('attack'))
-    :subscribe(self:wrap(self.eventAttack))
+    self.animations.thuju.events
+      :pluck('data', 'name')
+      :filter(f.eq('attack'))
+      :subscribe(self:wrap(self.eventAttack)),
 
-  self.animations.muju.events
-    :pluck('data', 'name')
-    :filter(f.eq('step'))
-    :subscribe(self:wrap(self.eventFootstep))
+    self.animations.muju.events
+      :pluck('data', 'name')
+      :filter(f.eq('step'))
+      :subscribe(self:wrap(self.eventFootstep)),
 
-  self.animations.muju.events
-    :pluck('data', 'name')
-    :filter(f.eq('staff'))
-    :subscribe(self:wrap(self.eventLimp))
+    self.animations.muju.events
+      :pluck('data', 'name')
+      :filter(f.eq('staff'))
+      :subscribe(self:wrap(self.eventLimp)),
 
-  self.animations.muju.events
-    :pluck('data', 'name')
-    :filter(f.eq('attack'))
-    :subscribe(self:wrap(self.eventAttack))
+    self.animations.muju.events
+      :pluck('data', 'name')
+      :filter(f.eq('attack'))
+      :subscribe(self:wrap(self.eventAttack)),
+  })
 
   self.collisions = app.context.collision:add(self)
 
-  self.collisions
-    :subscribe(self:wrap(self.onCollision))
+  self:dispose({
+    self.collisions
+      :subscribe(self:wrap(self.onCollision))
+  })
 
   app.context.view.draw:subscribe(self:wrap(self.draw))
 end

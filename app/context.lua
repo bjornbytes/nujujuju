@@ -19,7 +19,7 @@ function context.load(scene)
     local path = entry[1]
 
     local object = table.get(app, path .. '.object') or table.get(app, path)
-    local instance = object:new(entry)
+    local instance = object:new(table.copy(entry))
 
     context.objects[instance] = instance
 
@@ -36,6 +36,8 @@ function context.unload()
   for object in pairs(context.objects) do
     f.try(object.unbind, object)
   end
+
+  context.objects = nil
 
   context.view:unbind()
   context.particles:unbind()

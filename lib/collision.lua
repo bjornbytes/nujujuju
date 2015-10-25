@@ -65,6 +65,18 @@ function collision:bind()
         g.line(0, y, w, y)
       end
 
+      for _, objects in pairs(self.grid) do
+        local ct = table.count(objects)
+        if ct > 0 then
+          local _, object = next(objects)
+          local x, y = self:cell(object.position.x, object.position.y)
+          x = x - 1
+          y = y - 1
+          g.white(10 * math.min(ct, 20))
+          g.rectangle('fill', x * self.config.size, y * self.config.size, self.config.size, self.config.size)
+        end
+      end
+
       return -1000
     end)
 end

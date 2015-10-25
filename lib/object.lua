@@ -13,7 +13,10 @@ function object:wrap(fn)
 end
 
 function object:dispose(subscriptions)
-  self._subscriptions = subscriptions
+  self._subscriptions = self._subscriptions or {}
+  for i = 1, #subscriptions do
+    table.insert(self._subscriptions, subscriptions[i])
+  end
 end
 
 function object:unbind()
@@ -24,11 +27,11 @@ function object:unbind()
 end
 
 function object:new(state)
-  local baseState = type(self.state) == 'function' and self.state() or self.state
+  local baseState = type(self.state) == 'function' and self.state() or {}
   state = table.merge(state, baseState)
   local instance = table.merge(state, {})
 
-  setmetatable(instance, { __index = self })
+  setmetatable(instance, {__index = self})
 
   f.try(instance.bind, instance)
 

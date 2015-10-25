@@ -1,8 +1,10 @@
 local abilities = lib.object.create()
 
-abilities.state = {
-  list = {}
-}
+abilities.state = function()
+  return {
+    list = {}
+  }
+end
 
 function abilities:add(ability, position)
   position = position or (#self.list + 1)

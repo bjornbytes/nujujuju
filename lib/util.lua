@@ -27,11 +27,14 @@ function math.round(x)
   return math.floor(x + .5)
 end
 
-function table.copy(x)
+function table.copy(x, seen)
+  seen = seen or {}
   local t = type(x)
   if t ~= 'table' then return x end
+  if seen[x] then return seen[x] end
   local y = {}
-  for k, v in next, x, nil do y[k] = table.copy(v) end
+  seen[x] = y
+  for k, v in next, x, nil do y[k] = table.copy(v, seen) end
   setmetatable(y, getmetatable(x))
   return y
 end
@@ -157,4 +160,12 @@ end
 function g.white(alpha)
   g.setColor(255, 255, 255, alpha)
   return g
+end
+
+function table.count(t)
+  local ct = 0
+  for _, _ in pairs(t) do
+    ct = ct + 1
+  end
+  return ct
 end
