@@ -176,6 +176,7 @@ function muju:hurt(amount)
       lib.flux.to(app.context.hud, 1, {fadeout = 1})
       coroutine.yield(1)
       app.context.unload()
+      app.context.load('overgrowth')
     end)
   else
     self.lastHurt = lib.tick.index

@@ -127,9 +127,9 @@ end
 function ui:geometry()
   local u, v = g.getDimensions()
   local inspectorWidth = app.inspector.config.width
-  local x = inspectorWidth
+  local x = (app.context.inspector.x or 0) + inspectorWidth
   local y = self.y
-  local w = u - inspectorWidth
+  local w = u - inspectorWidth - app.context.inspector.x
   local h = self.config.height
   if y > 0 then
     h = h + y
