@@ -94,9 +94,16 @@ function ui:draw()
     g.setColor(200, 200, 100, 100)
     g.setLineWidth(2)
     local xx = math.lerp(x, x + w, affine)
-    g.line(xx, y, xx, y + h)
+    g.line(xx, y + 16, xx, y + h)
+    g.setLineWidth(3)
+    g.circle('line', xx, y + 8, 7)
     g.setLineWidth(1)
   end
+
+  -- event separator
+  g.white(40)
+  local yy = math.round(y + 16)
+  g.line(x, yy, x + w, yy)
 
   -- events
   for i = 1, #timeline.events do
@@ -106,7 +113,7 @@ function ui:draw()
       g.setColor(255, 100, 100, 100)
       g.setLineWidth(2)
       local xx = math.lerp(x, x + w, affine)
-      g.line(xx, y, xx, y + h)
+      g.line(xx, y + 16, xx, y + h)
       g.setLineWidth(1)
     end
   end

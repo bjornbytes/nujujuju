@@ -65,7 +65,10 @@ function ui:bind()
       :subscribe(self:wrap(self.smoothY)),
 
     mousepress
-      :filter(self:wrap(self.contains))
+      :filter(function(mx, my)
+        local x, y, w, h = self:geometry()
+        return math.inside(mx, my, x, y + 16, w, h - 16)
+      end)
       :tap(function(x)
         originalTime = self.time
         dx = x
@@ -73,12 +76,19 @@ function ui:bind()
       :map(function()
         return love.mousemoved:takeUntil(mouserelease)
       end)
-      :tap(function()
-      end)
       :flatten()
       :subscribe(function(x, y)
         local _, y, w, h = self:geometry()
         self.time = originalTime - (x - dx) * self.scale / w
+      end),
+
+    mousepress
+      :filter(function(mx, my)
+        local x, y, w, h = self:geometry()
+        return math.inside(mx, my, x, y, w, 16)
+      end)
+      :subscribe(function(x)
+        app.context.timeline.time = self:timeAtPosition(x)
       end),
 
     mouserelease
