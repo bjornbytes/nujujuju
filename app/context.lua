@@ -9,7 +9,7 @@ function context.load(scene)
   context.inspector = app.inspector:new()
   context.collision = lib.collision:new()
   context.timeline = app.timeline.object:new({
-    events = nil or {}
+    events = table.copy(context.scene.events) or {}
   })
   context.timelineUI = app.timeline.ui:new()
 

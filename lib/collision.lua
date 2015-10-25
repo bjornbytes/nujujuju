@@ -20,6 +20,9 @@ collision.handlers = {
       return overlap * math.cos(dir), overlap * math.sin(dir)
     end
   end,
+  ['ellipse:ellipse'] = function(o1, o2)
+    return collision.handlers['circle:circle'](o1, o2)
+  end,
   ['circle:ellipse'] = function(o1, o2)
     local x1, y1, x2, y2, r1, a, b = o1.position.x, o1.position.y, o2.position.x, o2.position.y, o1.config.radius, o2.config.radius, o2.config.radius / o2.config.perspective
     local dis = math.distance(x1, y1, x2, y2)

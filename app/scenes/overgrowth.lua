@@ -45,16 +45,16 @@ overgrowth.events = {
   { time = 5 },
   { time = 5 },
 
-  { time = 14 },
-  { time = 15 },
-  { time = 16 },
-  { time = 17 },
-
+  { time = 24 },
   { time = 25 },
-  { time = 30 },
-  { time = 30 },
-  { time = 30 },
-  { time = 30 }
+  { time = 26 },
+  { time = 27 },
+
+  { time = 45 },
+  { time = 50 },
+  { time = 50 },
+  { time = 50 },
+  { time = 50 }
 }
 
 return overgrowth

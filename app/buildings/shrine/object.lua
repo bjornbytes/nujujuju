@@ -18,15 +18,31 @@ function shrine:bind()
   self:setIsSolid()
   self:setIsBuilding()
 
-  app.context.collision:add(self)
+  self.collisions = app.context.collision:add(self)
 
-  love.update
-    :subscribe(self:wrap(self.revertToStartPosition))
+  self:dispose({
+    love.update
+      :subscribe(self:wrap(self.revertToStartPosition)),
 
-  app.context.view.draw
-    :subscribe(self:wrap(self.draw))
+    app.context.view.draw
+      :subscribe(self:wrap(self.draw)),
+
+    self.collisions
+      :subscribe(function(other, dx, dy)
+        if self.totem and other.isEnemy then
+          if other.hasContactDamage then
+            self.totem:hurt(1)
+          end
+        end
+      end)
+  })
 
   return self
+end
+
+function shrine:unbind()
+  app.context.collision:remove(self)
+  lib.object.unbind(self)
 end
 
 function shrine:canInteractWith(player)

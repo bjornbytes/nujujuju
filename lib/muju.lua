@@ -36,7 +36,9 @@ function muju:shapeshift()
 end
 
 function muju:attack()
-  self.animation:set('attack')
+  if self.form ~= 'muju' then
+    self.animation:set('attack')
+  end
 end
 
 function muju:animate(input)
@@ -134,8 +136,10 @@ end
 
 function muju:onCollision(other, dx, dy)
   if other.isEnemy then
-    other.position.x = other.position.x + dx
-    other.position.y = other.position.y + dy
+    other.position.x = other.position.x + dx / 2
+    other.position.y = other.position.y + dy / 2
+    self.position.x = self.position.x - dx / 2
+    self.position.y = self.position.y - dy / 2
 
     local timeSinceLastHurt = (lib.tick.index - self.lastHurt) * lib.tick.rate
     if timeSinceLastHurt > self.config.hurtGrace and other.hasContactDamage then
@@ -196,6 +200,7 @@ function muju:draw()
   g.white()
   self.animation:tick(lib.tick.delta)
   local timeSinceLastHurt = (lib.tick.index - self.lastHurt) * lib.tick.rate
+  local timeSinceLastShapeshift = (lib.tick.index - self.lastShapeshift) * lib.tick.rate
   if timeSinceLastHurt < self.config.hurtFlash then
     self.animation:draw(self.position.x, self.position.y)
     g.setShader(app.shaders.colorize)
@@ -204,6 +209,12 @@ function muju:draw()
     g.setShader()
   elseif timeSinceLastHurt > self.config.hurtGrace or math.floor(lib.tick.index / (.15 / lib.tick.rate)) % 2 == 0 then
     self.animation:draw(self.position.x, self.position.y)
+    if timeSinceLastShapeshift < .25 then
+      g.setShader(app.shaders.colorize)
+      app.shaders.colorize:send('color', {1, 1, 1, 1 - timeSinceLastShapeshift / .25})
+      self.animation:draw(self.position.x, self.position.y)
+      g.setShader()
+    end
   end
 
   if app.context.inspector.active then

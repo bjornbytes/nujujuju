@@ -7,7 +7,8 @@ totem.config = app.totem.config
 totem.state = function()
   return {
     health = app.totem.config.maxHealth,
-    isTotem = true
+    isTotem = true,
+    lastHurt = -math.huge
   }
 end
 
@@ -27,7 +28,7 @@ function totem:bind()
       local enemy = self:closest('enemy')
       if enemy and self:distanceTo(enemy) < self.config.range then
         self:attack(enemy)
-        coroutine.yield(1)
+        coroutine.yield(self.config.attackRate)
       else
         coroutine.yield(.25)
       end
@@ -45,11 +46,36 @@ function totem:bind()
   })
 end
 
+function totem:unbind()
+  self.shrine.totem = nil
+  lib.quilt.remove(self.threads.build)
+  lib.quilt.remove(self.threads.attack)
+  lib.object.unbind(self)
+end
+
 function totem:draw()
   local x, y = self.position.x, self.position.y
   local w, h = 20, 60
+
   g.setColor(40, 40, 60)
   g.rectangle('fill', x - w / 2, y - h, w, h)
+
+  local timeSinceLastHurt = (lib.tick.index - self.lastHurt) * lib.tick.rate
+  if timeSinceLastHurt < .5 then
+    g.rectangle('fill', x - w / 2, y - h, w, h)
+    g.setShader(app.shaders.colorize)
+    app.shaders.colorize:send('color', {.75, .2, .2, 1 - timeSinceLastHurt / .5})
+    g.rectangle('fill', x - w / 2, y - h, w, h)
+    g.setShader()
+  end
+
+  if not self.building then
+    g.white(30)
+    g.setLineWidth(2)
+    g.circle('line', x, y, self.config.range)
+    g.setLineWidth(1)
+  end
+
   return -self.position.y + 10
 end
 
@@ -89,6 +115,16 @@ function totem:attack(enemy)
     force = 10,
     direction = self:directionTo(enemy)
   })
+end
+
+function totem:hurt(amount, source)
+  if lib.tick.index - self.lastHurt < .5 / lib.tick.rate then return end
+  self.lastHurt = lib.tick.index
+  self.health = math.max(self.health - 1, 0)
+  if self.health <= 0 then
+    app.context.objects[self] = nil
+    self:unbind()
+  end
 end
 
 return totem

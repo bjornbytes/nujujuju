@@ -20,7 +20,7 @@ muju.state = function()
     lastShapeshift = -math.huge,
     lastHurt = -math.huge,
     health = 5,
-    juju = 3,
+    juju = 0,
     shuffle = love.audio.play(app.muju.sound.shuffle),
     nearbyBuilding = nil,
     jujuTrickleTimer = 0,
@@ -44,6 +44,7 @@ end
 
 function muju:bind()
   self:tint(.5, .2, .7)
+  self.collisions = app.context.collision:add(self)
 
   self:dispose({
     lib.input
@@ -110,11 +111,7 @@ function muju:bind()
       :pluck('data', 'name')
       :filter(f.eq('attack'))
       :subscribe(self:wrap(self.eventAttack)),
-  })
 
-  self.collisions = app.context.collision:add(self)
-
-  self:dispose({
     self.collisions
       :subscribe(self:wrap(self.onCollision))
   })
