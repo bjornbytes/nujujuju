@@ -6,7 +6,8 @@ totem.config = app.totem.config
 
 totem.state = function()
   return {
-    health = app.totem.config.maxHealth
+    health = app.totem.config.maxHealth,
+    isTotem = true
   }
 end
 

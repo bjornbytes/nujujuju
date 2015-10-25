@@ -2,10 +2,10 @@ local entity = {}
 
 function entity.closest(source, ...)
   local getEntries = {
-    building = function(source, result)
-      table.each(table.filter(app.context.objects, 'isBuilding'), function(building)
-        if source ~= building and building:canTarget() then
-          table.insert(result, {building, lib.entity.distanceTo(source, building)})
+    totem = function(source, result)
+      table.each(table.filter(app.context.objects, 'isTotem'), function(totem)
+        if source ~= totem and not totem.building then
+          table.insert(result, {totem, lib.entity.distanceTo(source, totem)})
         end
       end)
     end,
@@ -40,6 +40,10 @@ end
 
 function entity:directionTo(other)
   return math.direction(self.position.x, self.position.y, other.position.x, other.position.y)
+end
+
+function entity:signTo(other)
+  return -math.sign(self.position.x - other.position.x)
 end
 
 function entity:isInRangeOf(other)

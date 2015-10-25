@@ -3,11 +3,12 @@ local ai = lib.object.create()
 function ai.state()
   return {
     state = 'moving',
+    target = nil,
     threads = {},
     speed = {
       x = 0,
       y = 0
-    },
+    }
   }
 end
 
@@ -27,13 +28,15 @@ function ai:bind()
 
     self.state = 'windup'
     coroutine.yield(.75)
-    self.direction = owner:directionTo(app.context.objects.muju)
+    self.direction = owner:directionTo(self.target)
     coroutine.yield(.25)
 
     self.state = 'attack'
+    owner.hasContactDamage = true
     coroutine.yield(.4)
 
     lib.quilt.add(self.threads.move)
+    owner.hasContactDamage = false
     coroutine.yield(2)
 
     lib.quilt.add(self.threads.scan)
@@ -41,16 +44,19 @@ function ai:bind()
 
   self.threads.scan = function()
     while true do
-      local dir = math.abs(owner:directionTo(app.context.objects.muju) % math.pi)
-      if dir > math.pi / 2 then
-        dir = math.abs(dir - math.pi)
-      end
+      self.target = owner:closest('player', 'totem')
+      if self.target then
+        local dir = math.abs(owner:directionTo(self.target) % math.pi)
+        if dir > math.pi / 2 then
+          dir = math.abs(dir - math.pi)
+        end
 
-      if owner:isInRangeOf(app.context.objects.muju) and dir < .25 then
-        lib.quilt.remove(self.threads.move)
-        lib.quilt.add(self.threads.attack)
+        if owner:isInRangeOf(self.target) and dir < .25 then
+          lib.quilt.remove(self.threads.move)
+          lib.quilt.add(self.threads.attack)
+        end
       end
-      coroutine.yield(.5)
+      coroutine.yield(.25)
     end
   end
 
@@ -65,6 +71,7 @@ function ai:bind()
       :subscribe(function()
         lib.entity.adjustSpeedToVector(self, owner.config.speed * 2, self.direction, 3)
         owner.animation:set('walk')
+        owner.animation.flipped = self.speed.x > 0
       end),
 
     currentState
@@ -72,6 +79,7 @@ function ai:bind()
       :subscribe(function()
         lib.entity.adjustSpeedToVector(self, 0, self.direction, 8)
         owner.animation:set('attack')
+        owner.animation.flipped = owner:signTo(self.target) > 0
       end),
 
     currentState
@@ -79,12 +87,12 @@ function ai:bind()
       :subscribe(function()
         lib.entity.adjustSpeedToVector(self, owner.config.speed * 6, self.direction)
         owner.animation:set('idle')
+        owner.animation.flipped = self.speed.x > 0
       end),
 
     love.update
       :subscribe(function()
         owner:moveWithSpeed(self.speed)
-        owner.animation.flipped = self.speed.x > 0
       end)
   })
 end

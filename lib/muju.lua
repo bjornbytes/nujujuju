@@ -133,13 +133,19 @@ function muju:eventAttack()
 end
 
 function muju:onCollision(other, dx, dy)
-  other.position.x = other.position.x + dx / 2
-  other.position.y = other.position.y + dy / 2
-  self.position.x = self.position.x - dx / 2
-  self.position.y = self.position.y - dy / 2
+  if other.isEnemy then
+    other.position.x = other.position.x + dx
+    other.position.y = other.position.y + dy
 
-  if other.isEnemy and not other:isDead() then
-    self:hurt(1)
+    local timeSinceLastHurt = (lib.tick.index - self.lastHurt) * lib.tick.rate
+    if timeSinceLastHurt > self.config.hurtGrace and other.hasContactDamage then
+      self:hurt(1)
+    end
+  else
+    other.position.x = other.position.x + dx / 2
+    other.position.y = other.position.y + dy / 2
+    self.position.x = self.position.x - dx / 2
+    self.position.y = self.position.y - dy / 2
   end
 end
 
@@ -166,8 +172,10 @@ function muju:hurt(amount)
       lib.tick.scale = .4
       coroutine.yield(1)
       lib.flux.to(lib.tick, 1, {scale = 1})
-      coroutine.yield(2)
-      love.event.quit()
+      coroutine.yield(1)
+      lib.flux.to(app.context.hud, 1, {fadeout = 1})
+      coroutine.yield(1)
+      app.context.unload()
     end)
   else
     self.lastHurt = lib.tick.index
@@ -193,7 +201,7 @@ function muju:draw()
     app.shaders.colorize:send('color', {.75, .2, .2, 1})
     self.animation:draw(self.position.x, self.position.y)
     g.setShader()
-  elseif timeSinceLastHurt > self.config.hurtGrace or math.floor(lib.tick.index / (.25 / lib.tick.rate)) % 2 == 0 then
+  elseif timeSinceLastHurt > self.config.hurtGrace or math.floor(lib.tick.index / (.15 / lib.tick.rate)) % 2 == 0 then
     self.animation:draw(self.position.x, self.position.y)
   end
 

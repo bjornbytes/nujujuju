@@ -17,6 +17,7 @@ function object:dispose(subscriptions)
 end
 
 function object:unbind()
+  if not self._subscriptions then return end
   for i = 1, #self._subscriptions do
     self._subscriptions[i]()
   end

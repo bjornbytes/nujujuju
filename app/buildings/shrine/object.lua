@@ -42,6 +42,7 @@ function shrine:interact()
       y = self.position.anchor.y
     }
   })
+  app.context.objects[self.totem] = self.totem
 end
 
 function shrine:resetTotem()

@@ -8,6 +8,12 @@ hud.config = {
   padding = .015
 }
 
+hud.state = function()
+  return {
+    fadeout = 0
+  }
+end
+
 function hud:bind()
   self.u, self.v = g.getDimensions()
   self.font = self.config.font(self.v * .02)
@@ -20,6 +26,7 @@ function hud:bind()
       self:drawPlayerHealthbar()
       self:drawPlayerJuju()
       self:drawBuildingUI()
+      self:drawFadeout()
 
       return -1000
     end)

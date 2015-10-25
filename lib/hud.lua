@@ -63,4 +63,11 @@ function hud:drawBuildingUI()
   end
 end
 
+function hud:drawFadeout()
+  if self.fadeout > 0 then
+    g.setColor(0, 0, 0, 255 * self.fadeout)
+    g.rectangle('fill', 0, 0, g.getDimensions())
+  end
+end
+
 return hud

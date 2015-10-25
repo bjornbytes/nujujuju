@@ -9,7 +9,7 @@ function context.load(scene)
   context.inspector = app.inspector:new()
   context.collision = lib.collision:new()
   context.timeline = app.timeline.object:new({
-    events = context.scene.events or {}
+    events = nil or {}
   })
   context.timelineUI = app.timeline.ui:new()
 
@@ -17,7 +17,6 @@ function context.load(scene)
 
   for _, entry in ipairs(context.scene.objects) do
     local path = entry[1]
-    entry[1] = nil
 
     local object = table.get(app, path .. '.object') or table.get(app, path)
     local instance = object:new(entry)
@@ -31,6 +30,20 @@ function context.load(scene)
   end
 
   --context.positioner = app.positioner:new({object = context.objects.muju})
+end
+
+function context.unload()
+  for object in pairs(context.objects) do
+    f.try(object.unbind, object)
+  end
+
+  context.view:unbind()
+  context.particles:unbind()
+  context.hud:unbind()
+  context.inspector:unbind()
+  context.collision:unbind()
+  context.timeline:unbind()
+  context.timelineUI:unbind()
 end
 
 function context:removeObject(object)

@@ -20,7 +20,9 @@ inspector.state = function()
     }
   }
 
-  state.dropdown = state.gooey:add(lib.gooey.dropdown, 'inspector.editing')
+  state.dropdown = state.gooey:add(lib.gooey.dropdown, 'inspector.editing', {
+    value = inspector.config.initialObject
+  })
 
   return state
 end
@@ -47,8 +49,6 @@ function inspector:bind()
   app.context.view.hud
     :with(self.components)
     :subscribe(self:wrap(self.draw))
-
-  self.dropdown.value:onNext(self.config.initialObject)
 end
 
 return inspector
