@@ -1090,9 +1090,13 @@ Subject.__tostring = constant('Subject')
 -- @returns {Subject}
 function Subject.create(...)
   local self = {
-    value = {...},
+    value = nil,
     observers = {}
   }
+
+  if select('#', ...) > 0 then
+    self.value = {..., n = select('#', ...)}
+  end
 
   return setmetatable(self, Subject)
 end
@@ -1104,6 +1108,9 @@ end
 function Subject:subscribe(onNext, onError, onComplete)
   local observer = Observer.create(onNext, onError, onComplete)
   table.insert(self.observers, observer)
+  if self.value then
+    observer:onNext(unpack(self.value))
+  end
   return self:dispose(observer)
 end
 
