@@ -11,7 +11,8 @@ dirt.state = function()
     team = 'player',
     isGrowing = false,
     isGrown = false,
-    growTimer = 0
+    growTimer = 0,
+    growStart = nil
   }
 end
 
@@ -20,25 +21,24 @@ function dirt:bind()
   self:setIsSolid()
   self:setIsBuilding()
 
+  self.threads = {}
+  self.threads.grow = function()
+    self.isGrowing = true
+    self.growStart = lib.tick.index
+    coroutine.yield(self.config.growTime)
+    self.isGrowing = false
+    self.isGrown = true
+  end
+
   app.context.collision:add(self)
 
-  love.update
-    :subscribe(self:wrap(self.revertToStartPosition))
+  self:dispose({
+    love.update
+      :subscribe(self:wrap(self.revertToStartPosition)),
 
-  love.update
-    :filter(function()
-      return self.isGrowing
-    end)
-    :subscribe(function()
-      self.growTimer = math.max(self.growTimer - lib.tick.rate, 0)
-      if self.growTimer == 0 then
-        self.isGrown = true
-        self.isGrowing = false
-      end
-    end)
-
-  app.context.view.draw
-    :subscribe(self:wrap(self.draw))
+    app.context.view.draw
+      :subscribe(self:wrap(self.draw))
+  })
 
   return self
 end
@@ -49,8 +49,7 @@ end
 
 function dirt:interact()
   if not self.isGrowing and not self.isGrown then
-    self.isGrowing = true
-    self.growTimer = self.config.growTime
+    lib.quilt.add(self.threads.grow)
   elseif self.isGrown then
     app.context.objects.muju:eatMushroom()
     self.isGrown = false
@@ -77,7 +76,7 @@ function dirt:drawUI(u, v)
   end
 
   if self.isGrowing or self.isGrown then
-    local percent = 1 - (self.growTimer / self.config.growTime)
+    local percent = math.clamp(((lib.tick.index - self.growStart) * lib.tick.rate) / self.config.growTime, 0, 1)
     local width = .1 * v
     local height = .02 * v
     local y = y - .06 * v
