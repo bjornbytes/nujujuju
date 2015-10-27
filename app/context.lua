@@ -12,6 +12,7 @@ function context.load(scene)
     events = table.copy(context.scene.events) or {}
   })
   context.timelineUI = app.timeline.ui:new()
+  context.grid = app.grid:new()
 
   context.objects = {}
 
