@@ -101,6 +101,10 @@ function collision:neighbors(object)
   return neighbors
 end
 
+function collision:at(x, y)
+  return self.grid[self:serialize(x, y)]
+end
+
 function collision:resolve(o1, o2)
   local s1, s2 = o1.config.shape, o2.config.shape
   local dx, dy = f.try(self.handlers[s1 .. ':' .. s2], o1, o2)

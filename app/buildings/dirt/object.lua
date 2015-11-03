@@ -21,6 +21,8 @@ function dirt:bind()
   self:setIsSolid()
   self:setIsBuilding()
 
+  app.context.collision:add(self)
+
   self.threads = {}
   self.threads.grow = function()
     self.isGrowing = true
@@ -29,8 +31,6 @@ function dirt:bind()
     self.isGrowing = false
     self.isGrown = true
   end
-
-  app.context.collision:add(self)
 
   self:dispose({
     love.update
@@ -43,14 +43,24 @@ function dirt:bind()
   return self
 end
 
-function dirt:canInteractWith(player)
-  return player.form == 'muju' and (self.isGrown or not self.isGrowing)
+function dirt:unbind()
+  app.context.collision:remove(self)
+  lib.object:unbind(self)
 end
 
-function dirt:interact()
+function dirt:canInteractWith(player)
+  return player.form == 'muju' and (self.isGrown or (not self.isGrowing and player.juju >= self.config.shrujuCost))
+end
+
+function dirt:grow()
   if not self.isGrowing and not self.isGrown then
+    app.context.objects.muju:spendJuju(self.config.shrujuCost)
     lib.quilt.add(self.threads.grow)
-  elseif self.isGrown then
+  end
+end
+
+function dirt:harvest()
+  if self.isGrown then
     app.context.objects.muju:eatMushroom()
     self.isGrown = false
   end

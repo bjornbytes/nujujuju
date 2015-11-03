@@ -34,6 +34,8 @@ function grid:bind()
 
   app.context.view.hud
     :subscribe(function()
+      do return end
+
       g.white(20)
       local w, h = app.context.scene.width, app.context.scene.height
       local size = app.context.grid.config.size

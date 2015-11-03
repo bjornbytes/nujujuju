@@ -22,8 +22,8 @@ overgrowth.objects = {
   },
   { 'buildings.dirt',
     position = {
-      x = 200,
-      y = 200
+      x = app.grid.config.size.x * 2.5,
+      y = app.grid.config.size.y * 3.5
     }
   }
 }

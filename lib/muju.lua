@@ -97,6 +97,7 @@ function muju:jujuTrickle()
   if self.jujuTrickleTimer == 0 then
     self.jujuTrickleTimer = self.config.jujuTrickleRate
     self.juju = math.min(self.juju + 1, self.config.maxJuju)
+    self.totalJuju = self.totalJuju + 1
   end
 end
 
@@ -163,6 +164,7 @@ end
 function muju:eatMushroom()
   self.health = math.min(self.health + self.config.healthPerShruju, self.config.maxHealth)
   self.juju = math.min(self.juju + self.config.jujuPerShruju, self.config.maxJuju)
+  self.totalJuju = self.totalJuju + self.config.jujuPerShruju
 end
 
 function muju:hurt(amount)

@@ -169,3 +169,7 @@ function table.count(t)
   end
   return ct
 end
+
+function lib.tick.getLerpFactor(factor)
+  return ((1 / lib.tick.rate) * factor) * lib.tick.rate
+end

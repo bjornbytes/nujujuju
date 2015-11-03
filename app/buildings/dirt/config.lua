@@ -3,5 +3,6 @@ return {
   shape = 'ellipse',
   size = 80,
   perspective = 3,
-  growTime = 20
+  growTime = 10,
+  shrujuCost = 1
 }

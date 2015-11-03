@@ -20,7 +20,8 @@ muju.state = function()
     lastShapeshift = -math.huge,
     lastHurt = -math.huge,
     health = 5,
-    juju = 0,
+    juju = 2,
+    totalJuju = 2,
     shuffle = love.audio.play(app.muju.sound.shuffle),
     nearbyBuilding = nil,
     jujuTrickleTimer = 0,
@@ -37,8 +38,6 @@ muju.state = function()
   state.animation = state.animations.muju
 
   state.abilities = lib.abilities:new()
-  state.abilities:add('blink')
-
   return state
 end
 
