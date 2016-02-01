@@ -81,7 +81,7 @@ end
 function slider:mousepressed(mx, my, b)
   local ox, oy = self:getOffset()
   mx, my = mx + ox, my + oy
-  if b == 'l' and self:containsBar(mx, my) then
+  if b == 1 and self:containsBar(mx, my) then
     self.gooey.hot = self
   end
 end

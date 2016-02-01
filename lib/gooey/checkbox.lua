@@ -60,7 +60,7 @@ end
 function checkbox:mousereleased(mx, my, b)
   local ox, oy = self:getOffset()
   mx, my = mx + ox, my + oy
-  if b == 'l' and self:contains(mx, my) and not self.gooey.focused then
+  if b == 1 and self:contains(mx, my) and not self.gooey.focused then
     self:toggle()
   end
 end

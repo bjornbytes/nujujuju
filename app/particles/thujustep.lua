@@ -1,7 +1,7 @@
 return {
   image = app.particles.images.smoke,
   max = 32,
-  blendMode = 'additive',
+  blendMode = 'add',
 
   options = {
     particleLifetime = {.75},

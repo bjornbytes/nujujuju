@@ -20,7 +20,7 @@ ui.state = function()
 end
 
 function ui:bind()
-  local function isLeft(_, _, b) return b == 'l' end
+  local function isLeft(_, _, b) return b == 1 end
   local mousepress = love.mousepressed:filter(isLeft)
   local mouserelease = love.mousereleased:filter(isLeft)
   local dx

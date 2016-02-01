@@ -164,7 +164,6 @@ function spine.Skeleton.new (skeletonData, group)
         if not batching then
           batching = true
           self.spritebatch:clear()
-          self.spritebatch:bind()
         end
 				local attachment = slot.attachment
         if attachment then
@@ -291,7 +290,6 @@ function spine.Skeleton.new (skeletonData, group)
 		end
 
     if batching then
-      self.spritebatch:unbind()
       love.graphics.setColor(255, 255, 255)
       love.graphics.draw(self.spritebatch)
     end

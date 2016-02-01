@@ -52,7 +52,7 @@ function dirt:canInteractWith(player)
   return player.form == 'muju' and (self.isGrown or (not self.isGrowing and player.juju >= self.config.shrujuCost))
 end
 
-function dirt:grow()
+function dirt:interact()
   if not self.isGrowing and not self.isGrown then
     app.context.objects.muju:spendJuju(self.config.shrujuCost)
     lib.quilt.add(self.threads.grow)

@@ -20,7 +20,7 @@ function patch:initCanvas()
   local scale = self.canvas:getWidth() / image:getWidth()
   g.draw(self.texture, 0, 0, 0, scale, scale)
 
-  g.setBlendMode('subtractive')
+  g.setBlendMode('subtract')
   image = self.config.blob
   scale = self.canvas:getWidth() / image:getWidth()
   g.white()

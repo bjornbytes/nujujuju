@@ -31,13 +31,13 @@ function button:update()
 end
 
 function button:mousepressed(mx, my, b)
-  if b == 'l' and self:contains(mx, my) and not self.disabled then
+  if b == 1 and self:contains(mx, my) and not self.disabled then
     self.gooey.hot = self
   end
 end
 
 function button:mousereleased(mx, my, b)
-  if b == 'l' and self.gooey.hot == self and self:contains(mx, my) and not self.disabled then
+  if b == 1 and self.gooey.hot == self and self:contains(mx, my) and not self.disabled then
     --self:emit('click')
   end
 end
@@ -47,7 +47,7 @@ function button:render()
   local text = self.text
   local mx, my = self:getMousePosition()
   local hover = self:contains(mx, my)
-  local active = hover and love.mouse.isDown('l') and self.gooey.hot == self
+  local active = hover and love.mouse.isDown(1) and self.gooey.hot == self
 
   -- button
   g.white(40)

@@ -105,7 +105,7 @@ function editor:textinput(char)
 end
 
 function editor:mousepressed(mx, my, b)
-  if b == 'l' and self:contains(mx, my) then
+  if b == 1 and self:contains(mx, my) then
     self.gooey.hot = self
     if self:focused() then return true end
   elseif (b == 'wu' or b == 'wd') and not self:focused() and self:contains(mx, my) then
@@ -114,7 +114,7 @@ function editor:mousepressed(mx, my, b)
 end
 
 function editor:mousereleased(mx, my, b)
-  if b == 'l' then
+  if b == 1 then
     if not self:focused() then
       if self.gooey.hot == self and self:contains(mx, my) then
         self.gooey:focus(self)
