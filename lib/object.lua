@@ -5,7 +5,7 @@ function object.create()
 end
 
 function object:include(source)
-  table.merge(source, self)
+  util.merge(source, self)
 end
 
 function object:wrap(fn)
@@ -28,8 +28,8 @@ end
 
 function object:new(state)
   local baseState = type(self.state) == 'function' and self.state() or {}
-  state = table.merge(state, baseState)
-  local instance = table.merge(state, {})
+  state = util.merge(state, baseState)
+  local instance = util.merge(state, {})
 
   setmetatable(instance, {__index = self})
 

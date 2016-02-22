@@ -9,12 +9,12 @@ end
 
 function inspector:toggleActive()
   self.active = not self.active
-  lib.flux.to(self, .3, {x = self.active and 0 or -self.config.width}):ease('quartout')
+  lib.flux.to(self, .25, {x = self.active and 0 or -self.config.width}):ease('backout')
 end
 
 function inspector:smoothX()
   local targetX = self.active and 0 or -self.config.width
-  --self.x = math.lerp(self.x, targetX, 16 * lib.tick.rate)
+  --self.x = util.lerp(self.x, targetX, 16 * lib.tick.rate)
 end
 
 function inspector:updateCursor(mouse, components)
@@ -28,7 +28,7 @@ function inspector:updateCursor(mouse, components)
 end
 
 function inspector:setupComponents(editing)
-  local subject = table.get(app, editing)
+  local subject = util.get(app, editing)
   if subject.editor then
     local components = {}
     local y = 44
@@ -62,7 +62,7 @@ function inspector:setupComponents(editing)
     return components
   else
     local config = subject.config or subject
-    return table.map(table.keys(config), function(prop, i)
+    return util.map(util.keys(config), function(prop, i)
       local editor = self.gooey:add(lib.gooey.editor, 'config.' .. editing .. '.' .. prop, {value = config[prop]})
       editor.label = prop:gsub('[A-Z]', function(x) return ' ' .. x:lower() end)
       editor.valueSubject:onNext(editor.value)

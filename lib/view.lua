@@ -123,13 +123,13 @@ function view:resize()
   self.frame.x, self.frame.y, self.frame.width, self.frame.height = 0, 0, self.width, self.height
   if (self.width / self.height) > (w / h) then
     self.scale = w / self.width
-    local margin = math.max(math.round(((h - w * (self.height / self.width)) / 2)), 0)
+    local margin = math.max(util.round(((h - w * (self.height / self.width)) / 2)), 0)
     self.frame.y = margin
     self.frame.height = h - 2 * margin
     self.frame.width = w
   else
     self.scale = h / self.height
-    local margin = math.max(math.round(((w - h * (self.width / self.height)) / 2)), 0)
+    local margin = math.max(util.round(((w - h * (self.width / self.height)) / 2)), 0)
     self.frame.x = margin
     self.frame.width = w - 2 * margin
     self.frame.height = h
@@ -163,39 +163,39 @@ function view:convertZ(z)
 end
 
 function view:three(x, y, z)
-  local sx, sy = math.lerp(self.prevx, self.x, lib.tick.accum / lib.tick.rate), math.lerp(self.prevy, self.y, lib.tick.accum / lib.tick.rate)
+  local sx, sy = util.lerp(self.prevx, self.x, lib.tick.accum / lib.tick.rate), util.lerp(self.prevy, self.y, lib.tick.accum / lib.tick.rate)
   z = self:convertZ(z)
   return x - (z * ((sx + self.width / 2 - x) / 500)), y - (z * ((sy + self.height / 2 - y) / 500))
 end
 
 function view:threeDepth(x, y, z)
-  return math.clamp(math.distance(x, y, self.x + self.width / 2, self.y + self.height / 2) * self.scale - 1000 - z, -4096, -16)
+  return util.clamp(util.distance(x, y, self.x + self.width / 2, self.y + self.height / 2) * self.scale - 1000 - z, -4096, -16)
 end
 
 function view:contain()
-  self.x = math.clamp(self.x, 0, self.xmax - self.width)
-  self.y = math.clamp(self.y, 0, self.ymax - self.height)
+  self.x = util.clamp(self.x, 0, self.xmax - self.width)
+  self.y = util.clamp(self.y, 0, self.ymax - self.height)
 end
 
 function view:worldPoint(x, y)
-  x = math.round(((x - self.frame.x) / self.scale) + self.x)
-  if y then y = math.round(((y - self.frame.y) / self.scale) + self.y) end
+  x = util.round(((x - self.frame.x) / self.scale) + self.x)
+  if y then y = util.round(((y - self.frame.y) / self.scale) + self.y) end
   return x, y
 end
 
 function view:screenPoint(x, y)
-  local vx, vy = math.lerp(self.prevx, self.x, lib.tick.accum / lib.tick.rate), math.lerp(self.prevy, self.y, lib.tick.accum / lib.tick.rate)
+  local vx, vy = util.lerp(self.prevx, self.x, lib.tick.accum / lib.tick.rate), util.lerp(self.prevy, self.y, lib.tick.accum / lib.tick.rate)
   x = (x - vx) * self.scale
   if y then y = (y - vy) * self.scale end
   return x, y
 end
 
 function view:worldMouseX()
-  return math.round(((love.mouse.getX() - self.frame.x) / self.scale) + self.x)
+  return util.round(((love.mouse.getX() - self.frame.x) / self.scale) + self.x)
 end
 
 function view:worldMouseY()
-  return math.round(((love.mouse.getY() - self.frame.y) / self.scale) + self.y)
+  return util.round(((love.mouse.getY() - self.frame.y) / self.scale) + self.y)
 end
 
 function view:frameMouseX()
@@ -211,7 +211,7 @@ function view:screenshake(amount)
 end
 
 function view:worldPush()
-  local x, y, s = unpack(table.interpolate({self.prevx, self.prevy, self.prevscale}, {self.x, self.y, self.scale}, lib.tick.accum / lib.tick.rate))
+  local x, y, s = unpack(util.interpolateTable({self.prevx, self.prevy, self.prevscale}, {self.x, self.y, self.scale}, lib.tick.accum / lib.tick.rate))
   if self.shake > .01 then
     local shakex = -1 + love.math.random() * 2
     local shakey = -1 + love.math.random() * 2

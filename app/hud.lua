@@ -23,7 +23,7 @@ function hud:bind()
       local muju = app.context.objects.muju
       self.prevJujuFactor = self.jujuFactor
       local percent = muju.totalJuju / 50
-      self.jujuFactor = math.lerp(self.jujuFactor, percent, lib.tick.getLerpFactor(.6))
+      self.jujuFactor = util.lerp(self.jujuFactor, percent, lib.tick.getLerpFactor(.6))
     end)
 
   app.context.view.hud

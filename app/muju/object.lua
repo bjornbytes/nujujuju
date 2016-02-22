@@ -16,7 +16,9 @@ muju.state = function()
     juju = 5,
     totalJuju = 5,
     jujuTrickleTimer = 0,
-    dead = false
+    dead = false,
+    squishFactor = 0,
+    squishFactorTween = nil
   }
 
   state.animations = {}
@@ -39,6 +41,18 @@ function muju:bind()
 
     love.update
       :subscribe(self:wrap(self.animate)),
+
+    love.mousepressed
+      :filter(function(x, y, b) return b == 1 end)
+      :subscribe(function(x, y, b)
+        self.squishFactorTween = lib.flux.to(self, .3, { squishFactor = 1 }):ease('backinout')
+      end),
+
+    love.mousereleased
+      :filter(function(x, y, b) return b == 1 end)
+      :subscribe(function(x, y, b)
+        self.squishFactorTween = lib.flux.to(self, .3, { squishFactor = 0 }):ease('backinout')
+      end),
 
     self.collisions
       :subscribe(self:wrap(self.onCollision))

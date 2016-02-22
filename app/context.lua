@@ -14,8 +14,8 @@ function context.load(scene)
   for _, entry in ipairs(context.scene.objects) do
     local path = entry[1]
 
-    local object = table.get(app, path .. '.object') or table.get(app, path)
-    local instance = object:new(table.copy(entry))
+    local object = util.get(app, path .. '.object') or util.get(app, path)
+    local instance = object:new(util.copy(entry))
 
     context.objects[instance] = instance
 

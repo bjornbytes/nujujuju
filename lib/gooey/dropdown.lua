@@ -24,14 +24,14 @@ function dropdown:update()
   local hover = self:contains(mx, my)
   self.prevFactor = self.factor
   self.prevHoverFactor = self.hoverFactor
-  self.factor = math.lerp(self.factor, self:focused() and 1 or 0, math.min(16 * lib.tick.rate, 1))
-  self.hoverFactor = math.lerp(self.hoverFactor, (self:focused() or hover) and 1 or 0, math.min(16 * lib.tick.rate, 1))
+  self.factor = util.lerp(self.factor, self:focused() and 1 or 0, math.min(16 * lib.tick.rate, 1))
+  self.hoverFactor = util.lerp(self.hoverFactor, (self:focused() or hover) and 1 or 0, math.min(16 * lib.tick.rate, 1))
   if self:focused() then
     local hoverIndex = self:contains(mx, my)
     local hoverAmount = 1 + (love.mouse.isDown(1) and .5 or 0)
     for i = 1, #self.choices do
       self.prevChoiceHoverFactors[i] = self.choiceHoverFactors[i] or 0
-      self.choiceHoverFactors[i] = math.lerp(self.prevChoiceHoverFactors[i], i == hoverIndex and hoverAmount or 0, math.min(16 * lib.tick.rate, 1))
+      self.choiceHoverFactors[i] = util.lerp(self.prevChoiceHoverFactors[i], i == hoverIndex and hoverAmount or 0, math.min(16 * lib.tick.rate, 1))
     end
 
     if hover then
@@ -58,9 +58,9 @@ function dropdown:render()
   local ox, oy = self:getOffset()
   mx, my = mx + ox, my + oy
   local hoverIndex = self:contains(mx, my)
-  local choiceHoverFactors = table.interpolate(self.prevChoiceHoverFactors, self.choiceHoverFactors, lib.tick.accum / lib.tick.rate)
-  local hoverFactor = math.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
-  local factor = math.lerp(self.prevFactor, self.factor, lib.tick.accum / lib.tick.rate)
+  local choiceHoverFactors = util.interpolateTable(self.prevChoiceHoverFactors, self.choiceHoverFactors, lib.tick.accum / lib.tick.rate)
+  local hoverFactor = util.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
+  local factor = util.lerp(self.prevFactor, self.factor, lib.tick.accum / lib.tick.rate)
   local dropdownHeight = self:getdropdownHeight() * factor
   local font = g.setFont(self.gooey.font)
   local value = self.value:getValue()
@@ -84,7 +84,7 @@ function dropdown:render()
     local hoverFactor = 0
     if self:focused() then
       local prev = self:getdropdownHeight() * (i - 1) / #self.choices
-      factor = math.clamp((dropdownHeight - prev) / h, 0, 1) ^ 4
+      factor = util.clamp((dropdownHeight - prev) / h, 0, 1) ^ 4
       hoverFactor = choiceHoverFactors[i]
     end
     local alpha = math.min(180 * factor + (75 * hoverFactor), 255)
@@ -134,11 +134,11 @@ end
 
 function dropdown:contains(mx, my)
   local x, y, w, h = self.geometry()
-  if math.inside(mx, my, x, y, w, h) then return 0 end
+  if util.inside(mx, my, x, y, w, h) then return 0 end
 
   if self:focused() then
     for i = 1, #self.choices do
-      if math.inside(mx, my, x, y + h * i, w, h) then
+      if util.inside(mx, my, x, y + h * i, w, h) then
         return i
       end
     end

@@ -30,18 +30,18 @@ function slider:update()
 
   if self.gooey.hot == self then
     local x, y, w, r = self:geometry()
-    local percent = math.clamp((mx - x) / w, 0, 1)
+    local percent = util.clamp((mx - x) / w, 0, 1)
     self:setValue(self.min + (self.max - self.min) * percent)
   end
 
   self.prevFactor = self.factor
-  self.factor = math.lerp(self.factor, (value - self.min) / (self.max - self.min), math.min(16 * lib.tick.rate, 1))
+  self.factor = util.lerp(self.factor, (value - self.min) / (self.max - self.min), math.min(16 * lib.tick.rate, 1))
 
   self.prevScale = self.scale
-  self.scale = math.lerp(self.scale, (hover or self.gooey.hot == self) and 1.15 or 1, math.min(16 * lib.tick.rate, 1))
+  self.scale = util.lerp(self.scale, (hover or self.gooey.hot == self) and 1.15 or 1, math.min(16 * lib.tick.rate, 1))
 
   self.prevHoverFactor = self.hoverFactor
-  self.hoverFactor = math.lerp(self.hoverFactor, hover and 1 or 0, math.min(16 * lib.tick.rate, 1))
+  self.hoverFactor = util.lerp(self.hoverFactor, hover and 1 or 0, math.min(16 * lib.tick.rate, 1))
 
   if hover then
     if not self.hoverDirty then
@@ -55,9 +55,9 @@ end
 function slider:render()
   local x, y, w, r = self.geometry()
 
-  local factor = math.lerp(self.prevFactor, self.factor, lib.tick.accum / lib.tick.rate)
-  local hoverFactor = math.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
-  local scale = math.lerp(self.prevScale, self.scale, lib.tick.accum / lib.tick.rate)
+  local factor = util.lerp(self.prevFactor, self.factor, lib.tick.accum / lib.tick.rate)
+  local hoverFactor = util.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
+  local scale = util.lerp(self.prevScale, self.scale, lib.tick.accum / lib.tick.rate)
   local radius = scale * r
 
   g.white()
@@ -67,7 +67,7 @@ function slider:render()
 
   g.white(40 + 80 * hoverFactor)
   g.setLineWidth(2)
-  g.line(math.round(x) + .5, math.round(y) + .5, x + w, y)
+  g.line(util.round(x) + .5, util.round(y) + .5, x + w, y)
   g.setLineWidth(1)
 
   g.setColor(30, 30, 30)
@@ -94,19 +94,19 @@ function slider:contains(mx, my)
   local x, y, w, r = self:geometry()
   local value = self.valueSubject:getValue()
   local factor = (value - self.min) / (self.max - self.min)
-  return math.insideCircle(mx, my, x + w * factor, y, r + 2)
+  return util.insideCircle(mx, my, x + w * factor, y, r + 2)
 end
 
 function slider:containsBar(mx, my)
   local x, y, w, r = self:geometry()
   r = r * 1.5
-  return math.inside(mx, my, x - r, y - r, w + 2 * r, 2 * r)
+  return util.inside(mx, my, x - r, y - r, w + 2 * r, 2 * r)
 end
 
 function slider:setValue(value)
   local current = self.valueSubject:getValue()
   local old = currentValue
-  local new = math.round(value, self.round)
+  local new = util.round(value, self.round)
   if new ~= current then
     self.valueSubject:onNext(new)
   end

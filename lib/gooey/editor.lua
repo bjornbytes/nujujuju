@@ -28,19 +28,19 @@ function editor:update()
   local mx, my = love.mouse.getPosition()
 
   local hover = self:contains(mx, my)
-  self.hoverFactor = math.lerp(self.hoverFactor, hover and 1 or 0, math.min(16 * lib.tick.rate, 1))
-  self.focusFactor = math.lerp(self.focusFactor, self:focused() and 1 or 0, math.min(16 * lib.tick.rate, 1))
-  self.errorFactor = math.lerp(self.errorFactor, 0, math.min(16 * lib.tick.rate, 1))
+  self.hoverFactor = util.lerp(self.hoverFactor, hover and 1 or 0, math.min(16 * lib.tick.rate, 1))
+  self.focusFactor = util.lerp(self.focusFactor, self:focused() and 1 or 0, math.min(16 * lib.tick.rate, 1))
+  self.errorFactor = util.lerp(self.errorFactor, 0, math.min(16 * lib.tick.rate, 1))
 end
 
 function editor:render()
   local x, y, w = self.geometry()
 
-  local hoverFactor = math.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
-  local focusFactor = math.lerp(self.prevFocusFactor, self.focusFactor, lib.tick.accum / lib.tick.rate)
-  local errorFactor = math.lerp(self.prevErrorFactor, self.errorFactor, lib.tick.accum / lib.tick.rate)
+  local hoverFactor = util.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
+  local focusFactor = util.lerp(self.prevFocusFactor, self.focusFactor, lib.tick.accum / lib.tick.rate)
+  local errorFactor = util.lerp(self.prevErrorFactor, self.errorFactor, lib.tick.accum / lib.tick.rate)
 
-  x = x + math.round(4 * hoverFactor)
+  x = x + util.round(4 * hoverFactor)
 
   g.setFont(self.gooey.font)
   g.white(180 + (75 * hoverFactor))
@@ -57,11 +57,11 @@ function editor:render()
   g.setLineWidth(1)
   if errorFactor > .01 then
     g.setColor(255, 100, 100, math.min(errorFactor, 1) * 255)
-    local y = math.round(y + g.getFont():getHeight()) + .5
+    local y = util.round(y + g.getFont():getHeight()) + .5
     g.line(x, y, x + w, y)
   elseif focusFactor * w > 1 then
     g.white(200)
-    local y = math.round(y + g.getFont():getHeight()) + .5
+    local y = util.round(y + g.getFont():getHeight()) + .5
     g.line(x, y, x + w * focusFactor, y)
   end
 end
@@ -129,7 +129,7 @@ end
 
 function editor:wheelmoved(x, y)
   if y ~= 0 and not self:focused() and self:contains(love.mouse.getPosition()) then
-    self:increment(math.sign(y))
+    self:increment(util.sign(y))
   end
 end
 
@@ -139,7 +139,7 @@ function editor:contains(mx, my)
   local x1 = x
   local y1 = y
   local str = self.label
-  return math.inside(mx, my, x1, y1, w, font:getHeight())
+  return util.inside(mx, my, x1, y1, w, font:getHeight())
 end
 
 function editor:increment(sign)

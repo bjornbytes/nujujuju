@@ -17,7 +17,7 @@ lib.tick.init()
 lib.quilt.init()
 f = lib.funk
 g = love.graphics
-require 'lib/util'
+util = setmetatable(lib.util, { __index = lib.lume })
 
 app.context.load('overgrowth')
 

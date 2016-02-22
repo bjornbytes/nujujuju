@@ -13,9 +13,9 @@ end
 collision.handlers = {
   ['circle:circle'] = function(o1, o2)
     local x1, y1, x2, y2, r1, r2 = o1.position.x, o1.position.y, o2.position.x, o2.position.y, o1.config.radius, o2.config.radius
-    local dis = math.distance(x1, y1, x2, y2)
+    local dis = util.distance(x1, y1, x2, y2)
     if dis <= r1 + r2 then
-      local dir = math.direction(x1, y1, x2, y2)
+      local dir = util.angle(x1, y1, x2, y2)
       local overlap = (r1 + r2) - dis
       return overlap * math.cos(dir), overlap * math.sin(dir)
     end
@@ -25,12 +25,12 @@ collision.handlers = {
   end,
   ['circle:ellipse'] = function(o1, o2)
     local x1, y1, x2, y2, r1, a, b = o1.position.x, o1.position.y, o2.position.x, o2.position.y, o1.config.radius, o2.config.radius, o2.config.radius / o2.config.perspective
-    local dis = math.distance(x1, y1, x2, y2)
-    local dir = math.direction(x1, y1, x2, y2)
+    local dis = util.distance(x1, y1, x2, y2)
+    local dir = util.angle(x1, y1, x2, y2)
     local r2 = (a * b) / math.sqrt((b * math.cos(dir)) ^ 2 + (a * math.sin(dir)) ^ 2)
     local ex = x2 + math.cos(dir + math.pi) * r2
     local ey = y2 + math.sin(dir + math.pi) * r2
-    local overlap = r1 - math.distance(x1, y1, ex, ey)
+    local overlap = r1 - util.distance(x1, y1, ex, ey)
     if overlap > 0 then
       return overlap * math.cos(dir), overlap * math.sin(dir)
     end

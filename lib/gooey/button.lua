@@ -20,7 +20,7 @@ function button:update()
   self.prevHoverFactor = self.hoverFactor
   self.prevHoverFade = self.hoverFade
   if self.hoverActive then
-    self.hoverFactor = math.lerp(self.hoverFactor, 1, math.min(8 * lib.tick.rate, 1))
+    self.hoverFactor = util.lerp(self.hoverFactor, 1, math.min(8 * lib.tick.rate, 1))
     if self.hoverFactor > .9 then
       self.hoverFade = math.min(self.hoverFade + lib.tick.rate, 1)
     end
@@ -53,7 +53,7 @@ function button:render()
   g.white(40)
   g.rectangle('fill', x, y, w, h)
 
-  local fade = math.lerp(self.prevHoverFade, self.hoverFade, lib.tick.accum / lib.tick.rate)
+  local fade = util.lerp(self.prevHoverFade, self.hoverFade, lib.tick.accum / lib.tick.rate)
   g.setColor(0, 0, 0, 200)
   g.setLineWidth(2)
   local xx, yy = x, y
@@ -66,7 +66,7 @@ function button:render()
     if not self.hoverActive then
       self.hoverX = mx
       self.hoverY = my
-      local d = math.distance
+      local d = util.distance
       self.hoverDistance = math.max(d(mx, my, x, y), d(mx, my, x + w, y), d(mx, my, x, y + h), d(mx, my, x + w, y + h))
     end
 
@@ -75,7 +75,7 @@ function button:render()
       g.rectangle('fill', x, y, w, h)
     end)
 
-    local factor = math.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
+    local factor = util.lerp(self.prevHoverFactor, self.hoverFactor, lib.tick.accum / lib.tick.rate)
     g.white(40 * (1 - fade))
     g.setBlendMode('alpha')
     g.circle('fill', self.hoverX, self.hoverY, factor * self.hoverDistance)
@@ -100,7 +100,7 @@ function button:render()
 end
 
 function button:contains(x, y)
-  return math.inside(x, y, self.geometry()) and not self.disabled
+  return util.inside(x, y, self.geometry()) and not self.disabled
 end
 
 return button

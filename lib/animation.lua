@@ -26,7 +26,7 @@ function animation.create(spine, config)
     return spine.image
   end
 
-  self.states = table.copy(self.config.states)
+  self.states = util.copy(self.config.states)
 
   self.animationStateData = lib.spine.AnimationStateData.new(self.skeletonData)
   self.animationState = lib.spine.AnimationState.new(self.animationStateData)

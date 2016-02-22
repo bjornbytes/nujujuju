@@ -22,9 +22,9 @@ function checkbox:update()
   mx, my = mx + ox, my + oy
 
   local hover = self:contains(mx, my)
-  self.scale = math.lerp(self.scale, hover and 1.15 or 1, math.min(16 * lib.tick.rate, 1))
+  self.scale = util.lerp(self.scale, hover and 1.15 or 1, math.min(16 * lib.tick.rate, 1))
 
-  self.factor = math.lerp(self.factor, self.value and 1 or 0, math.min(16 * lib.tick.rate, 1))
+  self.factor = util.lerp(self.factor, self.value and 1 or 0, math.min(16 * lib.tick.rate, 1))
 
   if self:contains(mx, my) then
     if not self.hoverDirty and not self.gooey.focused then
@@ -38,8 +38,8 @@ end
 function checkbox:render()
   local x, y, r = self.geometry()
 
-  local factor = math.lerp(self.prevFactor, self.factor, lib.tick.accum / lib.tick.rate)
-  local scale = math.lerp(self.prevScale, self.scale, lib.tick.accum / lib.tick.rate)
+  local factor = util.lerp(self.prevFactor, self.factor, lib.tick.accum / lib.tick.rate)
+  local scale = util.lerp(self.prevScale, self.scale, lib.tick.accum / lib.tick.rate)
   local radius = scale * r
 
   if self.value then g.setColor(0, 0, 0, 200)
@@ -77,7 +77,7 @@ function checkbox:contains(mx, my)
   local x1 = x - r
   local y1 = y - r
   local str = self.label
-  return math.inside(mx, my, x1, y1, r + r + 1.4 * r + font:getWidth(str), math.max(font:getHeight(), 2 * r))
+  return util.inside(mx, my, x1, y1, r + r + 1.4 * r + font:getWidth(str), math.max(font:getHeight(), 2 * r))
 end
 
 return checkbox

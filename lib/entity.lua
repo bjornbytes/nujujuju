@@ -3,7 +3,7 @@ local entity = {}
 function entity.closest(source, ...)
   local getEntries = {
     totem = function(source, result)
-      table.each(table.filter(app.context.objects, 'isTotem'), function(totem)
+      util.each(util.filter(app.context.objects, 'isTotem'), function(totem)
         if source ~= totem and not totem.building then
           table.insert(result, {totem, lib.entity.distanceTo(source, totem)})
         end
@@ -11,7 +11,7 @@ function entity.closest(source, ...)
     end,
 
     enemy = function(source, result)
-      table.each(table.filter(app.context.objects, 'isEnemy'), function(enemy)
+      util.each(util.filter(app.context.objects, 'isEnemy'), function(enemy)
         if source ~= enemy then
           table.insert(result, {enemy, lib.entity.distanceTo(source, enemy)})
         end
@@ -28,22 +28,22 @@ function entity.closest(source, ...)
 
   local kinds = {...}
   local targets = {}
-  table.each(kinds, function(kind) getEntries[kind](source, targets) end)
+  util.each(kinds, function(kind) getEntries[kind](source, targets) end)
   table.sort(targets, function(a, b) return a[2] < b[2] end)
   if targets[1] then return unpack(targets[1]) end
   return nil
 end
 
 function entity:distanceTo(other)
-  return math.distance(self.position.x, self.position.y, other.position.x, other.position.y)
+  return util.distance(self.position.x, self.position.y, other.position.x, other.position.y)
 end
 
 function entity:directionTo(other)
-  return math.direction(self.position.x, self.position.y, other.position.x, other.position.y)
+  return util.angle(self.position.x, self.position.y, other.position.x, other.position.y)
 end
 
 function entity:signTo(other)
-  return -math.sign(self.position.x - other.position.x)
+  return -util.sign(self.position.x - other.position.x)
 end
 
 function entity:isInRangeOf(other)
@@ -77,8 +77,8 @@ end
 
 function entity:adjustSpeedToVector(length, direction, smooth)
   local lerp = smooth and (smooth * lib.tick.rate) or 1
-  self.speed.x = math.lerp(self.speed.x, length * math.cos(direction), lerp)
-  self.speed.y = math.lerp(self.speed.y, length * math.sin(direction), lerp)
+  self.speed.x = util.lerp(self.speed.x, length * math.cos(direction), lerp)
+  self.speed.y = util.lerp(self.speed.y, length * math.sin(direction), lerp)
   return self.speed
 end
 
@@ -98,8 +98,8 @@ function entity:enclose()
     local r = self.config.radius
     local x, y = self.position.x, self.position.y
     local w, h = app.context.scene.width, app.context.scene.height
-    self.position.x = math.clamp(x, r, w - r)
-    self.position.y = math.clamp(y, r, h - r)
+    self.position.x = util.clamp(x, r, w - r)
+    self.position.y = util.clamp(y, r, h - r)
   end
 end
 

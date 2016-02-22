@@ -70,7 +70,7 @@ function gooey:call(method, ...)
     end
   end
 
-  local components = table.filter(self.components, function(c) return c ~= self.focused end)
+  local components = util.filter(self.components, function(c) return c ~= self.focused end)
   for code, component in pairs(components) do
     f.try(component[method], component, ...)
   end
@@ -78,7 +78,7 @@ end
 
 function gooey:add(class, code, vars)
   local component = class()
-  table.merge(vars, component)
+  util.merge(vars, component)
   component.code = code
   component.gooey = self
   f.try(component.activate, component)
