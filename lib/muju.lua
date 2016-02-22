@@ -1,95 +1,7 @@
 local muju = {}
 
-function muju:move(input)
-  local x, y = input.x, input.y
-  local config = self.config
-  local direction = math.atan2(y, x)
-  local length = math.min(math.distance(0, 0, x, y), 1)
-
-  if x == 0 and y == 0 then
-    self.speed.x = math.lerp(self.speed.x, 0, math.min(config.deceleration * lib.tick.rate, 1))
-    self.speed.y = math.lerp(self.speed.y, 0, math.min(config.deceleration * lib.tick.rate, 1))
-  else
-    self.speed.x = math.lerp(self.speed.x, config.speed * math.cos(direction) * length, config.acceleration * lib.tick.rate)
-    self.speed.y = math.lerp(self.speed.y, config.speed * math.sin(direction) * length, config.acceleration * lib.tick.rate)
-  end
-
-  self.position.x = self.position.x + self.speed.x * lib.tick.rate
-  self.position.y = self.position.y + self.speed.y * lib.tick.rate
-end
-
-function muju:canShapeshift()
-  return lib.tick.index - self.lastShapeshift > self.config.shapeshiftCooldown / lib.tick.rate and self.juju >= self.config.shapeshiftCost
-end
-
-function muju:shapeshift()
-  self.form = self.form == 'muju' and 'thuju' or 'muju'
-  self.animation = self.animations[self.form]
-
-  if self.form == 'thuju' then
-    self.animation:clear()
-    self.animation:resetTo('spawn')
-  end
-
-  self.lastShapeshift = lib.tick.index
-  self:spendJuju(self.config.shapeshiftCost)
-end
-
-function muju:attack()
-  if self.form ~= 'muju' then
-    self.animation:set('attack')
-  end
-end
-
-function muju:animate(input)
-  if self.dead then return end
-
-  self.animation.speed = 1
-
-  local moving = math.abs(input.x) > .5 or math.abs(input.y) > .5
-  local speed = math.sqrt((self.speed.x ^ 2) + (self.speed.y ^ 2)) / self.config.speed
-
-  if moving then
-    self.animation:set('walk')
-  elseif self.animation.states.walk.active and speed < 1 then
-    self.animation:set('stop')
-  end
-end
-
-function muju:interactWithBuilding()
-  if self.nearbyBuilding and self.nearbyBuilding:canInteractWith(self) then
-    self.nearbyBuilding:interact()
-  end
-end
-
-function muju:flipAnimation()
-  local x = self.speed.x
-  if x ~= 0 then
-    self.animation.flipped = x > 0
-  end
-end
-
-function muju:setShuffleVolume()
-  local speed = math.sqrt((self.speed.x ^ 2) + (self.speed.y ^ 2)) / self.config.speed
-  self.shuffle:setVolume(speed * self.config.shuffleVolume)
-end
-
-function muju:setActiveBuilding()
-  self.nearbyBuilding = nil
-  local buildings = table.filter(app.context.objects, 'isBuilding')
-  for _, building in pairs(buildings) do
-    local distance = math.distance(self.position.x, self.position.y, building.position.x, building.position.y)
-    local direction = math.direction(self.position.x, self.position.y, building.position.x, building.position.y)
-    local a, b = building.config.radius, building.config.radius / building.config.perspective
-    local r = (a * b) / math.sqrt((b * math.cos(direction)) ^ 2 + (a * math.sin(direction)) ^ 2)
-    local ex = building.position.x + math.cos(direction + math.pi) * r
-    local ey = building.position.y + math.sin(direction + math.pi) * r
-    local overlap = self.config.radius - (math.distance(self.position.x, self.position.y, ex, ey))
-    if overlap > -1 then
-      self.nearbyBuilding = building
-      return
-    end
-  end
+function muju:animate()
+  self.animation:tick(lib.tick.rate)
 end
 
 function muju:jujuTrickle()
@@ -101,70 +13,11 @@ function muju:jujuTrickle()
   end
 end
 
-function muju:eventFootstep()
-  local sound = love.audio.play(app.muju.sound['footstep' .. love.math.random(1, 2)])
-  sound:setVolume(self.config.footstepVolume)
-  sound:setPitch(.9 + love.math.random() * .2)
-end
-
-function muju:eventLimp()
-  local sound = love.audio.play(app.muju.sound.staff)
-  sound:setVolume(self.config.staffVolume)
-  sound:setPitch(.8 + love.math.random() * .6)
-
-  local x = self.position.x + (self.animation.flipped and 40 or -40)
-  local y = self.position.y
-  app.context.particles:emit('dust', x, y, 25, function()
-    return { direction = love.math.random() < .5 and math.pi or 0 }
-  end)
-end
-
-function muju:eventAttack()
-  table.each(table.filter(app.context.objects, 'isEnemy'), function(enemy)
-    local animationDirectionSign = self.animation.flipped and -1 or 1
-    local closeEnough = math.distance(self.position.x, self.position.y, enemy.position.x, enemy.position.y) < (self.config.radius + enemy.config.radius) * self.config.staffHitboxThreshold
-    local verticallyCloseEnough = math.abs(self.position.y - enemy.position.y) < self.config.staffYPositionThreshold
-    local facingTheRightWay = animationDirectionSign == math.sign(self.position.x - enemy.position.x)
-    if closeEnough and verticallyCloseEnough and facingTheRightWay then
-      enemy:hurt(self.config.staffDamage)
-      enemy:push({
-        force = 6 + (enemy:isDead() and 6 or 0),
-        direction = self:directionTo(enemy)
-      })
-    end
-  end)
-end
-
-function muju:onCollision(other, dx, dy)
-  if other.isEnemy then
-    other.position.x = other.position.x + dx / 2
-    other.position.y = other.position.y + dy / 2
-    self.position.x = self.position.x - dx / 2
-    self.position.y = self.position.y - dy / 2
-
-    local timeSinceLastHurt = (lib.tick.index - self.lastHurt) * lib.tick.rate
-    if timeSinceLastHurt > self.config.hurtGrace and other.hasContactDamage then
-      self:hurt(1)
-    end
-  else
-    other.position.x = other.position.x + dx / 2
-    other.position.y = other.position.y + dy / 2
-    self.position.x = self.position.x - dx / 2
-    self.position.y = self.position.y - dy / 2
-  end
-end
-
 function muju:tint(r, g, b)
   for _, slot in pairs({'robebottom', 'torso', 'front_upper_arm', 'rear_upper_arm', 'front_bracer', 'rear_bracer'}) do
     local slot = self.animation.skeleton:findSlot(slot)
     slot.r, slot.g, slot.b = r, g, b
   end
-end
-
-function muju:eatMushroom()
-  self.health = math.min(self.health + self.config.healthPerShruju, self.config.maxHealth)
-  self.juju = math.min(self.juju + self.config.jujuPerShruju, self.config.maxJuju)
-  self.totalJuju = self.totalJuju + self.config.jujuPerShruju
 end
 
 function muju:hurt(amount)
@@ -194,30 +47,13 @@ function muju:spendJuju(amount)
 end
 
 function muju:draw()
-  local image = app.art.shadow
-  local scale = 70 / image:getWidth()
-  g.white(120)
-  g.draw(image, self.position.x, self.position.y, 0, scale, scale / 2, image:getWidth() / 2, image:getHeight() / 2)
+  local image = app.environment.art.stump
+  local scale = 60 / image:getWidth()
 
   g.white()
-  self.animation:tick(lib.tick.delta)
-  local timeSinceLastHurt = (lib.tick.index - self.lastHurt) * lib.tick.rate
-  local timeSinceLastShapeshift = (lib.tick.index - self.lastShapeshift) * lib.tick.rate
-  if timeSinceLastHurt < self.config.hurtFlash then
-    self.animation:draw(self.position.x, self.position.y)
-    g.setShader(app.shaders.colorize)
-    app.shaders.colorize:send('color', {.75, .2, .2, 1})
-    self.animation:draw(self.position.x, self.position.y)
-    g.setShader()
-  elseif timeSinceLastHurt > self.config.hurtGrace or math.floor(lib.tick.index / (.15 / lib.tick.rate)) % 2 == 0 then
-    self.animation:draw(self.position.x, self.position.y)
-    if timeSinceLastShapeshift < .25 then
-      g.setShader(app.shaders.colorize)
-      app.shaders.colorize:send('color', {1, 1, 1, 1 - timeSinceLastShapeshift / .25})
-      self.animation:draw(self.position.x, self.position.y)
-      g.setShader()
-    end
-  end
+  g.draw(image, self.position.x, self.position.y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
+
+  self.animation:draw(self.position.x, self.position.y)
 
   if app.context.inspector.active then
     g.setLineWidth(3)

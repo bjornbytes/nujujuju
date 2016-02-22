@@ -2,7 +2,11 @@ local collision = lib.object.create()
 
 collision.state = function()
   return {
-    grid = {}
+    grid = {},
+    gridSize = {
+      x = 70,
+      y = 70 / 1.5
+    }
   }
 end
 
@@ -51,7 +55,7 @@ function collision:bind()
 end
 
 function collision:refresh(object)
-  local cell = self:serialize(app.context.grid:cell(object.position.x, object.position.y))
+  local cell = self:serialize(self:cell(object.position.x, object.position.y))
   if object._cell ~= cell then
     if object._cell and self.grid[object._cell] then
       self.grid[object._cell][object] = nil
@@ -86,7 +90,7 @@ end
 
 function collision:neighbors(object)
   local neighbors = {}
-  local ox, oy = app.context.grid:cell(object.position.x, object.position.y)
+  local ox, oy = self:cell(object.position.x, object.position.y)
   for x = ox - 1, ox + 1 do
     for y = oy - 1, oy + 1 do
       local cell = self.grid[self:serialize(x, y)]
@@ -115,6 +119,10 @@ end
 function collision:invert(x, y)
   if not x or not y then return x, y end
   return -x, -y
+end
+
+function collision:cell(x, y)
+  return math.ceil(x / self.gridSize.x), math.ceil(y / self.gridSize.y)
 end
 
 return collision

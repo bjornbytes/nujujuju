@@ -8,11 +8,6 @@ function context.load(scene)
   context.hud = app.hud:new()
   context.inspector = app.inspector:new()
   context.collision = lib.collision:new()
-  context.timeline = app.timeline.object:new({
-    events = table.copy(context.scene.events) or {}
-  })
-  context.timelineUI = app.timeline.ui:new()
-  context.grid = app.grid:new()
 
   context.objects = {}
 
@@ -29,8 +24,6 @@ function context.load(scene)
       context.objects[entry.key] = instance
     end
   end
-
-  --context.positioner = app.positioner:new({object = context.objects.muju})
 end
 
 function context.unload()
@@ -45,8 +38,6 @@ function context.unload()
   context.hud:unbind()
   context.inspector:unbind()
   context.collision:unbind()
-  context.timeline:unbind()
-  context.timelineUI:unbind()
 end
 
 function context:removeObject(object)

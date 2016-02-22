@@ -1,7 +1,5 @@
 local hud = lib.object.create()
 
-hud:include(lib.hud)
-
 hud.config = {
   font = fonts.roundedElegance,
   margin = .03,
@@ -30,14 +28,8 @@ function hud:bind()
 
   app.context.view.hud
     :subscribe(function()
-      g.setFont(self.font)
 
-      self:drawBlood()
-      self:drawPlayerHealthbar()
-      self:drawPlayerJuju()
-      self:drawTotalJuju()
-      self:drawBuildingUI()
-      self:drawFadeout()
+      -- render
 
       return -1000
     end)

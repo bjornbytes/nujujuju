@@ -4,7 +4,7 @@ inspector:include(lib.inspector)
 
 inspector.config = {
   width = 160,
-  objects = {'muju', 'buildings.shrine', 'buildings.dirt', 'totem', 'enemy'},
+  objects = {'muju', 'enemy'},
   initialObject = 'muju'
 }
 
@@ -13,11 +13,7 @@ inspector.state = function()
     active = false,
     editing = 'muju',
     x = -inspector.config.width,
-    gooey = lib.gooey.controller:new(),
-    timeline = {
-      active = false,
-      factor = 0
-    }
+    gooey = lib.gooey.controller:new()
   }
 
   state.dropdown = state.gooey:add(lib.gooey.dropdown, 'inspector.editing', {

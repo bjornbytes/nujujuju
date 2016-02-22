@@ -37,6 +37,10 @@ function gooey:bind()
     self.hot = nil
   end)
 
+  love.wheelmoved:subscribe(function(x, y)
+    self:call('wheelmoved', x, y)
+  end)
+
   love.textinput:subscribe(function(char)
     self:call('textinput', char)
   end)

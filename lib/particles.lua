@@ -1,7 +1,7 @@
 local particles = lib.object.create()
 
 particles.config = {
-  list = {'dust', 'thujustep'}
+  list = {'dust'}
 }
 
 particles.state = function()

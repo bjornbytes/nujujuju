@@ -108,8 +108,6 @@ function editor:mousepressed(mx, my, b)
   if b == 1 and self:contains(mx, my) then
     self.gooey.hot = self
     if self:focused() then return true end
-  elseif (b == 'wu' or b == 'wd') and not self:focused() and self:contains(mx, my) then
-    self:increment(b == 'wu' and 1 or -1)
   end
 end
 
@@ -126,6 +124,12 @@ function editor:mousereleased(mx, my, b)
       self.gooey:unfocus()
       self.value = self.valueSubject:getValue()
     end
+  end
+end
+
+function editor:wheelmoved(x, y)
+  if y ~= 0 and not self:focused() and self:contains(love.mouse.getPosition()) then
+    self:increment(math.sign(y))
   end
 end
 
