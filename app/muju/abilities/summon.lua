@@ -12,7 +12,9 @@ function summon:cast(x, y)
     }
   })
 
-  app.context.objects.muju.animation:set('summon')
+  app.context.objects[minion] = minion
+
+  self.owner.animation:set('summon')
 end
 
 return summon

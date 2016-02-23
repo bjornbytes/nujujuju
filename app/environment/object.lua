@@ -17,6 +17,7 @@ function environment:bind()
       local background = self.config.background
       g.white()
       g.draw(background.image, self.quad, 0, 0, 0, 1, 1 / background.perspective)
+      return 0
     end)
 end
 

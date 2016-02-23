@@ -26,9 +26,6 @@ muju.state = function()
   state.animation.flipped = true
   state.animation:set('idle')
 
-  state.abilities = {}
-  state.abilities.auto = app.muju.abilities.summon:new()
-
   return state
 end
 
@@ -36,26 +33,15 @@ function muju:bind()
   self:tint(.5, .2, .7)
   self.collisions = app.context.collision:add(self)
 
+  self.abilities = {}
+  self.abilities.auto = app.muju.abilities.summon:new({ owner = self })
+
   self:dispose({
     love.update
       :subscribe(self:wrap(self.jujuTrickle)),
 
     love.update
       :subscribe(self:wrap(self.animate)),
-
-    love.mousepressed
-      :filter(function(x, y, b) return b == 1 end)
-      :subscribe(function(x, y, b)
-        self.squishActive = true
-        lib.flux.to(self, .3, { squishFactor = 1 }):ease('backinout')
-      end),
-
-    love.mousereleased
-      :filter(function(x, y, b) return b == 1 end)
-      :subscribe(function(x, y, b)
-        self.squishActive = false
-        lib.flux.to(self, .3, { squishFactor = 0 }):ease('cubicout')
-      end),
 
     self.collisions
       :subscribe(self:wrap(self.onCollision))

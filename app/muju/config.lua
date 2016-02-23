@@ -1,5 +1,5 @@
 return {
-  radius = 20,
+  radius = 30,
 
   maxHealth = 5,
   maxJuju = 5,

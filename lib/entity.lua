@@ -2,18 +2,18 @@ local entity = {}
 
 function entity.closest(source, ...)
   local getEntries = {
-    totem = function(source, result)
-      util.each(util.filter(app.context.objects, 'isTotem'), function(totem)
-        if source ~= totem and not totem.building then
-          table.insert(result, {totem, lib.entity.distanceTo(source, totem)})
-        end
-      end)
-    end,
-
     enemy = function(source, result)
       util.each(util.filter(app.context.objects, 'isEnemy'), function(enemy)
         if source ~= enemy then
           table.insert(result, {enemy, lib.entity.distanceTo(source, enemy)})
+        end
+      end)
+    end,
+
+    minion = function(source, result)
+      util.each(util.filter(app.context.objects, 'isMinion'), function(minion)
+        if source ~= minion then
+          table.insert(result, {minion, lib.entity.distanceTo(source, minion)})
         end
       end)
     end,
@@ -29,6 +29,34 @@ function entity.closest(source, ...)
   local kinds = {...}
   local targets = {}
   util.each(kinds, function(kind) getEntries[kind](source, targets) end)
+  table.sort(targets, function(a, b) return a[2] < b[2] end)
+  if targets[1] then return unpack(targets[1]) end
+  return nil
+end
+
+function entity.closestToPoint(x, y, ...)
+  local getEntries = {
+    enemy = function(result)
+      util.each(util.filter(app.context.objects, 'isEnemy'), function(enemy)
+        table.insert(result, {enemy, lib.entity.distanceToPoint(enemy, x, y)})
+      end)
+    end,
+
+    minion = function(result)
+      util.each(util.filter(app.context.objects, 'isMinion'), function(minion)
+        table.insert(result, {minion, lib.entity.distanceToPoint(minion, x, y)})
+      end)
+    end,
+
+    player = function(result)
+      local player = app.context.objects.muju
+      table.insert(result, {player, lib.entity.distanceToPoint(player, x, y)})
+    end
+  }
+
+  local kinds = {...}
+  local targets = {}
+  util.each(kinds, function(kind) getEntries[kind](targets) end)
   table.sort(targets, function(a, b) return a[2] < b[2] end)
   if targets[1] then return unpack(targets[1]) end
   return nil

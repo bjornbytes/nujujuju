@@ -1,6 +1,7 @@
 local bruju = lib.object.create()
 
 bruju:include(lib.entity)
+bruju:include(lib.minion)
 
 bruju.config = app.minions.bruju.config
 
@@ -22,6 +23,11 @@ bruju.state = function()
 end
 
 function bruju:bind()
+  self.abilities = {}
+  self.abilities.auto = app.minions.abilities.move:new({ owner = self })
+
+  self:setIsMinion()
+
   self:dispose({
     love.update
       :subscribe(function()
@@ -41,10 +47,8 @@ function bruju:bind()
         return self:moveTowardsPoint(self.target.x, self.target.y, speed)
       end),
 
-    love.draw
-      :subscribe(function()
-        self:draw()
-      end)
+    app.context.view.draw
+      :subscribe(self:wrap(self.draw))
   })
 end
 
