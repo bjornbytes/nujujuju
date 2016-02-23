@@ -3,6 +3,7 @@ local context = {}
 function context.load(scene)
   context.scene = app.scenes[scene]
 
+  context.input = lib.input:new()
   context.view = lib.view:new()
   context.particles = lib.particles:new()
   context.hud = app.hud:new()
@@ -33,6 +34,7 @@ function context.unload()
 
   context.objects = nil
 
+  context.input:unbind()
   context.view:unbind()
   context.particles:unbind()
   context.hud:unbind()

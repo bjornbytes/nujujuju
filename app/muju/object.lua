@@ -28,6 +28,9 @@ muju.state = function()
   state.animation.speed = 1
   state.animation:set('idle')
 
+  state.abilities = {}
+  state.abilities.auto = app.muju.abilities.auto:new()
+
   return state
 end
 
@@ -51,7 +54,7 @@ function muju:bind()
     love.mousereleased
       :filter(function(x, y, b) return b == 1 end)
       :subscribe(function(x, y, b)
-        self.squishFactorTween = lib.flux.to(self, .3, { squishFactor = 0 }):ease('backinout')
+        self.squishFactorTween = lib.flux.to(self, .3, { squishFactor = 0 }):ease('quintout')
       end),
 
     self.collisions
