@@ -39,7 +39,7 @@ function inspector:bind()
 
   love.mousemoved
     :pack()
-    :combine(self.components)
+    :combineLatest(self.components)
     :subscribe(self:wrap(self.updateCursor))
 
   app.context.view.hud

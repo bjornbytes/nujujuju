@@ -5,7 +5,7 @@ getmetatable(dropdown).__call = function()
 end
 
 function dropdown:activate()
-  self.value = lib.rx.Subject.create(self.value)
+  self.value = lib.rx.BehaviorSubject.create(self.value)
   self.choices = self.choices or {}
   self.factor = 0
   self.prevFactor = self.factor
