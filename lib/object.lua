@@ -28,8 +28,7 @@ end
 
 function object:new(state)
   local baseState = type(self.state) == 'function' and self.state() or {}
-  state = util.merge(state, baseState)
-  local instance = util.merge(state, {})
+  local instance = lib.lume.merge({}, baseState, state or {})
 
   setmetatable(instance, {__index = self})
 

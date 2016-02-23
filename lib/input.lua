@@ -36,6 +36,7 @@ function input:bind()
       :flatMapLatest(function(ability)
         return love.mousereleased
           :filter(isLeft)
+          :first()
           :map(function(x, y)
             return x, y, ability
           end)
@@ -43,7 +44,7 @@ function input:bind()
       :subscribe(function(x, y, ability)
         ability:cast(x, y)
         self.autoCasting = nil
-      end)
+      end, print)
   })
 end
 

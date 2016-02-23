@@ -69,6 +69,10 @@ function muju:draw()
     local dir = util.angle(self.position.x, self.position.y, mx, my)
     local pointCount = 80
 
+    if not self.squishActive then
+      radius = radius + 30 * (1 - self.squishFactor)
+    end
+
     for i = 1, 80 do
       if self.squishFactor == 0 then
       end
@@ -77,8 +81,10 @@ function muju:draw()
       local y = my + util.dy(radius, dir + (2 * math.pi * (i / 80)))
       local max = math.pi / 2 + (math.pi / 2) * util.distance(self.position.x, self.position.y, mx, my) / 500 -- how bulbous it is
       local dif = (max - util.clamp(math.abs(util.anglediff(util.angle(mx, my, x, y), dir + math.pi)), 0, max)) / max
-      x = util.lerp(self.position.x, x, self.squishFactor)
-      y = util.lerp(self.position.y, y, self.squishFactor)
+      if self.squishActive then
+        x = util.lerp(self.position.x, x, self.squishFactor)
+        y = util.lerp(self.position.y, y, self.squishFactor)
+      end
       x = util.lerp(x, self.position.x, dif ^ 5)
       y = util.lerp(y, self.position.y, dif ^ 5)
 
@@ -86,7 +92,7 @@ function muju:draw()
       table.insert(points, y)
     end
 
-    g.white(40)
+    g.white(40 * self.squishFactor)
     g.polygon('fill', points)
   end
 

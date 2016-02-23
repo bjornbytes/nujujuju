@@ -18,18 +18,16 @@ muju.state = function()
     jujuTrickleTimer = 0,
     dead = false,
     squishFactor = 0,
-    squishFactorTween = nil
+    squishActive = false
   }
 
-  state.animations = {}
-  state.animations.muju = lib.animation.create(app.muju.spine, app.muju.animation)
-
-  state.animation = state.animations.muju
+  state.animation = lib.animation.create(app.muju.spine, app.muju.animation)
   state.animation.speed = 1
+  state.animation.flipped = true
   state.animation:set('idle')
 
   state.abilities = {}
-  state.abilities.auto = app.muju.abilities.auto:new()
+  state.abilities.auto = app.muju.abilities.summon:new()
 
   return state
 end
@@ -48,13 +46,15 @@ function muju:bind()
     love.mousepressed
       :filter(function(x, y, b) return b == 1 end)
       :subscribe(function(x, y, b)
-        self.squishFactorTween = lib.flux.to(self, .3, { squishFactor = 1 }):ease('backinout')
+        self.squishActive = true
+        lib.flux.to(self, .3, { squishFactor = 1 }):ease('backinout')
       end),
 
     love.mousereleased
       :filter(function(x, y, b) return b == 1 end)
       :subscribe(function(x, y, b)
-        self.squishFactorTween = lib.flux.to(self, .3, { squishFactor = 0 }):ease('quintout')
+        self.squishActive = false
+        lib.flux.to(self, .3, { squishFactor = 0 }):ease('cubicout')
       end),
 
     self.collisions

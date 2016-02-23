@@ -29,7 +29,8 @@ return {
     },
 
     summon = {
-      speed = 1.85
+      speed = 1.85,
+      next = 'idle'
     },
 
     death = {

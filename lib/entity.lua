@@ -35,11 +35,19 @@ function entity.closest(source, ...)
 end
 
 function entity:distanceTo(other)
-  return util.distance(self.position.x, self.position.y, other.position.x, other.position.y)
+  return entity.distanceToPoint(self, other.position.x, other.position.y)
+end
+
+function entity:distanceToPoint(x, y)
+  return util.distance(self.position.x, self.position.y, x, y)
 end
 
 function entity:directionTo(other)
-  return util.angle(self.position.x, self.position.y, other.position.x, other.position.y)
+  return entity.directionToPoint(self, other.position.x, other.position.y)
+end
+
+function entity:directionToPoint(x, y)
+  return util.angle(self.position.x, self.position.y, x, y)
 end
 
 function entity:signTo(other)
@@ -57,7 +65,11 @@ function entity:moveIntoRangeOf(other, speed)
 end
 
 function entity:moveTowards(other, speed)
-  local distance, direction = entity.distanceTo(self, other), entity.directionTo(self, other)
+  return entity.moveTowardsPoint(self, other.position.x, other.position.y, speed)
+end
+
+function entity:moveTowardsPoint(x, y, speed)
+  local distance, direction = entity.distanceToPoint(self, x, y), entity.directionToPoint(self, x, y)
   speed = math.min(distance, speed)
   self.position.x = self.position.x + math.cos(direction) * speed
   self.position.y = self.position.y + math.sin(direction) * speed
