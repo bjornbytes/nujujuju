@@ -9,9 +9,19 @@ function input:isCasting()
 end
 
 function input:getAbilityFromPosition(x, y)
-  local closest = lib.entity.closestToPoint(x, y, 'player', 'minion')
-  if closest and util.distance(closest.position.x, closest.position.y, x, y) <= closest.config.radius then
-    return (closest.abilities and closest.abilities.auto), closest
+  local candidates = util.filter(app.context.objects, 'isMinion')
+  candidates = util.concat(candidates, { app.context.objects.muju })
+
+  table.sort(candidates, function(a, b)
+    return a.position.y > b.position.y
+  end)
+
+  for i, candidate in ipairs(candidates) do
+    if candidate == app.context.objects.muju and util.distance(x, y, candidate.position.x, candidate.position.y) < candidate.config.radius then
+      return candidate.abilities.auto, candidate
+    elseif candidate.animation:contains(x, y) and candidate.abilities and candidate.abilities.auto then
+      return candidate.abilities.auto, candidate
+    end
   end
 end
 
@@ -90,8 +100,8 @@ function input:draw()
       local max = math.pi / 2 + (math.pi / 2) * util.distance(ox, oy, mx, my) / 500 -- how bulbous it is
       local dif = (max - util.clamp(math.abs(util.anglediff(util.angle(mx, my, x, y), dir + math.pi)), 0, max)) / max
       if self.targetActive then
-        x = util.lerp(ox, x, self.targetFactor)
-        y = util.lerp(oy, y, self.targetFactor)
+        x = util.lerp(ox, x, self.targetFactor ^ 2)
+        y = util.lerp(oy, y, self.targetFactor ^ 2)
       end
       x = util.lerp(x, ox, dif ^ 5)
       y = util.lerp(y, oy, dif ^ 5)

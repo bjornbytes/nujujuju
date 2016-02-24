@@ -51,7 +51,7 @@ function muju:draw()
   local scale = 60 / image:getWidth()
 
   g.white()
-  g.draw(image, self.position.x, self.position.y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
+  g.draw(image, self.position.x, self.position.y - 10, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
 
   self.animation:draw(self.position.x, self.position.y)
 

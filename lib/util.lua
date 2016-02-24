@@ -7,6 +7,7 @@ end
 function util.anglediff(d1, d2) return math.rad((((math.deg(d2) - math.deg(d1) % 360) + 540) % 360) - 180) end
 function util.inside(px, py, rx, ry, rw, rh) return px >= rx and px <= rx + rw and py >= ry and py <= ry + rh end
 function util.insideCircle(px, py, cx, cy, r) return math.distance(px, py, cx, cy) <= r end
+function util.sign(x) if x == 0 then return 0 else return lib.lume.sign(x) end end
 
 function util.dx(dis, dir)
   return dis * math.cos(dir)

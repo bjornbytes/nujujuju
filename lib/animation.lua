@@ -114,6 +114,24 @@ function animation:set(name)
   end
 end
 
+function animation:contains(x, y)
+  util.each(self.skeleton.slots, function(slot)
+    slot:setAttachment(self.skeleton:getAttachment(slot.data.name, slot.data.name .. '_bb'))
+  end)
+
+  self.skeleton.flipY = true
+  self.skeleton:updateWorldTransform()
+  self.skeletonBounds:update(self.skeleton)
+  self.skeleton.flipY = false
+  local contains = self.skeletonBounds:containsPoint(x, y)
+
+  util.each(self.skeleton.slots, function(slot)
+    slot:setAttachment(self.skeleton:getAttachment(slot.data.name, slot.data.name))
+  end)
+
+  return contains
+end
+
 function animation:clear()
   self.animationState:clearTracks()
 end

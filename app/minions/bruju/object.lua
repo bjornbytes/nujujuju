@@ -12,6 +12,10 @@ bruju.state = function()
       x = app.context.scene.width / 2,
       y = app.context.scene.height / 2
     },
+    target = {
+      x = nil,
+      y = nil
+    },
     health = 5
   }
 
@@ -37,6 +41,12 @@ function bruju:bind()
           self.animation:set('idle')
         end
 
+        local sign = util.sign(self.target.x - self.position.x)
+
+        if sign ~= 0 then
+          self.animation.flipped = sign < 0
+        end
+
         self.animation:tick(lib.tick.rate)
       end),
 
@@ -58,6 +68,14 @@ function bruju:draw()
 
   g.white(70)
   g.draw(image, self.position.x, self.position.y, 0, scale, scale / 1.5, image:getWidth() / 2, image:getHeight() / 2)
+
+  g.setColor(80, 200, 90, 80)
+  g.setLineWidth(3)
+  g.ellipse('line', self.target.x, self.target.y, 30, 30 / 2)
+
+  g.white(80)
+  g.setLineWidth(1)
+  g.ellipse('line', self.target.x, self.target.y, 30, 30 / 2)
 
   self.animation:draw(self.position.x, self.position.y)
 
