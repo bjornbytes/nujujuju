@@ -11,13 +11,9 @@ function target.objectAtPosition(x, y)
     return a.position.y > b.position.y
   end)
 
-  for i, candidate in ipairs(candidates) do
-    if candidate == app.context.objects.muju and util.distance(x, y, candidate.position.x, candidate.position.y) < candidate.config.radius then
-      return candidate
-    elseif candidate.animation:contains(x, y) then
-      return candidate
-    end
-  end
+  return util.match(candidates, function(candidate)
+    return candidate.animation:contains(x, y)
+  end)
 end
 
 return target
