@@ -1,6 +1,5 @@
 local bruju = lib.object.create()
 
-bruju:include(lib.entity)
 bruju:include(lib.unit)
 bruju:include(lib.minion)
 
@@ -13,7 +12,7 @@ bruju.state = function()
       x = app.context.scene.width / 2,
       y = app.context.scene.height / 2
     },
-    target = {
+    destination = {
       x = nil,
       y = nil
     },
@@ -29,20 +28,32 @@ end
 
 function bruju:bind()
   self.abilities = {}
-  self.abilities.auto = app.minions.common.abilities.move:new({ owner = self })
+  self.abilities.auto = app.minions.common.abilities.auto:new({ owner = self })
 
   self:setIsMinion()
 
   self:dispose({
     love.update
       :subscribe(function()
-        if self:distanceToPoint(self.target.x, self.target.y) > 0 then
+        if self.target then
+          local distance = self:distanceTo(self.target)
+          if distance <= self.config.radius + self.target.config.radius then
+            self.animation:set('idle')
+          else
+            self.animation:set('walk')
+          end
+        elseif self:distanceToPoint(self.destination.x, self.destination.y) > 0 then
           self.animation:set('walk')
         else
           self.animation:set('idle')
         end
 
-        local sign = util.sign(self.target.x - self.position.x)
+        local sign
+        if self.target then
+          sign = self:signTo(self.target)
+        else
+          sign = util.sign(self.destination.x - self.position.x)
+        end
 
         if sign ~= 0 then
           self.animation.flipped = sign < 0
@@ -53,9 +64,19 @@ function bruju:bind()
 
     love.update
       :subscribe(function()
-        local distance = self:distanceToPoint(self.target.x, self.target.y)
-        local speed = math.min(self.config.speed * lib.tick.rate, distance)
-        return self:moveTowardsPoint(self.target.x, self.target.y, speed)
+        if self.target then
+          local distance = self:distanceTo(self.target)
+          if distance <= self.config.radius + self.target.config.radius then
+            -- attack I guess
+          else
+            local speed = math.min(self.config.speed * lib.tick.rate, distance)
+            self:moveTowards(self.target, speed)
+          end
+        else
+          local distance = self:distanceToPoint(self.destination.x, self.destination.y)
+          local speed = math.min(self.config.speed * lib.tick.rate, distance)
+          self:moveTowardsPoint(self.destination.x, self.destination.y, speed)
+        end
       end),
 
     app.context.view.draw

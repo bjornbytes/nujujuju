@@ -8,23 +8,6 @@ function input:isCasting()
   return self.casting
 end
 
-function input:getAbilityFromPosition(x, y)
-  local candidates = util.filter(app.context.objects, 'isMinion')
-  candidates = util.concat(candidates, { app.context.objects.muju })
-
-  table.sort(candidates, function(a, b)
-    return a.position.y > b.position.y
-  end)
-
-  for i, candidate in ipairs(candidates) do
-    if candidate == app.context.objects.muju and util.distance(x, y, candidate.position.x, candidate.position.y) < candidate.config.radius then
-      return candidate.abilities.auto, candidate
-    elseif candidate.animation:contains(x, y) and candidate.abilities and candidate.abilities.auto then
-      return candidate.abilities.auto, candidate
-    end
-  end
-end
-
 input.state = function()
   return {
     casting = nil,
@@ -39,8 +22,11 @@ function input:bind()
     love.mousepressed
       :filter(isLeft)
       :reject(self:wrap(self.isCasting))
-      :map(self:wrap(self.getAbilityFromPosition))
+      :map(lib.target.objectAtPosition)
       :filter(f.id)
+      :map(function(entity)
+        return (entity.abilities and entity.abilities.auto), entity
+      end)
       :tap(function(ability, owner)
         self.casting = ability
         self.castOwner = owner

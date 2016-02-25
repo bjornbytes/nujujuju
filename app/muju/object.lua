@@ -1,7 +1,6 @@
 local muju = lib.object.create()
 
 muju:include(lib.muju)
-muju:include(lib.entity)
 
 muju.config = app.muju.config
 
@@ -42,9 +41,6 @@ function muju:bind()
 
     love.update
       :subscribe(self:wrap(self.animate)),
-
-    self.collisions
-      :subscribe(self:wrap(self.onCollision))
   })
 
   app.context.view.draw:subscribe(self:wrap(self.draw))

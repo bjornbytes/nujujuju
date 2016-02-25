@@ -6,7 +6,7 @@ function summon:cast(x, y)
       x = app.context.objects.muju.position.x,
       y = app.context.objects.muju.position.y,
     },
-    target = {
+    destination = {
       x = x,
       y = y
     }

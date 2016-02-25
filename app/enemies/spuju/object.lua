@@ -1,6 +1,5 @@
 local spuju = lib.object.create()
 
-spuju:include(lib.entity)
 spuju:include(lib.unit)
 spuju:include(lib.enemy)
 
