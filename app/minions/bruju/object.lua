@@ -1,6 +1,7 @@
 local bruju = lib.object.create()
 
 bruju:include(lib.entity)
+bruju:include(lib.unit)
 bruju:include(lib.minion)
 
 bruju.config = app.minions.bruju.config
@@ -16,7 +17,7 @@ bruju.state = function()
       x = nil,
       y = nil
     },
-    health = 5
+    health = bruju.config.maxHealth
   }
 
   state.animation = lib.animation.create(app.minions.bruju.spine, app.minions.bruju.animation)
@@ -28,7 +29,7 @@ end
 
 function bruju:bind()
   self.abilities = {}
-  self.abilities.auto = app.minions.abilities.move:new({ owner = self })
+  self.abilities.auto = app.minions.common.abilities.move:new({ owner = self })
 
   self:setIsMinion()
 
@@ -69,13 +70,7 @@ function bruju:draw()
   g.white(70)
   g.draw(image, self.position.x, self.position.y, 0, scale, scale / 1.5, image:getWidth() / 2, image:getHeight() / 2)
 
-  g.setColor(80, 200, 90, 80)
-  g.setLineWidth(3)
-  g.ellipse('line', self.target.x, self.target.y, 30, 30 / 2)
-
-  g.white(80)
-  g.setLineWidth(1)
-  g.ellipse('line', self.target.x, self.target.y, 30, 30 / 2)
+  self:drawRing(80, 200, 80)
 
   self.animation:draw(self.position.x, self.position.y)
 
