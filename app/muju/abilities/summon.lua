@@ -5,14 +5,12 @@ function summon:cast(x, y)
     position = {
       x = app.context.objects.muju.position.x,
       y = app.context.objects.muju.position.y,
-    },
-    destination = {
-      x = x,
-      y = y
     }
   })
 
   app.context.objects[minion] = minion
+
+  minion.abilities.auto:cast(x, y)
 
   self.owner.animation:set('summon')
 end

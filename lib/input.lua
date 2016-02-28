@@ -10,10 +10,16 @@ end
 
 input.state = function()
   return {
-    casting = nil,
-    castOwner = nil,
-    targetFactor = 0,
-    targetActive = false
+    castContext = {
+      active = false,
+      ox = nil,
+      oy = nil,
+      owner = nil,
+      ability = nil,
+      tick = nil,
+      factor = 0
+    },
+    selected = nil
   }
 end
 
@@ -23,61 +29,68 @@ function input:bind()
       :filter(isLeft)
       :reject(self:wrap(self.isCasting))
       :map(lib.target.objectAtPosition)
-      :filter(f.id)
-      :map(function(entity)
-        return (entity.abilities and entity.abilities.auto), entity
+      :tap(function(owner)
+        self.selected = owner
       end)
-      :tap(function(ability, owner)
-        self.casting = ability
-        self.castOwner = owner
+      :filter(function(owner)
+        return owner and owner.abilities and owner.abilities.auto
       end)
-      :flatMapLatest(function(ability)
-        return love.mousereleased
-          :filter(isLeft)
-          :first()
-          :map(function(x, y)
-            return x, y, ability
+      :tap(function(owner)
+        self.castContext = {
+          active = false,
+          ox = love.mouse.getX(),
+          oy = love.mouse.getY(),
+          owner = owner,
+          ability = owner.abilities.auto,
+          tick = lib.tick.index,
+          factor = 0
+        }
+      end)
+      :flatMapLatest(function()
+        return love.update
+          :takeUntil(love.mousereleased)
+          :tap(function()
+            local context = self.castContext
+            if not context.active then
+              if util.distance(context.ox, context.oy, love.mouse.getPosition()) > 10 then
+                context.active = true
+                lib.flux.to(context, .3, { factor = 1 })
+                  :ease('backinout')
+              end
+            end
           end)
+          :sample(love.mousereleased:filter(isLeft):take(1))
       end)
-      :subscribe(function(x, y, ability)
-        ability:cast(x, y)
-        self.casting = nil
-      end, print),
-
-    love.mousepressed
-      :filter(isLeft)
-      :subscribe(function(x, y, b)
-        self.targetActive = true
-        lib.flux.to(self, .3, { targetFactor = 1 })
-          :ease('backinout')
-      end),
-
-    love.mousereleased
-      :filter(isLeft)
-      :subscribe(function(x, y, b)
-        self.targetActive = false
-        lib.flux.to(self, .3, { targetFactor = 0 })
-          :ease('cubicout')
-          :oncomplete(function()
-            self.castOwner = nil
-          end)
-      end)
+      :subscribe(function()
+        local context = self.castContext
+        if context.active then
+          context.ability:cast(love.mouse.getPosition())
+          context.ability = nil
+          context.active = false
+          lib.flux.to(context, .3, { factor = 0 })
+            :ease('cubicout')
+            :oncomplete(function()
+              context.owner = nil
+            end)
+        end
+      end, print)
   })
 
   app.context.view.draw:subscribe(self:wrap(self.draw))
 end
 
 function input:draw()
-  if self.targetFactor > 0 and self.castOwner then
-    local ox, oy = self.castOwner.position.x, self.castOwner.position.y
+  local context = self.castContext
+  if context.factor > 0 and context.owner then
+    local ox, oy = context.owner.position.x, context.owner.position.y
     local points = {}
     local radius = 30
     local mx, my = love.mouse.getPosition()
     local dir = util.angle(ox, oy, mx, my)
     local pointCount = 80
 
-    if not self.targetActive then
-      radius = radius + 20 * (1 - self.targetFactor)
+    if not context.active then
+      radius = radius + 20 * (1 - context.factor)
     end
 
     for i = 1, 80 do
@@ -85,9 +98,9 @@ function input:draw()
       local y = my + util.dy(radius, dir + (2 * math.pi * (i / 80)))
       local max = math.pi / 2 + (math.pi / 2) * util.distance(ox, oy, mx, my) / 500 -- how bulbous it is
       local dif = (max - util.clamp(math.abs(util.anglediff(util.angle(mx, my, x, y), dir + math.pi)), 0, max)) / max
-      if self.targetActive then
-        x = util.lerp(ox, x, self.targetFactor ^ 2)
-        y = util.lerp(oy, y, self.targetFactor ^ 2)
+      if context.active then
+        x = util.lerp(ox, x, context.factor ^ 2)
+        y = util.lerp(oy, y, context.factor ^ 2)
       end
       x = util.lerp(x, ox, dif ^ 5)
       y = util.lerp(y, oy, dif ^ 5)
@@ -96,7 +109,7 @@ function input:draw()
       table.insert(points, y)
     end
 
-    g.white(40 * self.targetFactor)
+    g.white(40 * context.factor)
     g.polygon('fill', points)
   end
 

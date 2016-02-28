@@ -78,12 +78,12 @@ function animation:tick(delta)
         local speed = animation.duration / state.length
         self.animationState.tracks[i].timeScale = speed
       else
-        self.animationState.tracks[i].timeScale = state.speed or 1
+        self.animationState.tracks[i].timeScale = 1
       end
     end
   end
 
-  self.animationState:update(delta)
+  self.animationState:update(delta * (self.active.speed or 1))
   self.animationState:apply(self.skeleton)
 end
 
@@ -100,6 +100,7 @@ function animation:resetTo(name)
     local track = state.track or 0
     local loop = state.loop
     state.active = true
+    self.active = state
     self.animationState:setAnimationByName(track, name, loop)
   end
 end
@@ -110,6 +111,7 @@ function animation:set(name)
     local track = state.track or 0
     local loop = state.loop
     state.active = true
+    self.active = state
     self.animationState:setAnimationByName(track, name, loop)
   end
 end

@@ -21,7 +21,6 @@ spuju.state = function()
 
   state.animation = lib.animation.create(app.enemies.spuju.spine, app.enemies.spuju.animation)
   state.animation.speed = 1
-  state.animation:set('idle')
 
   return state
 end
