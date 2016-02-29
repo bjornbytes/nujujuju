@@ -1,5 +1,5 @@
 return {
-  scale = .6,
+  scale = .55,
   offset = {
     x = 0,
     y = -8
@@ -8,7 +8,7 @@ return {
   states = {
 
     spawn = {
-      speed = .75
+      speed = 1
     },
 
     idle = {

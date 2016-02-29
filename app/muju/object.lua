@@ -1,5 +1,6 @@
 local muju = lib.object.create()
 
+muju:include(lib.entity)
 muju:include(lib.muju)
 
 muju.config = app.muju.config
@@ -39,11 +40,9 @@ function muju:bind()
     love.update
       :subscribe(self:wrap(self.jujuTrickle)),
 
-    love.update
-      :subscribe(self:wrap(self.animate)),
+    app.context.view.draw
+      :subscribe(self:wrap(self.draw))
   })
-
-  app.context.view.draw:subscribe(self:wrap(self.draw))
 end
 
 return muju

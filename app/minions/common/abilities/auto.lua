@@ -3,7 +3,7 @@ local auto = lib.object.create()
 function auto:cast(x, y)
   local entity = lib.target.objectAtPosition(x, y)
 
-  if entity and entity.isEnemy then
+  if entity then
     self.owner.target = entity
   else
     self.owner.destination.x = x

@@ -22,13 +22,14 @@ end
 function object:unbind()
   if not self._subscriptions then return end
   for i = 1, #self._subscriptions do
-    self._subscriptions[i]()
+    self._subscriptions[i]:unsubscribe()
   end
 end
 
 function object:new(state)
   local baseState = type(self.state) == 'function' and self.state() or {}
-  local instance = lib.lume.merge({}, baseState, state or {})
+  local instance = util.merge(baseState, {})
+  instance = util.merge(state or {}, instance)
 
   setmetatable(instance, {__index = self})
 

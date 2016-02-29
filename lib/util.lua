@@ -66,6 +66,10 @@ function util.merge(t1, t2)
   return t2
 end
 
+function util.isa(object, class)
+  return getmetatable(object) and getmetatable(object).__index == class
+end
+
 function g.drawCenter(image, size, x, y, a, sx, sy)
   local scale = size / image:getWidth()
   sx = sx or 1

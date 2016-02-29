@@ -1,5 +1,6 @@
 local spuju = lib.object.create()
 
+spuju:include(lib.entity)
 spuju:include(lib.unit)
 spuju:include(lib.enemy)
 
@@ -16,7 +17,8 @@ spuju.state = function()
       x = nil,
       y = nil
     },
-    health = spuju.config.maxHealth
+    health = spuju.config.maxHealth,
+    dead = false
   }
 
   state.animation = lib.animation.create(app.enemies.spuju.spine, app.enemies.spuju.animation)
@@ -34,19 +36,33 @@ function spuju:bind()
   self:dispose({
     love.update
       :subscribe(function()
-        if self:distanceToPoint(self.target.x, self.target.y) > 0 then
-          self.animation:set('walk')
-        else
-          self.animation:set('idle')
+        if not self.dead then
+          if self:distanceToPoint(self.target.x, self.target.y) > 0 then
+            self.animation:set('walk')
+          else
+            self.animation:set('idle')
+          end
+
+          local sign = util.sign(self.target.x - self.position.x)
+
+          if sign ~= 0 then
+            self.animation.flipped = sign > 0
+          end
         end
+      end),
 
-        local sign = util.sign(self.target.x - self.position.x)
-
-        if sign ~= 0 then
-          self.animation.flipped = sign > 0
-        end
-
-        self.animation:tick(lib.tick.rate)
+    self.animation.completions
+      :filter(f.eq('death'))
+      :subscribe(function()
+        self:unbind()
+        app.context:removeObject(self)
+        local juju = app.juju:new({
+          position = {
+            x = self.position.x,
+            y = self.position.y
+          }
+        })
+        app.context.objects[juju] = juju
       end),
 
     love.update
@@ -61,6 +77,13 @@ function spuju:bind()
   })
 end
 
+function spuju:die()
+  if not self.dead then
+    self.dead = true
+    self.animation:set('death')
+  end
+end
+
 function spuju:draw()
   local image = app.art.shadow
   local scale = 60 / image:getWidth()
@@ -70,6 +93,7 @@ function spuju:draw()
 
   self:drawRing(200, 80, 80)
 
+  self.animation:tick(lib.tick.delta)
   self.animation:draw(self.position.x, self.position.y)
 
   return -self.position.y

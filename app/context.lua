@@ -25,15 +25,6 @@ function context.load(scene)
       context.objects[entry.key] = instance
     end
   end
-
-  local spuju = app.enemies.spuju.object:new({
-    position = {
-      x = 100,
-      y = 300
-    }
-  })
-
-  context.objects[spuju] = spuju
 end
 
 function context.unload()

@@ -13,6 +13,12 @@ overgrowth.objects = {
       x = w / 2,
       y = h / 2
     }
+  },
+  { 'enemies.spuju',
+    position = {
+      x = 200,
+      y = 300
+    }
   }
 }
 

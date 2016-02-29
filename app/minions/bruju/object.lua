@@ -1,5 +1,6 @@
 local bruju = lib.object.create()
 
+bruju:include(lib.entity)
 bruju:include(lib.unit)
 bruju:include(lib.minion)
 
@@ -13,8 +14,8 @@ bruju.state = function()
       y = app.context.scene.height / 2
     },
     destination = {
-      x = nil,
-      y = nil
+      x = app.context.scene.width / 2,
+      y = app.context.scene.height / 2
     },
     health = bruju.config.maxHealth
   }
@@ -35,19 +36,6 @@ function bruju:bind()
   self:dispose({
     love.update
       :subscribe(function()
-        if self.target then
-          local distance = self:distanceTo(self.target)
-          if distance <= self.config.radius + self.target.config.radius then
-            self.animation:set('idle')
-          else
-            self.animation:set('walk')
-          end
-        elseif self:distanceToPoint(self.destination.x, self.destination.y) > 0 then
-          self.animation:set('walk')
-        else
-          self.animation:set('idle')
-        end
-
         local sign
         if self.target then
           sign = self:signTo(self.target)
@@ -58,24 +46,53 @@ function bruju:bind()
         if sign ~= 0 then
           self.animation.flipped = sign < 0
         end
-
-        self.animation:tick(lib.tick.rate)
       end),
 
     love.update
       :subscribe(function()
+        if self.target and self.target.isEnemy and self.target.dead then
+          self.target = nil
+        end
+
         if self.target then
           local distance = self:distanceTo(self.target)
           if distance <= self.config.radius + self.target.config.radius then
-            -- attack I guess
+            if self.target.isEnemy then
+              self.animation:set('attack')
+            elseif util.isa(self.target, app.juju) then
+              self.target:pickup(self)
+              self.animation:set('idle')
+            else
+              self.animation:set('idle')
+            end
           else
-            local speed = math.min(self.config.speed * lib.tick.rate, distance)
+            local speed = math.min(self:getBaseSpeed() * lib.tick.rate, distance)
             self:moveTowards(self.target, speed)
+            self.animation:set('walk')
           end
         else
           local distance = self:distanceToPoint(self.destination.x, self.destination.y)
-          local speed = math.min(self.config.speed * lib.tick.rate, distance)
+          local speed = math.min(self:getBaseSpeed() * lib.tick.rate, distance)
           self:moveTowardsPoint(self.destination.x, self.destination.y, speed)
+
+          if distance > 0 then
+            self.animation:set('walk')
+          else
+            self.animation:set('idle')
+          end
+        end
+      end),
+
+    self.animation.events
+      :pluck('data', 'name')
+      :filter(f.eq('attack'))
+      :subscribe(function()
+        if self.target then
+          self.target:hurt(1)
+          if self.target.dead then
+            self.destination.x = self.position.x
+            self.destination.y = self.position.y
+          end
         end
       end),
 
@@ -93,6 +110,7 @@ function bruju:draw()
 
   self:drawRing(80, 200, 80)
 
+  self.animation:tick(lib.tick.delta)
   self.animation:draw(self.position.x, self.position.y)
 
   return -self.position.y

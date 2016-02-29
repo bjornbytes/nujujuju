@@ -1,9 +1,5 @@
 local muju = {}
 
-function muju:animate()
-  self.animation:tick(lib.tick.rate)
-end
-
 function muju:jujuTrickle()
   self.jujuTrickleTimer = math.max(self.jujuTrickleTimer - lib.tick.rate, 0)
   if self.jujuTrickleTimer == 0 then
@@ -42,6 +38,11 @@ function muju:hurt(amount)
   end
 end
 
+function muju:addJuju(amount)
+  self.juju = self.juju + amount
+  self.totalJuju = self.totalJuju + amount
+end
+
 function muju:spendJuju(amount)
   self.juju = self.juju - amount
 end
@@ -53,6 +54,7 @@ function muju:draw()
   g.white()
   g.draw(image, self.position.x, self.position.y - 10, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
 
+  self.animation:tick(lib.tick.delta)
   self.animation:draw(self.position.x, self.position.y)
 
   if app.context.inspector.active then

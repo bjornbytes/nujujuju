@@ -1,87 +1,5 @@
 local unit = {}
 
-function unit.closest(source, ...)
-  local getEntries = {
-    enemy = function(source, result)
-      util.each(util.filter(app.context.objects, 'isEnemy'), function(enemy)
-        if source ~= enemy then
-          table.insert(result, {enemy, lib.unit.distanceTo(source, enemy)})
-        end
-      end)
-    end,
-
-    minion = function(source, result)
-      util.each(util.filter(app.context.objects, 'isMinion'), function(minion)
-        if source ~= minion then
-          table.insert(result, {minion, lib.unit.distanceTo(source, minion)})
-        end
-      end)
-    end,
-
-    player = function(source, result)
-      local player = app.context.objects.muju
-      if source ~= player then
-        table.insert(result, {player, lib.unit.distanceTo(source, player)})
-      end
-    end
-  }
-
-  local kinds = {...}
-  local targets = {}
-  util.each(kinds, function(kind) getEntries[kind](source, targets) end)
-  table.sort(targets, function(a, b) return a[2] < b[2] end)
-  if targets[1] then return unpack(targets[1]) end
-  return nil
-end
-
-function unit.closestToPoint(x, y, ...)
-  local getEntries = {
-    enemy = function(result)
-      util.each(util.filter(app.context.objects, 'isEnemy'), function(enemy)
-        table.insert(result, {enemy, lib.unit.distanceToPoint(enemy, x, y)})
-      end)
-    end,
-
-    minion = function(result)
-      util.each(util.filter(app.context.objects, 'isMinion'), function(minion)
-        table.insert(result, {minion, lib.unit.distanceToPoint(minion, x, y)})
-      end)
-    end,
-
-    player = function(result)
-      local player = app.context.objects.muju
-      table.insert(result, {player, lib.unit.distanceToPoint(player, x, y)})
-    end
-  }
-
-  local kinds = {...}
-  local targets = {}
-  util.each(kinds, function(kind) getEntries[kind](targets) end)
-  table.sort(targets, function(a, b) return a[2] < b[2] end)
-  if targets[1] then return unpack(targets[1]) end
-  return nil
-end
-
-function unit:distanceTo(other)
-  return unit.distanceToPoint(self, other.position.x, other.position.y)
-end
-
-function unit:distanceToPoint(x, y)
-  return util.distance(self.position.x, self.position.y, x, y)
-end
-
-function unit:directionTo(other)
-  return unit.directionToPoint(self, other.position.x, other.position.y)
-end
-
-function unit:directionToPoint(x, y)
-  return util.angle(self.position.x, self.position.y, x, y)
-end
-
-function unit:signTo(other)
-  return -util.sign(self.position.x - other.position.x)
-end
-
 function unit:isInRangeOf(other)
   return unit.distanceTo(self, other) < self.config.range
 end
@@ -97,7 +15,7 @@ function unit:moveTowards(other, speed)
 end
 
 function unit:moveTowardsPoint(x, y, speed)
-  local distance, direction = unit.distanceToPoint(self, x, y), unit.directionToPoint(self, x, y)
+  local distance, direction = lib.entity.distanceToPoint(self, x, y), lib.entity.directionToPoint(self, x, y)
   speed = math.min(distance, speed)
   self.position.x = self.position.x + math.cos(direction) * speed
   self.position.y = self.position.y + math.sin(direction) * speed
@@ -143,17 +61,11 @@ function unit:enclose()
   end
 end
 
-function unit:drawRing(r, gg, b)
-  local alpha = (self.animation:contains(love.mouse.getPosition()) or app.context.input.selected == self) and 1 or .5
-  local radius = self.config.radius
-
-  g.setColor(r, gg, b, alpha * 160)
-  g.setLineWidth(3)
-  g.ellipse('line', self.position.x, self.position.y, radius, radius / 2)
-
-  g.white(alpha * 160)
-  g.setLineWidth(1)
-  g.ellipse('line', self.position.x, self.position.y, radius, radius / 2)
+function unit:hurt(amount)
+  self.health = self.health - amount
+  if self.health <= 0 then
+    self:die()
+  end
 end
 
 return unit

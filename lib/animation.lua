@@ -39,6 +39,7 @@ function animation.create(spine, config)
   self:resetTo(self.config.default)
 
   self.events = lib.rx.Subject.create()
+  self.completions = lib.rx.Subject.create()
 
   self.animationState.onEvent = function(_, event)
     self.events:onNext(event)
@@ -47,6 +48,7 @@ function animation.create(spine, config)
   self.animationState.onEnd = function(track)
     local name = self.animationState.tracks[track].animation.name
     local state = self.states[name]
+    self.completions:onNext(name)
     state.active = false
     if state.next then
       self:set(state.next)
