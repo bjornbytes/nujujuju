@@ -4,7 +4,7 @@ function muju:jujuTrickle()
   self.jujuTrickleTimer = math.max(self.jujuTrickleTimer - lib.tick.rate, 0)
   if self.jujuTrickleTimer == 0 then
     self.jujuTrickleTimer = self.config.jujuTrickleRate
-    self.juju = math.min(self.juju + 1, self.config.maxJuju)
+    self.juju = math.min(self.juju + 1, self.maxJuju)
     self.totalJuju = self.totalJuju + 1
   end
 end

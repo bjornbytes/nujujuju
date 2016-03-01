@@ -28,7 +28,8 @@ function juju:bind()
           self.carrier.destination.x = self.carrier.position.x
           self.carrier.destination.y = self.carrier.position.y
           self.carrier.target = nil
-          muju:addJuju(1)
+          muju.maxJuju = math.min(muju.maxJuju + 1, muju.config.maxJuju)
+          muju.juju = muju.maxJuju
           self:unbind()
           app.context:removeObject(self)
         end

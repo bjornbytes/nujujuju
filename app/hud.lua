@@ -39,11 +39,8 @@ function hud:bind()
         g.setColor(255, 160, 160)
       end
 
-      g.setFont(self.font)
-      g.print(population .. ' / ' .. app.context.objects.muju.config.maxMinions, 4, 4)
-
-      g.setColor(160, 255, 160)
-      g.print(p.juju, 4, 4 + g.getFont():getHeight())
+      self:drawJuju()
+      self:drawPopulation()
 
       app.art.heartFrame:setFilter('nearest')
       app.art.heart:setFilter('nearest')
@@ -79,6 +76,45 @@ function hud:drawHealthbar(unit)
       g.draw(app.art.heart, x, y, 0, 1, 1, size / 2, size / 2)
     end
 
+    x = x + inc
+  end
+end
+
+function hud:drawJuju()
+  local p = app.context.objects.muju
+  local image = app.art.juju
+  local scale = 20 / image:getWidth()
+  local inc = 20 + 6
+  local x = 6
+
+  for i = 1, p.maxJuju do
+    if p.juju >= i then
+      g.white()
+    else
+      g.white(80)
+    end
+
+    g.draw(image, x, 6, 0, scale, scale)
+    x = x + inc
+  end
+end
+
+function hud:drawPopulation()
+  local p = app.context.objects.muju
+  local image = app.art.population
+  local scale = 20 / image:getWidth()
+  local inc = 20 + 6
+  local x = g.getWidth() - (inc * p.config.maxMinions) - 6
+  local minionCount = #util.filter(app.context.objects, 'isMinion')
+
+  for i = 1, p.config.maxMinions do
+    if minionCount >= i then
+      g.setColor(255, 153, 153)
+    else
+      g.setColor(153, 223, 255)
+    end
+
+    g.draw(image, x, 6, 0, scale, scale)
     x = x + inc
   end
 end

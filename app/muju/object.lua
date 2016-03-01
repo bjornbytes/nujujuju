@@ -13,9 +13,10 @@ muju.state = function()
       y = app.context.scene.height / 2
     },
     health = 5,
-    juju = 5,
+    maxJuju = 3,
+    juju = 0,
     totalJuju = 5,
-    jujuTrickleTimer = 0,
+    jujuTrickleTimer = muju.config.jujuTrickleRate,
     dead = false,
     squishFactor = 0,
     squishActive = false
