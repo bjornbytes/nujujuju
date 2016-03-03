@@ -73,7 +73,7 @@ function view:doDraw()
 
   g.setCanvas(source)
 
-  for i = 1, #subject.observers do
+  for i = #subject.observers, 1, -1 do
     if subject.observers[i] then
       subject.observers[i].depth = subject.observers[i]:onNext() or 0
       subject.observers[i].depthNudge = subject.observers[i].depthNudge or love.math.random() * .01
@@ -81,7 +81,7 @@ function view:doDraw()
   end
 
   table.sort(subject.observers, function(a, b)
-    return (a.depth or 0) + (a.depthNudge or 0) > (b.depth or 0) + (b.depthNudge or 0)
+    return (a.depth or 0) + (a.depthNudge or 0) < (b.depth or 0) + (b.depthNudge or 0)
   end)
 
   g.setCanvas()
@@ -107,10 +107,10 @@ function view:doHud()
   local source, target = self.sourceCanvas, self.targetCanvas
 
   table.sort(subject.observers, function(a, b)
-    return (a.depth or 0) > (b.depth or 0)
+    return (a.depth or 0) < (b.depth or 0)
   end)
 
-  for i = 1, #subject.observers do
+  for i = #subject.observers, 1, -1 do
     if subject.observers[i] then
       subject.observers[i].depth = subject.observers[i]:onNext() or 0
     end
