@@ -1,9 +1,16 @@
 local summon = lib.object.create()
 
-function summon:cast(x, y)
+function summon:canCast()
   local minionCount = #util.filter(app.context.objects, 'isMinion')
+  return minionCount < self.owner.config.maxMinions
+end
 
-  if minionCount >= self.owner.config.maxMinions then return end
+function summon:canCastAtPosition(x, y)
+  return true
+end
+
+function summon:cast(x, y)
+  if not self:canCast() or not self:canCastAtPosition(x, y) then return end
 
   local minion = app.minions.bruju.object:new({
     position = {

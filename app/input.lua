@@ -33,7 +33,8 @@ function input:bind()
         self.selected = owner
       end)
       :filter(function(owner)
-        return owner and owner.abilities and owner.abilities.auto
+        if not owner or not owner.abilities or not owner.abilities.auto then return false end
+        return not owner.abilities.auto.canCast or owner.abilities.auto:canCast()
       end)
       :tap(function(owner)
         self.castContext = {
@@ -64,9 +65,15 @@ function input:bind()
       :subscribe(function()
         local context = self.castContext
         if context.active then
-          context.ability:cast(love.mouse.getPosition())
+          local mx, my = love.mouse.getPosition()
+
+          if not context.ability.canCastAtPosition or context.ability:canCastAtPosition(mx, my) then
+            context.ability:cast(mx, my)
+          end
+
           context.ability = nil
           context.active = false
+
           lib.flux.to(context, .3, { factor = 0 })
             :ease('cubicout')
             :oncomplete(function()
