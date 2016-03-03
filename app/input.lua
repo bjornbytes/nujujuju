@@ -103,21 +103,39 @@ function input:draw()
     for i = 1, 80 do
       local x = mx + util.dx(radius, dir + (2 * math.pi * (i / 80)))
       local y = my + util.dy(radius, dir + (2 * math.pi * (i / 80)))
-      local max = math.pi / 2 + (math.pi / 2) * util.distance(ox, oy, mx, my) / 500 -- how bulbous it is
-      local dif = (max - util.clamp(math.abs(util.anglediff(util.angle(mx, my, x, y), dir + math.pi)), 0, max)) / max
-      if context.active then
-        x = util.lerp(ox, x, context.factor ^ 2)
-        y = util.lerp(oy, y, context.factor ^ 2)
-      end
-      x = util.lerp(x, ox, dif ^ 5)
-      y = util.lerp(y, oy, dif ^ 5)
+      local mouseDir = util.angle(x, y, mx, my)
 
-      table.insert(points, x)
-      table.insert(points, y)
+      if util.distance(ox, oy, mx, my) >= radius then
+        local max = math.pi / 2 + (math.pi / 2) * util.distance(ox, oy, mx, my) / 500 -- how bulbous it is
+        local dif = (max - util.clamp(math.abs(util.anglediff(mouseDir, dir)), 0, max)) / max
+        if context.active then
+          x = util.lerp(ox, x, context.factor ^ 2)
+          y = util.lerp(oy, y, context.factor ^ 2)
+        end
+        x = util.lerp(x, ox, dif ^ 5)
+        y = util.lerp(y, oy, dif ^ 5)
+      end
+
+      if util.distance(x, y, ox, oy) < 1 then
+        table.insert(points, x)
+        table.insert(points, y)
+      else
+        if util.distance(ox, oy, mx, my) >= radius then
+          local sign = util.sign(util.anglediff(mouseDir, dir))
+          x = x + 2 * math.cos(dir + (math.pi / 2) * sign)
+          y = y + 2 * math.sin(dir + (math.pi / 2) * sign)
+        end
+        table.insert(points, x)
+        table.insert(points, y)
+      end
     end
 
-    g.white(40 * context.factor)
-    g.polygon('fill', points)
+    if #points >= 3 then
+      g.white(40 * context.factor)
+      g.setLineWidth(3)
+      g.polygon('fill', points)
+      g.setLineWidth(1)
+    end
   end
 
   return -1000
