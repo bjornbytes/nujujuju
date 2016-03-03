@@ -15,7 +15,7 @@ function target.objectAtPosition(x, y)
   end)
 
   return util.match(candidates, function(candidate)
-    return candidate:isHovered(x, y)
+    return candidate:isTargetable() and candidate:isHovered(x, y)
   end)
 end
 

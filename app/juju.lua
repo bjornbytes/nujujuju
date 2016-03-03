@@ -66,11 +66,15 @@ end
 
 function juju:isHovered(x, y)
   local size = self.config.radius * 2
-  return util.inside(x, y, self.position.x - size * .5, self.position.y - size * .75, size, size)
+  return self:isTargetable() and util.inside(x, y, self.position.x - size * .5, self.position.y - size * .75, size, size)
 end
 
 function juju:isSelected()
   return false
+end
+
+function juju:isTargetable()
+  return not self.carrier
 end
 
 function juju:pickup(carrier)

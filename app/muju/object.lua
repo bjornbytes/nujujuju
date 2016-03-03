@@ -65,10 +65,10 @@ function muju:bind()
 
       if lib.tick.index == 3 / lib.tick.rate then
         makeSpuju()
-      elseif lib.tick.index == 15 / lib.tick.rate then
+      elseif lib.tick.index == 20 / lib.tick.rate then
         makeSpuju(2)
       elseif lib.tick.index == 30 / lib.tick.rate then
-        makeSpuju(3)
+        makeSpuju(2)
       end
     end)
   })

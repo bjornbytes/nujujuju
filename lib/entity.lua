@@ -5,7 +5,11 @@ function entity:isSelected()
 end
 
 function entity:isHovered(x, y)
-  return self.animation:contains(x, y)
+  return self:isTargetable() and self.animation:contains(x, y)
+end
+
+function entity:isTargetable()
+  return true
 end
 
 function entity:drawRing(r, gg, b)
