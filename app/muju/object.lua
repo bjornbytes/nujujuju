@@ -13,9 +13,9 @@ muju.state = function()
       y = app.context.scene.height / 2
     },
     health = 5,
-    maxJuju = 3,
+    maxJuju = 1,
     juju = 0,
-    totalJuju = 5,
+    totalJuju = 0,
     jujuTrickleTimer = muju.config.jujuTrickleRate,
     dead = false,
     squishFactor = 0,
@@ -42,7 +42,35 @@ function muju:bind()
       :subscribe(self:wrap(self.jujuTrickle)),
 
     app.context.view.draw
-      :subscribe(self:wrap(self.draw))
+      :subscribe(self:wrap(self.draw)),
+
+    love.update:subscribe(function()
+      local function makeSpuju(count)
+        count = count or 1
+
+        for i = 1, count do
+          local x = love.math.random() > .5 and app.context.scene.width - 50 or 50
+          local y = 100 + love.math.random() * (app.context.scene.height - 200)
+
+          local spuju = app.enemies.spuju.object:new({
+            position = {
+              x = x,
+              y = y
+            }
+          })
+
+          app.context.objects[spuju] = spuju
+        end
+      end
+
+      if lib.tick.index == 3 / lib.tick.rate then
+        makeSpuju()
+      elseif lib.tick.index == 15 / lib.tick.rate then
+        makeSpuju(2)
+      elseif lib.tick.index == 30 / lib.tick.rate then
+        makeSpuju(3)
+      end
+    end)
   })
 end
 

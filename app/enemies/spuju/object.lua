@@ -13,10 +13,7 @@ spuju.state = function()
       x = app.context.scene.width / 2,
       y = app.context.scene.height / 2
     },
-    target = {
-      x = nil,
-      y = nil
-    },
+    target = nil,
     health = spuju.config.maxHealth,
     dead = false
   }
@@ -30,20 +27,13 @@ end
 function spuju:bind()
   self:setIsEnemy()
 
-  self.target.x = self.position.x + 1
-  self.target.y = self.position.y
+  self.target = self:closest('minion', 'player')
 
   self:dispose({
     love.update
       :subscribe(function()
         if not self.dead then
-          if self:distanceToPoint(self.target.x, self.target.y) > 0 then
-            self.animation:set('walk')
-          else
-            self.animation:set('idle')
-          end
-
-          local sign = util.sign(self.target.x - self.position.x)
+          local sign = self:signTo(self.target)
 
           if sign ~= 0 then
             self.animation.flipped = sign > 0
@@ -65,11 +55,30 @@ function spuju:bind()
         app.context.objects[juju] = juju
       end),
 
+    self.animation.events
+      :pluck('data', 'name')
+      :filter(f.eq('attack'))
+      :subscribe(function()
+        self.target:hurt(1)
+      end),
+
     love.update
       :subscribe(function()
-        local distance = self:distanceToPoint(self.target.x, self.target.y)
+        if self.target and self.target.isMinion and self.target.dead then
+          self.target = nil
+        end
+
+        if self.dead then return end
+
+        self.target = self:closest('minion', 'player')
+        local distance = self:distanceTo(self.target)
         local speed = math.min(self.config.speed * lib.tick.rate, distance)
-        return self:moveTowardsPoint(self.target.x, self.target.y, speed)
+        if self:isInRangeOf(self.target) then
+          self.animation:set('attack')
+        else
+          self:moveTowards(self.target, speed)
+          self.animation:set('walk')
+        end
       end),
 
     app.context.view.draw

@@ -21,6 +21,11 @@ function juju:bind()
     love.update
       :filter(function() return self.carrier end)
       :subscribe(function()
+        if self.carrier.dead then
+          self.carrier = nil
+          return
+        end
+
         self.position.x = self.carrier.position.x
         self.position.y = self.carrier.position.y
         local muju = app.context.objects.muju

@@ -1,7 +1,7 @@
 local unit = {}
 
 function unit:isInRangeOf(other)
-  return unit.distanceTo(self, other) < self.config.range
+  return self:distanceTo(other) < self.config.range
 end
 
 function unit:moveIntoRangeOf(other, speed)

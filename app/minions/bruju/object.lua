@@ -22,7 +22,6 @@ bruju.state = function()
 
   state.animation = lib.animation.create(app.minions.bruju.spine, app.minions.bruju.animation)
   state.animation.speed = 1
-  state.animation:set('idle')
 
   return state
 end
@@ -54,6 +53,8 @@ function bruju:bind()
           self.target = nil
         end
 
+        if self.dead then return end
+
         if self.target then
           local distance = self:distanceTo(self.target)
           if distance <= self.config.radius + self.target.config.radius then
@@ -81,6 +82,13 @@ function bruju:bind()
             self.animation:set('idle')
           end
         end
+      end),
+
+    self.animation.completions
+      :filter(f.eq('death'))
+      :subscribe(function()
+        self:unbind()
+        app.context:removeObject(self)
       end),
 
     self.animation.events
@@ -114,6 +122,13 @@ function bruju:draw()
   self.animation:draw(self.position.x, self.position.y)
 
   return -self.position.y
+end
+
+function bruju:die()
+  if not self.dead then
+    self.dead = true
+    self.animation:set('death')
+  end
 end
 
 return bruju
