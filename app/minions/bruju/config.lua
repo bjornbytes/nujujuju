@@ -1,5 +1,5 @@
 return {
-  radius = 20,
+  radius = 40,
   maxHealth = 3,
   speed = 60
 }

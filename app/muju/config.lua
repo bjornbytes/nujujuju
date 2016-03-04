@@ -1,5 +1,5 @@
 return {
-  radius = 30,
+  radius = 40,
 
   maxHealth = 3,
   maxMinions = 3,

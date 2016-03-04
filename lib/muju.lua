@@ -51,6 +51,8 @@ function muju:draw()
   local image = app.environment.art.stump
   local scale = 60 / image:getWidth()
 
+  self:drawRing(128, 0, 255)
+
   g.white()
   g.draw(image, self.position.x, self.position.y - 10, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
 

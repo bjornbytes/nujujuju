@@ -5,7 +5,11 @@ function entity:isSelected()
 end
 
 function entity:isHovered(x, y)
-  return self:isTargetable() and self.animation:contains(x, y)
+  local dis = util.distance(self.position.x, self.position.y, x, y)
+  local dir = util.angle(self.position.x, self.position.y, x, y)
+  local ellipseHover = dis < self.config.radius / (2 - math.abs(math.cos(dir)))
+
+  return self:isTargetable() and (self.animation:contains(x, y) or ellipseHover)
 end
 
 function entity:isTargetable()

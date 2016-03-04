@@ -12,10 +12,14 @@ end
 function summon:cast(x, y)
   if not self:canCast() or not self:canCastAtPosition(x, y) then return end
 
+  local muju = self.owner
+
+  local dir = util.angle(muju.position.x, muju.position.y, x, y)
+
   local minion = app.minions.bruju.object:new({
     position = {
-      x = app.context.objects.muju.position.x,
-      y = app.context.objects.muju.position.y,
+      x = muju.position.x + (muju.config.radius + app.minions.bruju.config.radius) * math.cos(dir),
+      y = muju.position.y + (muju.config.radius + app.minions.bruju.config.radius) * math.sin(dir) / 2
     }
   })
 

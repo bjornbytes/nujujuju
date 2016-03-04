@@ -42,35 +42,7 @@ function muju:bind()
       :subscribe(self:wrap(self.jujuTrickle)),
 
     app.context.view.draw
-      :subscribe(self:wrap(self.draw)),
-
-    love.update:subscribe(function()
-      local function makeSpuju(count)
-        count = count or 1
-
-        for i = 1, count do
-          local x = love.math.random() > .5 and app.context.scene.width - 50 or 50
-          local y = 100 + love.math.random() * (app.context.scene.height - 200)
-
-          local spuju = app.enemies.spuju.object:new({
-            position = {
-              x = x,
-              y = y
-            }
-          })
-
-          app.context.objects[spuju] = spuju
-        end
-      end
-
-      if lib.tick.index == 3 / lib.tick.rate then
-        makeSpuju()
-      elseif lib.tick.index == 20 / lib.tick.rate then
-        makeSpuju(2)
-      elseif lib.tick.index == 30 / lib.tick.rate then
-        makeSpuju(2)
-      end
-    end)
+      :subscribe(self:wrap(self.draw))
   })
 end
 
