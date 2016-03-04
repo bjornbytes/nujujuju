@@ -4,9 +4,9 @@ function context.load(scene)
   context.scene = app.scenes[scene]
 
   context.view = lib.view:new()
-  context.input = app.input:new()
   context.particles = lib.particles:new()
   context.hud = app.hud:new()
+  context.input = app.input:new()
   context.inspector = app.inspector:new()
   context.collision = lib.collision:new()
 

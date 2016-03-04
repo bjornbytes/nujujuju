@@ -5,7 +5,7 @@ local function isLeft(x, y, b)
 end
 
 function input:isCasting()
-  return self.casting
+  return self.castContext.active
 end
 
 input.state = function()
@@ -25,8 +25,14 @@ end
 
 function input:bind()
   self:dispose({
+
+    -- Autocast
     love.mousepressed
       :filter(isLeft)
+      :filter(function(x, y)
+        local kind  = app.context.hud:getElement(x, y)
+        return kind == nil
+      end)
       :reject(self:wrap(self.isCasting))
       :map(lib.target.objectAtPosition)
       :tap(function(owner)
@@ -61,6 +67,52 @@ function input:bind()
             end
           end)
           :sample(love.mousereleased:filter(isLeft):take(1))
+      end)
+      :subscribe(function()
+        local context = self.castContext
+        if context.active then
+          local mx, my = love.mouse.getPosition()
+
+          if not context.ability.canCastAtPosition or context.ability:canCastAtPosition(mx, my) then
+            context.ability:cast(mx, my)
+          end
+
+          context.ability = nil
+          context.active = false
+
+          lib.flux.to(context, .3, { factor = 0 })
+            :ease('cubicout')
+            :oncomplete(function()
+              context.owner = nil
+            end)
+        end
+      end, print),
+
+    love.mousereleased
+      :filter(isLeft)
+      :filter(f.negate(self:wrap(self.isCasting)))
+      :filter(function() return self.selected end)
+      :map(function(x, y)
+        return app.context.hud:getElement(x, y)
+      end)
+      :filter(f.id)
+      :tap(function(_, index)
+        self.castContext = {
+          active = false,
+          ox = love.mouse.getX(),
+          oy = love.mouse.getY(),
+          owner = self.selected,
+          ability = self.selected.abilities[index],
+          tick = lib.tick.index,
+          factor = 0
+        }
+
+        self.castContext.active = true
+        lib.flux.to(self.castContext, .3, { factor = 1 })
+          :ease('backinout')
+      end)
+      :flatMapLatest(function()
+        return love.mousepressed:filter(isLeft):take(1)
       end)
       :subscribe(function()
         local context = self.castContext

@@ -56,11 +56,34 @@ function hud:bind()
           self:drawHealthbar(unit)
         end)
 
+        self:drawAbilities()
+
         return -1000
       end)
   })
 
   return self
+end
+
+function hud:getElement(mx, my)
+  local selected = app.context.input.selected
+  if selected and selected.abilities then
+    local u, v = self.u, self.v
+    local size = .06 * u
+    local inc = .08 * u
+    local count = #selected.abilities
+    local x = u / 2 - (inc * (count - 1) / 2)
+
+    for i = 1, count do
+      if util.inside(mx, my, x - size / 2, 8, size, size) then
+        return 'ability', i
+      end
+
+      x = x + inc
+    end
+  end
+
+  return nil
 end
 
 function hud:drawHealthbar(unit)
@@ -118,6 +141,24 @@ function hud:drawPopulation()
 
     g.draw(image, x, 6, 0, scale, scale)
     x = x + inc
+  end
+end
+
+function hud:drawAbilities()
+  local selected = app.context.input.selected
+  if selected and selected.abilities then
+    local u, v = self.u, self.v
+    local size = .06 * u
+    local inc = .08 * u
+    local count = #selected.abilities
+    local x = u / 2 - (inc * (count - 1) / 2)
+
+    g.setColor(0, 0, 0, 150)
+
+    for i = 1, count do
+      g.rectangle('fill', x - size / 2, 8, size, size)
+      x = x + inc
+    end
   end
 end
 

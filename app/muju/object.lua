@@ -1,5 +1,7 @@
 local muju = lib.object.create()
 
+muju.tag = 'muju'
+
 muju:include(lib.entity)
 muju:include(lib.muju)
 
@@ -36,6 +38,7 @@ function muju:bind()
 
   self.abilities = {}
   self.abilities.auto = app.muju.abilities.summon:new({ owner = self })
+  self.abilities[1] = self.abilities.auto
 
   self:dispose({
     love.update

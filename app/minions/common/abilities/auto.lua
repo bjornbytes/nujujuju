@@ -4,11 +4,9 @@ function auto:cast(x, y)
   local entity = lib.target.objectAtPosition(x, y)
 
   if entity then
-    self.owner.target = entity
+    self.owner.abilities.attack:cast(x, y)
   else
-    self.owner.destination.x = x
-    self.owner.destination.y = y
-    self.owner.target = nil
+    self.owner.abilities.move:cast(x, y)
   end
 end
 
