@@ -76,7 +76,9 @@ function view:doDraw()
   for i = #subject.observers, 1, -1 do
     if subject.observers[i] then
       subject.observers[i].depth = subject.observers[i]:onNext() or 0
-      subject.observers[i].depthNudge = subject.observers[i].depthNudge or love.math.random() * .01
+      if subject.observers[i] then
+        subject.observers[i].depthNudge = subject.observers[i].depthNudge or love.math.random() * .01
+      end
     end
   end
 

@@ -18,45 +18,47 @@ function hud:bind()
   self.u, self.v = g.getDimensions()
   self.font = self.config.font(self.v * .04)
 
-  love.update
-    :subscribe(function()
-      local muju = app.context.objects.muju
-      self.prevJujuFactor = self.jujuFactor
-      local percent = muju.totalJuju / 50
-      self.jujuFactor = util.lerp(self.jujuFactor, percent, lib.tick.getLerpFactor(.6))
-    end)
+  self:dispose({
+    love.update
+      :subscribe(function()
+        local muju = app.context.objects.muju
+        self.prevJujuFactor = self.jujuFactor
+        local percent = muju.totalJuju / 50
+        self.jujuFactor = util.lerp(self.jujuFactor, percent, lib.tick.getLerpFactor(.6))
+      end),
 
-  app.context.view.hud
-    :subscribe(function()
+    app.context.view.hud
+      :subscribe(function()
 
-      local p = app.context.objects.muju
-      local population = #util.filter(app.context.objects, 'isMinion')
-      local maxPop = p.config.maxMinions
+        local p = app.context.objects.muju
+        local population = #util.filter(app.context.objects, 'isMinion')
+        local maxPop = p.config.maxMinions
 
-      if population < maxPop then
-        g.white()
-      else
-        g.setColor(255, 160, 160)
-      end
+        if population < maxPop then
+          g.white()
+        else
+          g.setColor(255, 160, 160)
+        end
 
-      self:drawJuju()
-      self:drawPopulation()
+        self:drawJuju()
+        self:drawPopulation()
 
-      app.art.heartFrame:setFilter('nearest')
-      app.art.heart:setFilter('nearest')
-      app.art.heartHalf:setFilter('nearest')
+        app.art.heartFrame:setFilter('nearest')
+        app.art.heart:setFilter('nearest')
+        app.art.heartHalf:setFilter('nearest')
 
-      local healthbars = {}
-      healthbars = util.concat(healthbars, { app.context.objects.muju })
-      healthbars = util.concat(healthbars, util.filter(app.context.objects, 'isMinion'))
-      healthbars = util.concat(healthbars, util.filter(app.context.objects, 'isEnemy'))
+        local healthbars = {}
+        healthbars = util.concat(healthbars, { app.context.objects.muju })
+        healthbars = util.concat(healthbars, util.filter(app.context.objects, 'isMinion'))
+        healthbars = util.concat(healthbars, util.filter(app.context.objects, 'isEnemy'))
 
-      util.each(healthbars, function(unit)
-        self:drawHealthbar(unit)
+        util.each(healthbars, function(unit)
+          self:drawHealthbar(unit)
+        end)
+
+        return -1000
       end)
-
-      return -1000
-    end)
+  })
 
   return self
 end

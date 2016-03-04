@@ -12,7 +12,7 @@ muju.state = function()
       x = app.context.scene.width / 2,
       y = app.context.scene.height / 2
     },
-    health = 5,
+    health = muju.config.maxHealth,
     maxJuju = 1,
     juju = 0,
     totalJuju = 0,
@@ -40,6 +40,22 @@ function muju:bind()
   self:dispose({
     love.update
       :subscribe(self:wrap(self.jujuTrickle)),
+
+    love.keypressed
+      :filter(f.eq('space'))
+      :subscribe(function()
+        local x = love.math.random() > .5 and app.context.scene.width - 50 or 50
+        local y = 100 + love.math.random() * (app.context.scene.height - 200)
+
+        local spuju = app.enemies.spuju.object:new({
+          position = {
+            x = x,
+            y = y
+          }
+        })
+
+        app.context.objects[spuju] = spuju
+      end),
 
     app.context.view.draw
       :subscribe(self:wrap(self.draw))

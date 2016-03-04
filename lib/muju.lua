@@ -17,24 +17,15 @@ function muju:tint(r, g, b)
 end
 
 function muju:hurt(amount)
-  if self.dead or lib.tick.index - self.lastHurt < self.config.hurtGrace / lib.tick.rate then return end
+  if self.dead then return end
+
   self.health = math.max(self.health - amount, 0)
   app.context.view:screenshake(.1)
+
   if self.health == 0 then
     self.dead = true
-    lib.quilt.add(function()
-      self.animation:set('death')
-      lib.tick.scale = .4
-      coroutine.yield(1)
-      lib.flux.to(lib.tick, 1, {scale = 1})
-      coroutine.yield(1)
-      lib.flux.to(app.context.hud, 1, {fadeout = 1})
-      coroutine.yield(1)
-      app.context.unload()
-      app.context.load('overgrowth')
-    end)
-  else
-    self.lastHurt = lib.tick.index
+    app.context:unload()
+    app.context.load('overgrowth')
   end
 end
 
