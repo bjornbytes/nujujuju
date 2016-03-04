@@ -78,7 +78,7 @@ function juju:isTargetable()
 end
 
 function juju:pickup(carrier)
-  if not self.carrier then
+  if not self.carrier and not carrier:isCarryingJuju() then
     self.carrier = carrier
   end
 end

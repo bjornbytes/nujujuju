@@ -57,7 +57,7 @@ function bruju:bind()
 
     love.update
       :subscribe(function()
-        if self.target and self.target.isEnemy and self.target.dead then
+        if (self.target and self.target.isEnemy and self.target.dead) or self:isCarryingJuju() then
           self.target = nil
         end
 

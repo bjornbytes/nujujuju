@@ -12,4 +12,10 @@ function minion:getBaseSpeed()
   return isCarryingJuju and self.config.speed / 2 or self.config.speed
 end
 
+function minion:isCarryingJuju()
+  return util.match(app.context.objects, function(object)
+    return util.isa(object, app.juju) and object.carrier == self
+  end)
+end
+
 return minion
