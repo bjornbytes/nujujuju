@@ -25,9 +25,37 @@ function context.load(scene)
       context.objects[entry.key] = instance
     end
   end
+
+  context.events = util.copy(context.scene.events)
+  context.timeline = love.update
+    :subscribe(function()
+      if context.events[1] and lib.tick.index * lib.tick.rate >= context.events[1].time then
+        local event = table.remove(context.events, 1)
+
+        context.lastEvent = event
+
+        if event.kind == 'spuju' then
+          for i = 1, event.count do
+            local x = love.math.random() > .5 and context.scene.width - 50 or 50
+            local y = 100 + love.math.random() * (context.scene.height - 200)
+
+            local spuju = app.enemies.spuju.object:new({
+              position = {
+                x = x,
+                y = y
+              }
+            })
+
+            context.objects[spuju] = spuju
+          end
+        end
+      end
+    end)
 end
 
 function context.unload()
+  context.timeline:unsubscribe()
+
   for object in pairs(context.objects) do
     f.try(object.unbind, object)
   end

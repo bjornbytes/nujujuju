@@ -44,22 +44,6 @@ function muju:bind()
     love.update
       :subscribe(self:wrap(self.jujuTrickle)),
 
-    love.keypressed
-      :filter(f.eq('space'))
-      :subscribe(function()
-        local x = love.math.random() > .5 and app.context.scene.width - 50 or 50
-        local y = 100 + love.math.random() * (app.context.scene.height - 200)
-
-        local spuju = app.enemies.spuju.object:new({
-          position = {
-            x = x,
-            y = y
-          }
-        })
-
-        app.context.objects[spuju] = spuju
-      end),
-
     app.context.view.draw
       :subscribe(self:wrap(self.draw))
   })

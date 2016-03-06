@@ -100,7 +100,7 @@ function spuju:draw()
   g.white(70)
   g.draw(image, self.position.x, self.position.y, 0, scale, scale / 1.5, image:getWidth() / 2, image:getHeight() / 2)
 
-  self:drawRing(200, 80, 80)
+  self:drawRing(255, 40, 40)
 
   self.animation:tick(lib.tick.delta)
   self.animation:draw(self.position.x, self.position.y)

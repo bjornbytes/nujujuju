@@ -61,8 +61,19 @@ function unit:enclose()
   end
 end
 
+function unit:isInvincible()
+  return self.lastHurt and self.config.hurtGrace and (lib.tick.index - self.lastHurt) * lib.tick.rate <= self.config.hurtGrace
+end
+
 function unit:hurt(amount)
+  if self:isInvincible() then return end
+
   self.health = self.health - amount
+
+  if self.lastHurt then
+    self.lastHurt = lib.tick.index
+  end
+
   if self.health <= 0 then
     self:die()
   end

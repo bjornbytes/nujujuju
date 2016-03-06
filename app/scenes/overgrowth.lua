@@ -16,6 +16,17 @@ overgrowth.objects = {
   }
 }
 
-overgrowth.events = {}
+overgrowth.events = {
+  {
+    kind = 'spuju',
+    time = 5,
+    count = 1
+  },
+  {
+    kind = 'spuju',
+    time = 25,
+    count = 2
+  }
+}
 
 return overgrowth

@@ -19,7 +19,8 @@ bruju.state = function()
       x = app.context.scene.width / 2,
       y = app.context.scene.height / 2
     },
-    health = bruju.config.maxHealth
+    health = bruju.config.maxHealth,
+    lastHurt = -math.huge
   }
 
   state.animation = lib.animation.create(app.minions.bruju.spine, app.minions.bruju.animation)
@@ -57,7 +58,9 @@ function bruju:bind()
 
     love.update
       :subscribe(function()
-        if (self.target and self.target.isEnemy and self.target.dead) or self:isCarryingJuju() then
+        if self.target and (self.target.isEnemy and self.target.dead or self:isCarryingJuju()) then
+          self.destination.x = self.position.x
+          self.destination.y = self.position.y
           self.target = nil
         end
 
@@ -124,10 +127,13 @@ function bruju:draw()
   g.white(70)
   g.draw(image, self.position.x, self.position.y, 0, scale, scale / 1.5, image:getWidth() / 2, image:getHeight() / 2)
 
-  self:drawRing(80, 200, 80)
+  self:drawRing(40, 200, 40)
 
   self.animation:tick(lib.tick.delta)
-  self.animation:draw(self.position.x, self.position.y)
+
+  if not self:isInvincible() or util.round((lib.tick.index - self.lastHurt) * lib.tick.rate * 3) % 2 == 0 then
+    self.animation:draw(self.position.x, self.position.y)
+  end
 
   return -self.position.y
 end

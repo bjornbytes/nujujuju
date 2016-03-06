@@ -17,15 +17,15 @@ function entity:isTargetable()
 end
 
 function entity:drawRing(r, gg, b)
-  local alpha = (self:isSelected() or self:isHovered(love.mouse.getPosition())) and 1 or 0.5
+  local alpha = (self:isSelected() or self:isHovered(app.context.view:worldPoint(love.mouse.getPosition()))) and 1 or 0.5
   local radius = self.config.radius
 
-  g.setColor(r, gg, b, alpha * 160)
-  g.setLineWidth(3)
+  g.setColor(r, gg, b, alpha * 80)
+  g.setLineWidth(5)
   g.ellipse('line', self.position.x, self.position.y, radius, radius / 2)
 
   g.white(alpha * 160)
-  g.setLineWidth(1)
+  g.setLineWidth(2)
   g.ellipse('line', self.position.x, self.position.y, radius, radius / 2)
 end
 

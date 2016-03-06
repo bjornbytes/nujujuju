@@ -34,6 +34,9 @@ function input:bind()
         return kind == nil
       end)
       :reject(self:wrap(self.isCasting))
+      :map(function(...)
+        return app.context.view:worldPoint(...)
+      end)
       :map(lib.target.objectAtPosition)
       :tap(function(owner)
         self.selected = owner
@@ -45,8 +48,8 @@ function input:bind()
       :tap(function(owner)
         self.castContext = {
           active = false,
-          ox = love.mouse.getX(),
-          oy = love.mouse.getY(),
+          ox = app.context.view:worldMouseX(),
+          oy = app.context.view:worldMouseY(),
           owner = owner,
           ability = owner.abilities.auto,
           tick = lib.tick.index,
@@ -59,7 +62,7 @@ function input:bind()
           :tap(function()
             local context = self.castContext
             if not context.active then
-              if util.distance(context.ox, context.oy, love.mouse.getPosition()) > 10 then
+              if util.distance(context.ox, context.oy, app.context.view:worldPoint(love.mouse.getPosition())) > 10 then
                 context.active = true
                 lib.flux.to(context, .3, { factor = 1 })
                   :ease('backinout')
@@ -71,7 +74,7 @@ function input:bind()
       :subscribe(function()
         local context = self.castContext
         if context.active then
-          local mx, my = love.mouse.getPosition()
+          local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
 
           if not context.ability.canCastAtPosition or context.ability:canCastAtPosition(mx, my) then
             context.ability:cast(mx, my)
@@ -99,8 +102,8 @@ function input:bind()
       :tap(function(_, index)
         self.castContext = {
           active = false,
-          ox = love.mouse.getX(),
-          oy = love.mouse.getY(),
+          ox = app.context.view:worldMouseX(),
+          oy = app.context.view:worldMouseY(),
           owner = self.selected,
           ability = self.selected.abilities[index],
           tick = lib.tick.index,
@@ -117,7 +120,7 @@ function input:bind()
       :subscribe(function()
         local context = self.castContext
         if context.active then
-          local mx, my = love.mouse.getPosition()
+          local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
 
           if not context.ability.canCastAtPosition or context.ability:canCastAtPosition(mx, my) then
             context.ability:cast(mx, my)
@@ -132,10 +135,10 @@ function input:bind()
               context.owner = nil
             end)
         end
-      end, print)
-  })
+      end, print),
 
-  app.context.view.draw:subscribe(self:wrap(self.draw))
+    app.context.view.draw:subscribe(self:wrap(self.draw))
+  })
 end
 
 function input:draw()
@@ -144,7 +147,7 @@ function input:draw()
     local ox, oy = context.owner.position.x, context.owner.position.y
     local points = {}
     local radius = 30
-    local mx, my = love.mouse.getPosition()
+    local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
     local dir = util.angle(ox, oy, mx, my)
     local pointCount = 80
 

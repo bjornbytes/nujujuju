@@ -24,7 +24,7 @@ function inspector:updateCursor(mouse, components)
   for i = 1, #components do
     contains = contains or f.try(components[i].contains, components[i], mx, my)
   end
-  love.mouse.setCursor(contains and lib.gooey.controller.cursors.hand or lib.gooey.controller.cursors.default)
+  --love.mouse.setCursor(contains and lib.gooey.controller.cursors.hand or lib.gooey.controller.cursors.default)
 end
 
 function inspector:setupComponents(editing)

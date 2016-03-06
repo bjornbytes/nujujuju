@@ -1,7 +1,6 @@
 local target = {}
 
 function target.objectAtPosition(x, y)
-  local x, y = love.mouse.getPosition()
   local candidates = {}
   candidates = util.concat(candidates, util.filter(app.context.objects, 'isMinion'))
   candidates = util.concat(candidates, util.filter(app.context.objects, 'isEnemy'))
