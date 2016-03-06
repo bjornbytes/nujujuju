@@ -19,7 +19,7 @@ f = lib.funk
 g = love.graphics
 util = setmetatable(lib.util, { __index = lib.lume })
 
-app.context.load('overgrowth')
+app.context.load('world')
 
 love.update:subscribe(function()
   lib.flux.update(lib.tick.rate)

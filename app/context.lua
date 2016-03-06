@@ -5,10 +5,11 @@ function context.load(scene)
 
   context.view = lib.view:new()
   context.particles = lib.particles:new()
-  context.hud = app.hud:new()
-  context.input = app.input:new()
   context.inspector = app.inspector:new()
   context.collision = lib.collision:new()
+
+  context.view.xmax = context.scene.width
+  context.view.ymax = context.scene.height
 
   context.objects = {}
 
@@ -23,10 +24,14 @@ function context.load(scene)
     if entry.key then
       instance._key = entry.key
       context.objects[entry.key] = instance
+
+      if not context[entry.key] then
+        context[entry.key] = instance
+      end
     end
   end
 
-  context.events = util.copy(context.scene.events)
+  context.events = util.copy(context.scene.events) or {}
   context.timeline = love.update
     :subscribe(function()
       if context.events[1] and lib.tick.index * lib.tick.rate >= context.events[1].time then
@@ -63,9 +68,7 @@ function context.unload()
   context.objects = nil
 
   context.view:unbind()
-  context.input:unbind()
   context.particles:unbind()
-  context.hud:unbind()
   context.inspector:unbind()
   context.collision:unbind()
 end

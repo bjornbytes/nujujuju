@@ -13,7 +13,9 @@ overgrowth.objects = {
       x = w / 2,
       y = h / 2
     }
-  }
+  },
+  { 'hud.game', key = 'hud' },
+  { 'input', key = 'input' }
 }
 
 overgrowth.events = {
