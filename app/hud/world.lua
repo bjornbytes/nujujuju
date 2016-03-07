@@ -6,7 +6,8 @@ hud.config = {
     [true] = { 80, 200, 80 },
     [false] = { 200, 80, 80 }
   },
-  maxDrag = 300,
+  maxTapDistance = 32,
+  panAmount = 50,
   world = {
     overgrowth = {
       x = 800,
@@ -26,7 +27,10 @@ hud.config = {
 hud.state = function()
   return {
     selected = 'overgrowth',
-    peeking = false,
+    dragStart = {
+      x = nil,
+      y = nil
+    },
     bursts = {}
   }
 end
@@ -39,6 +43,13 @@ function hud:bind()
       local view = app.context.view
       local tx = self.config.world[self.selected].x
       local ty = self.config.world[self.selected].y
+
+      if love.mouse.isDown(1) then
+        local dis, dir = util.vector(self.dragStart.x, self.dragStart.y, love.mouse.getPosition())
+        dis = dis / (1 + (dis / self.config.panAmount) ^ .5)
+        tx = tx - math.cos(dir) * dis
+        ty = ty - math.sin(dir) * dis
+      end
 
       tx = tx - view.width / 2
       ty = ty - view.height / 2
@@ -70,11 +81,22 @@ function hud:bind()
       end
     end),
 
+    -- Selects scenes on tap, but only if mouse hasn't moved very far
     love.mousepressed
       :filter(function(_, _, b) return b == 1 end)
-      :map(function(x, y)
-        return app.context.view:worldPoint(x, y)
+      :flatMapLatest(function(x1, y1)
+        return love.mousemoved
+          :startWith(x1, y1)
+          :map(function(x2, y2)
+            return util.distance(x1, y1, x2, y2)
+          end)
+          :takeUntil(love.mousereleased:take(1))
+          :max()
       end)
+      :filter(function(distance)
+        return distance < self.config.maxTapDistance
+      end)
+      :map(function() return app.context.view:worldMouseX(), app.context.view:worldMouseY() end)
       :map(function(x, y)
         local _, key = util.match(self.config.world, function(info)
           local dir = util.angle(info.x, info.y, x, y)
@@ -100,7 +122,14 @@ function hud:bind()
           :oncomplete(function()
             table.remove(self.bursts)
           end)
-      end, print)
+      end, print),
+
+    love.mousepressed
+      :filter(function(_, _, b) return b == 1 end)
+      :subscribe(function(x, y)
+        self.dragStart.x = x
+        self.dragStart.y = y
+      end)
   })
 end
 
