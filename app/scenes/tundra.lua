@@ -1,12 +1,12 @@
-local overgrowth = {}
+local tundra = {}
 
-overgrowth.name = 'The Overgrowth'
-overgrowth.width = 800
-overgrowth.height = 600
+tundra.name = 'The Wild North'
+tundra.width = 800
+tundra.height = 600
 
-local w, h = overgrowth.width, overgrowth.height
+local w, h = tundra.width, tundra.height
 
-overgrowth.objects = {
+tundra.objects = {
   { 'environment' },
   { 'muju',
     key = 'muju',
@@ -19,7 +19,7 @@ overgrowth.objects = {
   { 'input', key = 'input' }
 }
 
-overgrowth.events = {
+tundra.events = {
   {
     kind = 'spuju',
     time = 5,
@@ -32,4 +32,4 @@ overgrowth.events = {
   }
 }
 
-return overgrowth
+return tundra

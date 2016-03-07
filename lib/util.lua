@@ -83,6 +83,16 @@ function g.white(alpha)
   return g
 end
 
+function g.alpha(color, alpha, ...)
+  if type(color) == 'table' then
+    local result = util.copy(color)
+    result[4] = alpha
+    return result
+  end
+
+  return color, alpha, ...
+end
+
 function lib.tick.getLerpFactor(factor)
   return ((1 / lib.tick.rate) * factor) * lib.tick.rate
 end

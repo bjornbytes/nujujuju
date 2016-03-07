@@ -1,10 +1,12 @@
 local hud = lib.object.create()
 
+local function isLeft(_, _, b) return b == 1 end
+
 hud.config = {
   markerSize = 30,
   markerColors = {
-    [true] = { 80, 200, 80 },
-    [false] = { 200, 80, 80 }
+    available = { 80, 200, 80 },
+    unavailable = { 200, 80, 80 }
   },
   maxTapDistance = 32,
   panAmount = 50,
@@ -26,17 +28,34 @@ hud.config = {
 
 hud.state = function()
   return {
-    selected = 'overgrowth',
+    selected = nil,
     dragStart = {
       x = nil,
       y = nil
     },
-    bursts = {}
+    bursts = {},
+    tooltipFactor = 0
   }
 end
 
 function hud:bind()
   self.u, self.v = g.getDimensions()
+  self.font = fonts.montserrat(.03 * self.v)
+  self.playText = g.newText(self.font, 'Play')
+
+  self.tooltip = {
+    factor = 1,
+    width = .4 * self.v,
+    height = .3 * self.v,
+    margin = .06 * self.v,
+    hintSize = .04 * self.v,
+    x = 0,
+    y = 0,
+    canvas = g.newCanvas(.4 * self.v + 2 * .06 * self.v, .3 * self.v + 2 * .06 * self.v),
+    backCanvas = g.newCanvas(.4 * self.v + 2 * .06 * self.v, .3 * self.v + 2 * .06 * self.v)
+  }
+
+  self:selectScene('overgrowth')
 
   self:dispose({
     love.update:subscribe(function()
@@ -54,8 +73,8 @@ function hud:bind()
       tx = tx - view.width / 2
       ty = ty - view.height / 2
 
-      view.x = util.lerp(view.x, tx, lib.tick.getLerpFactor(.2))
-      view.y = util.lerp(view.y, ty, lib.tick.getLerpFactor(.2))
+      view.x = util.lerp(view.x, tx, lib.tick.getLerpFactor(.16))
+      view.y = util.lerp(view.y, ty, lib.tick.getLerpFactor(.16))
     end),
 
     app.context.view.draw:subscribe(function()
@@ -65,8 +84,14 @@ function hud:bind()
       g.setLineWidth(4)
 
       for key, scene in pairs(self.config.world) do
-        g.setColor(self.config.markerColors[self:isSceneAvailable(key)])
-        g.ellipse('line', scene.x, scene.y, self.config.markerSize, self.config.markerSize / 1.5)
+        if self:isSceneAvailable(key) then
+          g.setColor(self.config.markerColors.available)
+        else
+          g.setColor(self.config.markerColors.unavailable)
+        end
+
+        local scale = self.selected == key and 1 + (.1 * math.sin(lib.tick.index * lib.tick.rate * 5)) or 1
+        g.ellipse('line', scene.x, scene.y, self.config.markerSize * scale, self.config.markerSize * scale / 1.5)
       end
 
       g.setLineWidth(1)
@@ -81,9 +106,89 @@ function hud:bind()
       end
     end),
 
+    app.context.view.hud:subscribe(function()
+      if self.tooltip.factor > 0 then
+        local canvas = self.tooltip.canvas
+        local u, v = self.u, self.v
+        local x, y = canvas:getWidth() / 2, canvas:getHeight() - self.tooltip.margin
+        local w, h = self.tooltip.width, self.tooltip.height
+        local hs = self.tooltip.hintSize
+        local points = {
+          x, y,
+          x - hs, y - hs,
+          x - w / 2, y - hs,
+          x - w / 2, y - h,
+          x + w / 2, y - h,
+          x + w / 2, y - hs,
+          x + hs, y - hs
+        }
+
+        for i = 1, #points, 2 do
+          points[i] = util.lerp(points[i], x, 1 - self.tooltip.factor)
+          points[i + 1] = util.lerp(points[i + 1], y, 1 - self.tooltip.factor)
+        end
+
+        g.setCanvas(self.tooltip.backCanvas)
+        love.graphics.clear(0, 0, 0, 0)
+
+        g.setCanvas(canvas)
+        love.graphics.clear(0, 0, 0, 0)
+
+        g.setColor(0, 0, 0, 200 * self.tooltip.factor)
+
+        local triangles = love.math.triangulate(points)
+        for i = 1, #triangles do
+          g.polygon('fill', triangles[i])
+        end
+
+        g.setCanvas()
+
+        g.white()
+
+        for i = 1, 3 do
+          app.shaders.horizontalBlur:send('amount', .0025)
+          app.shaders.verticalBlur:send('amount', .0025 * (canvas:getWidth() / canvas:getHeight()))
+          g.setCanvas(self.tooltip.backCanvas)
+          g.setShader(app.shaders.horizontalBlur)
+          g.draw(canvas)
+          g.setCanvas(canvas)
+          g.setShader(app.shaders.verticalBlur)
+          g.draw(self.tooltip.backCanvas)
+        end
+
+        g.setCanvas()
+        g.setShader()
+
+        local x, y = app.context.view:screenPoint(self.tooltip.x, self.tooltip.y)
+
+        g.white()
+        g.draw(self.tooltip.canvas, x, y, 0, 1, 1, canvas:getWidth() / 2, canvas:getHeight() - self.tooltip.margin)
+
+        local buttonPadding = {
+          x = .04 * v,
+          y = .01 * v
+        }
+
+        local bx = x
+        local by = y - canvas:getHeight() * .3
+        local bw = self.playText:getWidth() + 2 * buttonPadding.x
+        local bh = self.playText:getHeight() + 2 * buttonPadding.y
+        g.setLineWidth(3)
+        g.setColor(152, 255, 130, self.tooltip.factor ^ 2 * 255)
+        g.rectangle('line', bx - bw / 2, by - bh / 2, bw, bh, 8, 8)
+
+        g.white(self.tooltip.factor ^ 2 * 255)
+        g.draw(self.playText, bx - self.playText:getWidth() / 2, by - self.playText:getHeight() / 2)
+
+        g.setFont(self.font)
+        local scene = app.scenes[self.selected].name
+        g.print(scene, x - g.getFont():getWidth(scene) / 2, y - canvas:getHeight() * .58)
+      end
+    end),
+
     -- Selects scenes on tap, but only if mouse hasn't moved very far
     love.mousepressed
-      :filter(function(_, _, b) return b == 1 end)
+      :filter(isLeft)
       :flatMapLatest(function(x1, y1)
         return love.mousemoved
           :startWith(x1, y1)
@@ -107,8 +212,6 @@ function hud:bind()
       end)
       :filter(f.id)
       :subscribe(function(key, x, y)
-        self.selected = key
-
         local burst = {
           factor = 1,
           x = x,
@@ -122,19 +225,67 @@ function hud:bind()
           :oncomplete(function()
             table.remove(self.bursts)
           end)
+
+        self:selectScene(key)
       end, print),
 
     love.mousepressed
-      :filter(function(_, _, b) return b == 1 end)
+      :filter(isLeft)
       :subscribe(function(x, y)
         self.dragStart.x = x
         self.dragStart.y = y
-      end)
+      end),
+
+    love.mousepressed
+      :filter(isLeft)
+      :subscribe(function(x, y)
+        if not self.selected then return nil end
+
+        local u, v = self.u, self.v
+
+        local buttonPadding = {
+          x = .04 * v,
+          y = .01 * v
+        }
+
+        local bw = self.playText:getWidth() + 2 * buttonPadding.x
+        local bh = self.playText:getHeight() + 2 * buttonPadding.y
+
+        local sx, sy = app.context.view:screenPoint(self.config.world[self.selected].x, self.config.world[self.selected].y)
+
+        local bx = sx - bw / 2
+        local by = sy - self.tooltip.canvas:getHeight() * .3 - bh / 2
+
+        if util.inside(x, y, bx, by, bw, bh) then
+          local selected = self.selected
+          print('unloading')
+          app.context.unload()
+          print('loading')
+          app.context.load(selected)
+        end
+      end, print)
   })
 end
 
 function hud:isSceneAvailable(key)
   return key == 'overgrowth'
+end
+
+function hud:selectScene(key)
+  local changed = self.selected ~= key
+
+  self.selected = key
+
+  if changed then
+    lib.flux.to(self.tooltip, .2, { factor = 0 })
+      :ease('backin')
+      :oncomplete(function()
+        self.tooltip.x = self.config.world[self.selected].x
+        self.tooltip.y = self.config.world[self.selected].y
+      end)
+      :after(self.tooltip, .4, { factor = 1 })
+        :ease('backout')
+  end
 end
 
 return hud

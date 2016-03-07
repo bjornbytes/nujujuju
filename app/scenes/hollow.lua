@@ -1,12 +1,12 @@
-local overgrowth = {}
+local hollow = {}
 
-overgrowth.name = 'The Overgrowth'
-overgrowth.width = 800
-overgrowth.height = 600
+hollow.name = 'The Hollow'
+hollow.width = 800
+hollow.height = 600
 
-local w, h = overgrowth.width, overgrowth.height
+local w, h = hollow.width, hollow.height
 
-overgrowth.objects = {
+hollow.objects = {
   { 'environment' },
   { 'muju',
     key = 'muju',
@@ -19,7 +19,7 @@ overgrowth.objects = {
   { 'input', key = 'input' }
 }
 
-overgrowth.events = {
+hollow.events = {
   {
     kind = 'spuju',
     time = 5,
@@ -32,4 +32,4 @@ overgrowth.events = {
   }
 }
 
-return overgrowth
+return hollow

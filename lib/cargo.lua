@@ -27,7 +27,8 @@ cargo.loaders = {
   mp3 = la and la.newSource,
   ogg = la and la.newSource,
   wav = la and la.newSource,
-  ttf = lg and makeFont
+  ttf = lg and makeFont,
+  otf = lg and makeFont
 }
 
 cargo.processors = {}
