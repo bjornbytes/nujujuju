@@ -170,19 +170,22 @@ function hud:bind()
         }
 
         local bx = x
-        local by = y - canvas:getHeight() * .3
+        local by = util.lerp(y - canvas:getHeight() * .3, y, 1 - self.tooltip.factor)
         local bw = self.playText:getWidth() + 2 * buttonPadding.x
         local bh = self.playText:getHeight() + 2 * buttonPadding.y
-        g.setLineWidth(3)
-        g.setColor(152, 255, 130, self.tooltip.factor ^ 2 * 255)
+        g.setLineWidth(5)
+        g.setColor(152, 255, 130, self.tooltip.factor * 60)
+        g.rectangle('fill', bx - bw / 2, by - bh / 2, bw, bh, 8, 8)
+        g.setColor(152, 255, 130, self.tooltip.factor * 255)
         g.rectangle('line', bx - bw / 2, by - bh / 2, bw, bh, 8, 8)
 
-        g.white(self.tooltip.factor ^ 2 * 255)
+        g.white(self.tooltip.factor * 255)
         g.draw(self.playText, bx - self.playText:getWidth() / 2, by - self.playText:getHeight() / 2)
 
         g.setFont(self.font)
         local scene = app.scenes[self.selected].name
-        g.print(scene, x - g.getFont():getWidth(scene) / 2, y - canvas:getHeight() * .58)
+        local titleY = util.lerp(y - canvas:getHeight() * .58, y, 1 - self.tooltip.factor)
+        g.print(scene, x - g.getFont():getWidth(scene) / 2, titleY)
       end
     end),
 
@@ -258,9 +261,7 @@ function hud:bind()
 
         if util.inside(x, y, bx, by, bw, bh) then
           local selected = self.selected
-          print('unloading')
           app.context.unload()
-          print('loading')
           app.context.load(selected)
         end
       end, print)
@@ -283,7 +284,7 @@ function hud:selectScene(key)
         self.tooltip.x = self.config.world[self.selected].x
         self.tooltip.y = self.config.world[self.selected].y
       end)
-      :after(self.tooltip, .4, { factor = 1 })
+      :after(self.tooltip, .35, { factor = 1 })
         :ease('backout')
   end
 end

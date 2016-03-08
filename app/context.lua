@@ -1,6 +1,8 @@
 local context = {}
 
 function context.load(scene)
+  lib.tick.index = 1
+
   context.scene = app.scenes[scene]
 
   context.view = lib.view:new()
