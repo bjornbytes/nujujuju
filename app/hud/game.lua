@@ -186,7 +186,7 @@ function hud:drawWaves()
     else
       width = 120
     end
-    g.setColor(0, 0, 0)
+    g.setColor(0, 0, 0, i == 1 and 255 or 150)
     g.rectangle('fill', x, v - height, width, height)
   end
 end

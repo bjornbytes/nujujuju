@@ -59,7 +59,7 @@ function spuju:bind()
       :pluck('data', 'name')
       :filter(f.eq('attack'))
       :subscribe(function()
-        self.target:hurt(1)
+        self.target:hurt(1, self)
       end),
 
     love.update

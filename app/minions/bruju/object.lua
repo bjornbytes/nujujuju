@@ -64,6 +64,14 @@ function bruju:bind()
           self.target = nil
         end
 
+        if not self.target and self:distanceToPoint(self.destination.x, self.destination.y) == 0 then
+          local closest = self:closest('enemy')
+
+          if closest and not closest.dead and self:distanceTo(closest) <= self.config.aggroRange then
+            self.target = closest
+          end
+        end
+
         if self.dead then return end
 
         if self.target then
@@ -107,7 +115,8 @@ function bruju:bind()
       :filter(f.eq('attack'))
       :subscribe(function()
         if self.target then
-          self.target:hurt(1)
+          self.target:hurt(1, self)
+
           if self.target.dead then
             self.destination.x = self.position.x
             self.destination.y = self.position.y

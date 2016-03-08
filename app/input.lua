@@ -89,7 +89,7 @@ function input:bind()
               context.owner = nil
             end)
         end
-      end, print),
+      end),
 
     love.mousereleased
       :filter(isLeft)
@@ -135,7 +135,7 @@ function input:bind()
               context.owner = nil
             end)
         end
-      end, print),
+      end),
 
     app.context.view.draw:subscribe(self:wrap(self.draw))
   })

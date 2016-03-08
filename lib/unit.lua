@@ -65,13 +65,19 @@ function unit:isInvincible()
   return self.lastHurt and self.config.hurtGrace and (lib.tick.index - self.lastHurt) * lib.tick.rate <= self.config.hurtGrace
 end
 
-function unit:hurt(amount)
+function unit:hurt(amount, source)
   if self:isInvincible() then return end
 
   self.health = self.health - amount
 
   if self.lastHurt then
     self.lastHurt = lib.tick.index
+  end
+
+  if source.isMinion or source.isEnemy then
+    if not self.target and self:distanceToPoint(self.destination.x, self.destination.y) == 0 then
+      self.target = source
+    end
   end
 
   if self.health <= 0 then

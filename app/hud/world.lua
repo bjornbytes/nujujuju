@@ -230,7 +230,7 @@ function hud:bind()
           end)
 
         self:selectScene(key)
-      end, print),
+      end),
 
     love.mousepressed
       :filter(isLeft)
@@ -239,7 +239,7 @@ function hud:bind()
         self.dragStart.y = y
       end),
 
-    love.mousepressed
+    love.mousereleased
       :filter(isLeft)
       :subscribe(function(x, y)
         if not self.selected then return nil end
@@ -264,7 +264,7 @@ function hud:bind()
           app.context.unload()
           app.context.load(selected)
         end
-      end, print)
+      end)
   })
 end
 
