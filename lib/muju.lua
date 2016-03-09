@@ -1,5 +1,10 @@
 local muju = {}
 
+function muju:selectAbility(index)
+  if index < 1 or index > #self.abilities then error('Tried to select invalid ability ' .. index) end
+  self.activeAbility = self.abilities[index]
+end
+
 function muju:jujuTrickle()
   self.jujuTrickleTimer = math.max(self.jujuTrickleTimer - lib.tick.rate, 0)
   if self.jujuTrickleTimer == 0 then

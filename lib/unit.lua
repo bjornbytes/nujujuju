@@ -85,4 +85,8 @@ function unit:hurt(amount, source)
   end
 end
 
+function unit:heal(amount, source)
+  self.health = math.min(self.health + amount, self.config.maxHealth)
+end
+
 return unit

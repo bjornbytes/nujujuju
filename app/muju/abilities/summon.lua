@@ -5,12 +5,8 @@ function summon:canCast()
   return minionCount < self.owner.config.maxMinions
 end
 
-function summon:canCastAtPosition(x, y)
-  return true
-end
-
 function summon:cast(x, y)
-  if not self:canCast() or not self:canCastAtPosition(x, y) then return end
+  if not self:canCast() then return false end
 
   local muju = self.owner
 
@@ -25,7 +21,7 @@ function summon:cast(x, y)
 
   app.context.objects[minion] = minion
 
-  minion.abilities.auto:cast(x, y)
+  minion.activeAbility:cast(x, y)
 
   self.owner.animation:set('summon')
 end

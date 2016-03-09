@@ -18,8 +18,7 @@ input.state = function()
       ability = nil,
       tick = nil,
       factor = 0
-    },
-    selected = nil
+    }
   }
 end
 
@@ -38,12 +37,9 @@ function input:bind()
         return app.context.view:worldPoint(...)
       end)
       :map(lib.target.objectAtPosition)
-      :tap(function(owner)
-        self.selected = owner
-      end)
       :filter(function(owner)
-        if not owner or not owner.abilities or not owner.abilities.auto then return false end
-        return not owner.abilities.auto.canCast or owner.abilities.auto:canCast()
+        if not owner or not owner.activeAbility then return false end
+        return (owner.isMinion or owner == app.context.objects.muju) and owner.activeAbility:canCast()
       end)
       :tap(function(owner)
         self.castContext = {
@@ -51,7 +47,7 @@ function input:bind()
           ox = app.context.view:worldMouseX(),
           oy = app.context.view:worldMouseY(),
           owner = owner,
-          ability = owner.abilities.auto,
+          ability = owner.activeAbility,
           tick = lib.tick.index,
           factor = 0
         }
@@ -76,55 +72,7 @@ function input:bind()
         if context.active then
           local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
 
-          if not context.ability.canCastAtPosition or context.ability:canCastAtPosition(mx, my) then
-            context.ability:cast(mx, my)
-          end
-
-          context.ability = nil
-          context.active = false
-
-          lib.flux.to(context, .3, { factor = 0 })
-            :ease('cubicout')
-            :oncomplete(function()
-              context.owner = nil
-            end)
-        end
-      end),
-
-    love.mousereleased
-      :filter(isLeft)
-      :filter(f.negate(self:wrap(self.isCasting)))
-      :filter(function() return self.selected end)
-      :map(function(x, y)
-        return app.context.objects.hud:getElement(x, y)
-      end)
-      :filter(f.id)
-      :tap(function(_, index)
-        self.castContext = {
-          active = false,
-          ox = app.context.view:worldMouseX(),
-          oy = app.context.view:worldMouseY(),
-          owner = self.selected,
-          ability = self.selected.abilities[index],
-          tick = lib.tick.index,
-          factor = 0
-        }
-
-        self.castContext.active = true
-        lib.flux.to(self.castContext, .3, { factor = 1 })
-          :ease('backinout')
-      end)
-      :flatMapLatest(function()
-        return love.mousepressed:filter(isLeft):take(1)
-      end)
-      :subscribe(function()
-        local context = self.castContext
-        if context.active then
-          local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
-
-          if not context.ability.canCastAtPosition or context.ability:canCastAtPosition(mx, my) then
-            context.ability:cast(mx, my)
-          end
+          context.ability:cast(mx, my)
 
           context.ability = nil
           context.active = false

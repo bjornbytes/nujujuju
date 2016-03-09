@@ -30,14 +30,7 @@ bruju.state = function()
 end
 
 function bruju:bind()
-  self.abilities = {}
-
-  self.abilities.move = app.minions.common.abilities.move:new({ owner = self })
-  self.abilities.attack = app.minions.common.abilities.attack:new({ owner = self })
-  self.abilities.auto = app.minions.common.abilities.auto:new({ owner = self })
-
-  self.abilities[1] = self.abilities.move
-  self.abilities[2] = self.abilities.attack
+  self.activeAbility = app.minions.common.abilities.command:new({ owner = self })
 
   self:setIsMinion()
 

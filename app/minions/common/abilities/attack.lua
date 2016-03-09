@@ -11,11 +11,6 @@ function attack:canCastAtPosition()
 end
 
 function attack:cast(x, y)
-  local entity = lib.target.objectAtPosition(x, y)
-
-  if entity then
-    self.owner.target = entity
-  end
 end
 
 return attack

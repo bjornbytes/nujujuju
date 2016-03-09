@@ -1,13 +1,10 @@
 local entity = {}
 
-function entity:isSelected()
-  return app.context.input.selected == self
-end
-
 function entity:isHovered(x, y)
+  local hoverAllowanceFactor = 2
   local dis = util.distance(self.position.x, self.position.y, x, y)
   local dir = util.angle(self.position.x, self.position.y, x, y)
-  local ellipseHover = dis < self.config.radius / (2 - math.abs(math.cos(dir)))
+  local ellipseHover = dis < self.config.radius * hoverAllowanceFactor / (2 - math.abs(math.cos(dir)))
 
   return self:isTargetable() and (self.animation:contains(x, y) or ellipseHover)
 end
@@ -17,15 +14,20 @@ function entity:isTargetable()
 end
 
 function entity:drawRing(r, gg, b)
-  local alpha = (self:isSelected() or self:isHovered(app.context.view:worldPoint(love.mouse.getPosition()))) and 1 or 0.5
+  local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
+  local isHovered = lib.target.objectAtPosition(mx, my) == self
+  local isCasting = app.context.input:isCasting() and app.context.input.castContext.owner == self
+  local alpha = (isHovered or isCasting) and 1 or 0.5
   local radius = self.config.radius
 
-  g.setColor(r, gg, b, alpha * 80)
-  g.setLineWidth(5)
+  self.ringAlpha = util.lerp(self.ringAlpha or 0, alpha, 8 * lib.tick.delta)
+
+  g.setColor(r, gg, b, self.ringAlpha * 80)
+  g.setLineWidth(2 + 3 * alpha)
   g.ellipse('line', self.position.x, self.position.y, radius, radius / 2)
 
-  g.white(alpha * 160)
-  g.setLineWidth(2)
+  g.white(self.ringAlpha * 160)
+  g.setLineWidth(1 + 2 * (alpha - .5))
   g.ellipse('line', self.position.x, self.position.y, radius, radius / 2)
 end
 

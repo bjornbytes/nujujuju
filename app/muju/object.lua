@@ -36,9 +36,12 @@ function muju:bind()
   self:tint(.5, .2, .7)
   self.collisions = app.context.collision:add(self)
 
-  self.abilities = {}
-  self.abilities.auto = app.muju.abilities.summon:new({ owner = self })
-  self.abilities[1] = self.abilities.auto
+  self.abilities = {
+    app.muju.abilities.summon:new({ owner = self }),
+    app.muju.abilities.heal:new({ owner = self })
+  }
+
+  self.activeAbility = self.abilities[1]
 
   self:dispose({
     love.update

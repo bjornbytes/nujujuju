@@ -6,11 +6,9 @@ hud.config = {
   padding = .015
 }
 
-hud.state = function()
+function hud:state()
   return {
-    fadeout = 0,
-    jujuFactor = 0,
-    prevJujuFactor = 0
+    abilityFactor = {}
   }
 end
 
@@ -18,18 +16,13 @@ function hud:bind()
   self.u, self.v = g.getDimensions()
   self.font = self.config.font(self.v * .04)
 
-  self:dispose({
-    love.update
-      :subscribe(function()
-        local muju = app.context.objects.muju
-        self.prevJujuFactor = self.jujuFactor
-        local percent = muju.totalJuju / 50
-        self.jujuFactor = util.lerp(self.jujuFactor, percent, lib.tick.getLerpFactor(.6))
-      end),
+  for i = 1, #app.context.objects.muju.abilities do
+    self.abilityFactor[i] = i == 1 and 1 or 0
+  end
 
+  self:dispose({
     app.context.view.hud
       :subscribe(function()
-
         local p = app.context.objects.muju
         local population = #util.filter(app.context.objects, 'isMinion')
         local maxPop = p.config.maxMinions
@@ -60,6 +53,20 @@ function hud:bind()
         self:drawAbilities()
 
         return -1000
+      end),
+
+    love.mousepressed
+      :filter(function(_, _, b) return b == 1 end)
+      :map(self:wrap(self.getElement))
+      :filter(f.eq('ability'))
+      :subscribe(function(ability, index)
+        local muju = app.context.objects.muju
+
+        muju:selectAbility(index)
+
+        for i = 1, #muju.abilities do
+          lib.flux.to(self.abilityFactor, .25, { [i] = i == index and 1 or 0 }):ease('cubicout')
+        end
       end)
   })
 
@@ -67,21 +74,20 @@ function hud:bind()
 end
 
 function hud:getElement(mx, my)
-  local selected = app.context.input.selected
-  if selected and selected.abilities then
-    local u, v = self.u, self.v
-    local size = .06 * u
-    local inc = .08 * u
-    local count = #selected.abilities
-    local x = u / 2 - (inc * (count - 1) / 2)
+  local p = app.context.objects.muju
 
-    for i = 1, count do
-      if util.inside(mx, my, x - size / 2, 8, size, size) then
-        return 'ability', i
-      end
+  local u, v = self.u, self.v
+  local size = .06 * u
+  local inc = .08 * u
+  local count = #p.abilities
+  local x = u / 2 - (inc * (count - 1) / 2)
 
-      x = x + inc
+  for i = 1, count do
+    if util.inside(mx, my, x - size / 2, 8, size, size) then
+      return 'ability', i
     end
+
+    x = x + inc
   end
 
   return nil
@@ -192,20 +198,18 @@ function hud:drawWaves()
 end
 
 function hud:drawAbilities()
-  local selected = app.context.input.selected
-  if selected and selected.abilities then
-    local u, v = self.u, self.v
-    local size = .06 * u
-    local inc = .08 * u
-    local count = #selected.abilities
-    local x = u / 2 - (inc * (count - 1) / 2)
+  local p = app.context.objects.muju
 
-    g.setColor(0, 0, 0, 150)
+  local u, v = self.u, self.v
+  local size = .06 * u
+  local inc = .08 * u
+  local count = #p.abilities
+  local x = u / 2 - (inc * (count - 1) / 2)
 
-    for i = 1, count do
-      g.rectangle('fill', x - size / 2, 8, size, size)
-      x = x + inc
-    end
+  for i = 1, count do
+    g.setColor(0, 0, 0, 100 + 80 * self.abilityFactor[i])
+    g.rectangle('fill', x - size / 2, 8, size, size)
+    x = x + inc
   end
 end
 
