@@ -20,7 +20,8 @@ bruju.state = function()
       y = app.context.scene.height / 2
     },
     health = bruju.config.maxHealth,
-    lastHurt = -math.huge
+    lastHurt = -math.huge,
+    lastReachedDestination = -math.huge
   }
 
   state.animation = lib.animation.create(app.minions.bruju.spine, app.minions.bruju.animation)
@@ -51,11 +52,16 @@ function bruju:bind()
 
     love.update
       :subscribe(function()
-        if self.target and (self.target.isEnemy and self.target.dead or self:isCarryingJuju()) then
+        local didRecentlyReachDestination = (lib.tick.index - self.lastReachedDestination) * lib.tick.rate < self.config.stopDuration
+        local targetIsUnavailable = self.target and (self.target.isEnemy and self.target.dead or self:isCarryingJuju())
+
+        if didRecentlyReachDestination or targetIsUnavailable then
           self.destination.x = self.position.x
           self.destination.y = self.position.y
           self.target = nil
         end
+
+        if didRecentlyReachDestination then return end
 
         if not self.target and self:distanceToPoint(self.destination.x, self.destination.y) == 0 then
           local closest = self:closest('enemy')
@@ -90,6 +96,10 @@ function bruju:bind()
 
           if distance > 0 then
             self.animation:set('walk')
+
+            if self:distanceToPoint(self.destination.x, self.destination.y) == 0 then
+              self.lastReachedDestination = lib.tick.index
+            end
           else
             self.animation:set('idle')
           end
