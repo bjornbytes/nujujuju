@@ -23,16 +23,6 @@ function hud:bind()
   self:dispose({
     app.context.view.hud
       :subscribe(function()
-        local p = app.context.objects.muju
-        local population = #util.filter(app.context.objects, 'isMinion')
-        local maxPop = p.config.maxMinions
-
-        if population < maxPop then
-          g.white()
-        else
-          g.setColor(255, 160, 160)
-        end
-
         self:drawJuju()
         self:drawPopulation()
         self:drawWaves()
@@ -172,6 +162,8 @@ function hud:drawWaves()
   local width = 300
   local height = 80
 
+  g.setFont(self.font)
+
   if app.context.lastEvent and app.context.events[1] then
     local previousTime = app.context.lastEvent.time
     local time = lib.tick.index * lib.tick.rate - previousTime
@@ -181,11 +173,15 @@ function hud:drawWaves()
     local x = -width * percent
     g.setColor(0, 0, 0, alpha)
     g.rectangle('fill', x, v - height, width, height)
+
+    g.white()
+    local str = app.context.lastEvent.count
+    g.print(str, x + width * .25 - g.getFont():getWidth(str), v - height * .5 - g.getFont():getHeight() / 2)
   end
 
   for i = 1, #app.context.events do
     local event = app.context.events[i]
-    local x = (event.time - lib.tick.index * lib.tick.rate) * timeScale
+    local x = (event.time - lib.tick.index * lib.tick.rate) * timeScale + 3 * i
     local width
     if app.context.events[i + 1] then
       width = (app.context.events[i + 1].time - event.time) * timeScale
@@ -194,6 +190,10 @@ function hud:drawWaves()
     end
     g.setColor(0, 0, 0, i == 1 and 255 or 150)
     g.rectangle('fill', x, v - height, width, height)
+
+    g.white()
+    local str = event.count
+    g.print(str, x + width * .25 - g.getFont():getWidth(str) / 2, v - height * .5 - g.getFont():getHeight() / 2)
   end
 end
 

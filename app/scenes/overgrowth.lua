@@ -29,6 +29,16 @@ overgrowth.events = {
     kind = 'spuju',
     time = 25,
     count = 2
+  },
+  {
+    kind = 'spuju',
+    time = 40,
+    count = 2
+  },
+  {
+    kind = 'spuju',
+    time = 60,
+    count = 4
   }
 }
 
