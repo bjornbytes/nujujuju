@@ -15,7 +15,8 @@ spuju.state = function()
     },
     target = nil,
     health = spuju.config.maxHealth,
-    dead = false
+    dead = false,
+    lastHurt = -math.huge
   }
 
   state.animation = lib.animation.create(app.enemies.spuju.spine, app.enemies.spuju.animation)
@@ -103,7 +104,17 @@ function spuju:draw()
   self:drawRing(255, 40, 40)
 
   self.animation:tick(lib.tick.delta)
-  self.animation:draw(self.position.x, self.position.y)
+
+  if util.timeSince(self.lastHurt) < self.config.damageFlashDuration then
+    self.animation:draw(self.position.x, self.position.y)
+    app.shaders.colorize:send('color', { 1, 1, 1, 1 - util.timeSince(self.lastHurt) / self.config.damageFlashDuration })
+    g.setShader(app.shaders.colorize)
+    self.animation:draw(self.position.x, self.position.y)
+    g.setShader()
+  else
+    self.animation:draw(self.position.x, self.position.y)
+  end
+
 
   return -self.position.y
 end

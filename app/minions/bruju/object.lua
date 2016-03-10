@@ -143,7 +143,13 @@ function bruju:draw()
 
   self.animation:tick(lib.tick.delta)
 
-  if not self:isInvincible() or util.round((lib.tick.index - self.lastHurt) * lib.tick.rate * 3) % 2 == 0 then
+  if util.timeSince(self.lastHurt) < self.config.damageFlashDuration then
+    self.animation:draw(self.position.x, self.position.y)
+    app.shaders.colorize:send('color', { 1, 1, 1, 1 - util.timeSince(self.lastHurt) / self.config.damageFlashDuration })
+    g.setShader(app.shaders.colorize)
+    self.animation:draw(self.position.x, self.position.y)
+    g.setShader()
+  elseif not self:isInvincible() or util.round(util.timeSince(self.lastHurt) * 3) % 2 == 0 then
     self.animation:draw(self.position.x, self.position.y)
   end
 

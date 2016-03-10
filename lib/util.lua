@@ -97,4 +97,8 @@ function lib.tick.getLerpFactor(factor)
   return ((1 / lib.tick.rate) * factor) * lib.tick.rate
 end
 
+function util.timeSince(tick)
+  return (lib.tick.index - tick) * lib.tick.rate
+end
+
 return util
