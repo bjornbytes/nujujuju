@@ -10,6 +10,7 @@ hud.config = {
   },
   maxTapDistance = 32,
   panAmount = 50,
+  panDeadZone = 8,
   world = {
     overgrowth = {
       x = 800,
@@ -34,7 +35,8 @@ hud.state = function()
       y = nil
     },
     bursts = {},
-    tooltipFactor = 0
+    tooltipFactor = 0,
+    shakeFactors = {}
   }
 end
 
@@ -55,6 +57,10 @@ function hud:bind()
     backCanvas = g.newCanvas(.4 * self.v + 2 * .06 * self.v, .3 * self.v + 2 * .06 * self.v)
   }
 
+  for k in pairs(self.config.world) do
+    self.shakeFactors[k] = 0
+  end
+
   self:selectScene('overgrowth')
 
   self:dispose({
@@ -65,9 +71,11 @@ function hud:bind()
 
       if love.mouse.isDown(1) then
         local dis, dir = util.vector(self.dragStart.x, self.dragStart.y, love.mouse.getPosition())
-        dis = dis / (1 + (dis / self.config.panAmount) ^ .5)
-        tx = tx - math.cos(dir) * dis
-        ty = ty - math.sin(dir) * dis
+        if dis > self.config.panDeadZone then
+          dis = dis / (1 + (dis / self.config.panAmount) ^ .5)
+          tx = tx - math.cos(dir) * dis
+          ty = ty - math.sin(dir) * dis
+        end
       end
 
       tx = tx - view.width / 2
@@ -91,7 +99,16 @@ function hud:bind()
         end
 
         local scale = self.selected == key and 1 + (.1 * math.sin(lib.tick.index * lib.tick.rate * 5)) or 1
-        g.ellipse('line', scene.x, scene.y, self.config.markerSize * scale, self.config.markerSize * scale / 1.5)
+
+        if self:isSceneAvailable(key) then
+          g.ellipse('line', scene.x, scene.y, self.config.markerSize * scale, self.config.markerSize * scale / 1.5)
+        else
+          g.push()
+          g.translate(scene.x, scene.y)
+          g.rotate(math.sin(self.shakeFactors[key] * 10) * .25)
+          g.ellipse('line', 0, 0, self.config.markerSize * scale, self.config.markerSize * scale / 1.5)
+          g.pop()
+        end
       end
 
       g.setLineWidth(1)
@@ -102,7 +119,7 @@ function hud:bind()
         local size = util.lerp(self.config.markerSize, self.config.markerSize * 2, 1 - factor)
 
         g.white(alpha)
-        g.circle('fill', burst.x, burst.y, size)
+        g.circle('fill', burst.x, burst.y, size * burst.sizeFactor)
       end
     end),
 
@@ -213,10 +230,35 @@ function hud:bind()
 
         return key, x, y
       end)
-      :filter(f.id)
       :subscribe(function(key, x, y)
+        if not key then
+          local burst = {
+            factor = 1,
+            sizeFactor = .5,
+            x = x,
+            y = y
+          }
+
+          table.insert(self.bursts, 1, burst)
+
+          lib.flux.to(burst, .4, { factor = 0 })
+            :ease('cubicout')
+            :oncomplete(function()
+              table.remove(self.bursts)
+            end)
+
+          return
+        end
+
+        if not self:isSceneAvailable(key) then
+          self.shakeFactors[key] = 1
+          lib.flux.to(self.shakeFactors, .3, { [key] = 0 }):ease('linear')
+          return
+        end
+
         local burst = {
           factor = 1,
+          sizeFactor = 1,
           x = x,
           y = y
         }
