@@ -58,11 +58,9 @@ function input:bind()
           :tap(function()
             local context = self.castContext
             if not context.active then
-              if util.distance(context.ox, context.oy, app.context.view:worldPoint(love.mouse.getPosition())) > 10 then
-                context.active = true
-                lib.flux.to(context, .3, { factor = 1 })
-                  :ease('backinout')
-              end
+              context.active = true
+              lib.flux.to(context, .3, { factor = 1 })
+                :ease('backinout')
             end
           end)
           :sample(love.mousereleased:filter(isLeft):take(1))
