@@ -1,7 +1,7 @@
 local overgrowth = {}
 
 overgrowth.name = 'The Overgrowth'
-overgrowth.width = 800
+overgrowth.width = 960
 overgrowth.height = 600
 
 local w, h = overgrowth.width, overgrowth.height
@@ -15,11 +15,12 @@ overgrowth.objects = {
       y = h / 2
     }
   },
+  { 'juju', position = { x = w / 2, y = h * .75 }},
   { 'hud.game', key = 'hud' },
   { 'input', key = 'input' }
 }
 
-overgrowth.events = {
+--[[overgrowth.events = {
   {
     kind = 'spuju',
     time = 5,
@@ -40,6 +41,6 @@ overgrowth.events = {
     time = 55,
     count = 1
   }
-}
+}]]
 
 return overgrowth

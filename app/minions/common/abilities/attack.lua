@@ -1,7 +1,7 @@
 local attack = lib.object.create()
 
 function attack:canCast()
-  return not self.owner:isCarryingJuju()
+  return true
 end
 
 function attack:canCastAtPosition()

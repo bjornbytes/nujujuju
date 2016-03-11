@@ -311,7 +311,7 @@ function hud:bind()
 end
 
 function hud:isSceneAvailable(key)
-  return key == 'overgrowth' or key == 'tundra'
+  return key == 'overgrowth'
 end
 
 function hud:selectScene(key)

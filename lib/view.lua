@@ -4,11 +4,11 @@ view.state = function()
   return {
     x = 0,
     y = 0,
-    width = 800,
+    width = 960,
     height = 600,
     xmin = 0,
     ymin = 0,
-    xmax = 800,
+    xmax = 960,
     ymax = 600,
     frame = {
       x = 0,

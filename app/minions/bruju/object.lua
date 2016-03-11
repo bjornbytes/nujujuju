@@ -53,7 +53,7 @@ function bruju:bind()
     love.update
       :subscribe(function()
         local didRecentlyReachDestination = (lib.tick.index - self.lastReachedDestination) * lib.tick.rate < self.config.stopDuration
-        local targetIsUnavailable = self.target and (self.target.isEnemy and self.target.dead or self:isCarryingJuju())
+        local targetIsUnavailable = self.target and self.target.isEnemy and self.target.dead
 
         if didRecentlyReachDestination or targetIsUnavailable then
           self.destination.x = self.position.x
