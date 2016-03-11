@@ -23,7 +23,7 @@ return {
 
     attack = {
       loop = true,
-      length = 2
+      length = 2.5
     },
 
     fear = {

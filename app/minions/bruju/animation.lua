@@ -23,7 +23,7 @@ return {
 
     attack = {
       loop = true,
-      speed = .5
+      length = 1.75
     },
 
     death = {
