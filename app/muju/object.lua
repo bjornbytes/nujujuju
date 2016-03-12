@@ -15,10 +15,8 @@ muju.state = function()
       y = app.context.scene.height / 2
     },
     health = muju.config.maxHealth,
-    maxJuju = 1,
     juju = 0,
     totalJuju = 0,
-    jujuTrickleTimer = muju.config.jujuTrickleRate,
     dead = false,
     squishFactor = 0,
     squishActive = false
@@ -44,9 +42,6 @@ function muju:bind()
   self.activeAbility = self.abilities[1]
 
   self:dispose({
-    love.update
-      :subscribe(self:wrap(self.jujuTrickle)),
-
     app.context.view.draw
       :subscribe(self:wrap(self.draw))
   })

@@ -23,8 +23,7 @@ function juju:bind()
 
         if closest and self:distanceTo(closest) <= self.config.radius + closest.config.radius then
           local muju = app.context.objects.muju
-          muju.maxJuju = math.min(muju.maxJuju + 1, muju.config.maxJuju)
-          muju.juju = muju.maxJuju
+          muju.juju = muju.juju + 1
           self:unbind()
           app.context:removeObject(self)
         end

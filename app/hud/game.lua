@@ -121,13 +121,8 @@ function hud:drawJuju()
   local inc = .05 * v + margin
   local x = margin
 
-  for i = 1, p.maxJuju do
-    if p.juju >= i then
-      g.white()
-    else
-      g.white(80)
-    end
-
+  for i = 1, p.juju do
+    g.white()
     g.draw(image, x, margin, 0, scale, scale)
     x = x + inc
   end

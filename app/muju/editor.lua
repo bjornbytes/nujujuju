@@ -4,7 +4,7 @@ return {
       'radius'
     },
     { title = 'stats',
-      'maxHealth', 'jujuTrickleRate'
+      'maxHealth'
     }
   }
 }

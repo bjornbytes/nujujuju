@@ -5,15 +5,6 @@ function muju:selectAbility(index)
   self.activeAbility = self.abilities[index]
 end
 
-function muju:jujuTrickle()
-  self.jujuTrickleTimer = math.max(self.jujuTrickleTimer - lib.tick.rate, 0)
-  if self.jujuTrickleTimer == 0 then
-    self.jujuTrickleTimer = self.config.jujuTrickleRate
-    self.juju = math.min(self.juju + 1, self.maxJuju)
-    self.totalJuju = self.totalJuju + 1
-  end
-end
-
 function muju:tint(r, g, b)
   for _, slot in pairs({'robebottom', 'torso', 'front_upper_arm', 'rear_upper_arm', 'front_bracer', 'rear_bracer'}) do
     local slot = self.animation.skeleton:findSlot(slot)
