@@ -93,6 +93,10 @@ function g.alpha(color, alpha, ...)
   return color, alpha, ...
 end
 
+function g.imageScale(image, size)
+  return size / image:getWidth()
+end
+
 function lib.tick.getLerpFactor(factor)
   return ((1 / lib.tick.rate) * factor) * lib.tick.rate
 end

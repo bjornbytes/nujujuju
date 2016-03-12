@@ -16,6 +16,7 @@ overgrowth.objects = {
     }
   },
   { 'juju', position = { x = w / 2, y = h * .75 }},
+  { 'puju', position = { x = w * .75, y = h / 2 }},
   { 'hud.game', key = 'hud' },
   { 'input', key = 'input' }
 }
