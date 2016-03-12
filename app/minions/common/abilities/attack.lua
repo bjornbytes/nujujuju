@@ -11,6 +11,7 @@ function attack:canCastAtPosition()
 end
 
 function attack:cast(x, y)
+  self.owner.target = lib.target.objectAtPosition(x, y)
 end
 
 return attack

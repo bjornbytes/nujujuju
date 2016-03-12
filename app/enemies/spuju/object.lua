@@ -44,17 +44,7 @@ function spuju:bind()
 
     self.animation.completions
       :filter(f.eq('death'))
-      :subscribe(function()
-        self:unbind()
-        app.context:removeObject(self)
-        local juju = app.juju:new({
-          position = {
-            x = self.position.x,
-            y = self.position.y
-          }
-        })
-        app.context.objects[juju] = juju
-      end),
+      :subscribe(self:wrap(self.remove)),
 
     self.animation.events
       :pluck('data', 'name')
@@ -85,13 +75,6 @@ function spuju:bind()
     app.context.view.draw
       :subscribe(self:wrap(self.draw))
   })
-end
-
-function spuju:die()
-  if not self.dead then
-    self.dead = true
-    self.animation:set('death')
-  end
 end
 
 function spuju:draw()

@@ -89,4 +89,17 @@ function unit:heal(amount, source)
   self.health = math.min(self.health + amount, self.config.maxHealth)
 end
 
+function unit:die()
+  if not self.dead then
+    self.dead = true
+    self.animation:set('death')
+  end
+end
+
+function unit:remove()
+  self.dead = true
+  self:unbind()
+  app.context:removeObject(self)
+end
+
 return unit

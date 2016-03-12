@@ -41,20 +41,18 @@ function context.load(scene)
 
         context.lastEvent = event
 
-        if event.kind == 'spuju' then
-          for i = 1, event.count do
-            local x = love.math.random() > .5 and context.scene.width - 50 or 50
-            local y = 100 + love.math.random() * (context.scene.height - 200)
+        for i = 1, event.count do
+          local x = love.math.random() > .5 and context.scene.width - 50 or 50
+          local y = 100 + love.math.random() * (context.scene.height - 200)
 
-            local spuju = app.enemies.spuju.object:new({
-              position = {
-                x = x,
-                y = y
-              }
-            })
+          local spuju = app.enemies[event.kind].object:new({
+            position = {
+              x = x,
+              y = y
+            }
+          })
 
-            context.objects[spuju] = spuju
-          end
+          context.objects[spuju] = spuju
         end
       end
     end)
@@ -80,6 +78,10 @@ function context:removeObject(object)
   if object._key then
     self.objects[object._key] = nil
   end
+end
+
+function context:getObject(object)
+  return self.objects[object]
 end
 
 return context

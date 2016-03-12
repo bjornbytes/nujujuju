@@ -15,15 +15,13 @@ overgrowth.objects = {
       y = h / 2
     }
   },
-  { 'juju', position = { x = w / 2, y = h * .75 }},
-  { 'puju', position = { x = w * .75, y = h / 2 }},
   { 'hud.game', key = 'hud' },
   { 'input', key = 'input' }
 }
 
---[[overgrowth.events = {
+overgrowth.events = {
   {
-    kind = 'spuju',
+    kind = 'puju',
     time = 5,
     count = 1
   },
@@ -35,13 +33,13 @@ overgrowth.objects = {
   {
     kind = 'spuju',
     time = 40,
-    count = 1
+    count = 2
   },
   {
-    kind = 'spuju',
+    kind = 'puju',
     time = 55,
-    count = 1
+    count = 3
   }
-}]]
+}
 
 return overgrowth

@@ -20,8 +20,7 @@ bruju.state = function()
       y = app.context.scene.height / 2
     },
     health = bruju.config.maxHealth,
-    lastHurt = -math.huge,
-    lastReachedDestination = -math.huge
+    lastHurt = -math.huge
   }
 
   state.animation = lib.animation.create(app.minions.bruju.spine, app.minions.bruju.animation)
@@ -52,16 +51,13 @@ function bruju:bind()
 
     love.update
       :subscribe(function()
-        local didRecentlyReachDestination = (lib.tick.index - self.lastReachedDestination) * lib.tick.rate < self.config.stopDuration
-        local targetIsUnavailable = self.target and self.target.isEnemy and self.target.dead
+        local targetIsUnavailable = self.target and self.target.isEnemy and (self.target.dead)
 
-        if didRecentlyReachDestination or targetIsUnavailable then
+        if targetIsUnavailable then
           self.destination.x = self.position.x
           self.destination.y = self.position.y
           self.target = nil
         end
-
-        if didRecentlyReachDestination then return end
 
         if not self.target and self:distanceToPoint(self.destination.x, self.destination.y) == 0 then
           local closest = self:closest('enemy')
@@ -96,10 +92,6 @@ function bruju:bind()
 
           if distance > 0 then
             self.animation:set('walk')
-
-            if self:distanceToPoint(self.destination.x, self.destination.y) == 0 then
-              self.lastReachedDestination = lib.tick.index
-            end
           else
             self.animation:set('idle')
           end
@@ -108,10 +100,7 @@ function bruju:bind()
 
     self.animation.completions
       :filter(f.eq('death'))
-      :subscribe(function()
-        self:unbind()
-        app.context:removeObject(self)
-      end),
+      :subscribe(self:wrap(self.remove)),
 
     self.animation.events
       :pluck('data', 'name')
@@ -154,13 +143,6 @@ function bruju:draw()
   end
 
   return -self.position.y
-end
-
-function bruju:die()
-  if not self.dead then
-    self.dead = true
-    self.animation:set('death')
-  end
 end
 
 return bruju

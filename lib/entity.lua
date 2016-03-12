@@ -6,7 +6,7 @@ function entity:isHovered(x, y)
   local dir = util.angle(self.position.x, self.position.y, x, y)
   local ellipseHover = dis < self.config.radius * hoverAllowanceFactor / (2 - math.abs(math.cos(dir)))
 
-  return self:isTargetable() and (self.animation:contains(x, y) or ellipseHover)
+  return self:isTargetable() and ((self.animation and self.animation:contains(x, y)) or ellipseHover)
 end
 
 function entity:isTargetable()
