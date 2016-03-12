@@ -24,7 +24,6 @@ function hud:bind()
     app.context.view.hud
       :subscribe(function()
         self:drawJuju()
-        self:drawPopulation()
         self:drawWaves()
 
         app.art.heartFrame:setFilter('nearest')
@@ -127,28 +126,6 @@ function hud:drawJuju()
       g.white()
     else
       g.white(80)
-    end
-
-    g.draw(image, x, margin, 0, scale, scale)
-    x = x + inc
-  end
-end
-
-function hud:drawPopulation()
-  local u, v = self.u, self.v
-  local p = app.context.objects.muju
-  local image = app.art.population
-  local margin = .02 * v
-  local scale = (.03 * v) / image:getWidth()
-  local inc = (.03 * v) + margin
-  local x = g.getWidth() - (inc * p.config.maxMinions) - margin
-  local minionCount = #util.filter(app.context.objects, 'isMinion')
-
-  for i = 1, p.config.maxMinions do
-    if minionCount >= i then
-      g.setColor(255, 153, 153)
-    else
-      g.setColor(153, 223, 255)
     end
 
     g.draw(image, x, margin, 0, scale, scale)

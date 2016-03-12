@@ -9,7 +9,7 @@ function puju:bind()
         local scale = g.imageScale(image, 60 + offset)
 
         g.white(70)
-        g.draw(image, self.position.x, self.position.y + 30, 0, scale, scale / 1.5, image:getWidth() / 2, image:getHeight() / 2)
+        g.draw(image, self.position.x, self.position.y + 20, 0, scale, scale / 1.5, image:getWidth() / 2, image:getHeight() / 2)
 
         local image = app.art.puju
         local scale = g.imageScale(image, 35)
