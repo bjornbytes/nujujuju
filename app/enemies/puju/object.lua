@@ -92,7 +92,7 @@ function puju:bind()
       :subscribe(function()
         local image = app.art.shadow
         local offset = math.sin(lib.tick.index * lib.tick.rate * 3) * 4
-        local scale = g.imageScale(image, 60 + offset)
+        local scale = g.imageScale(image, 70 + offset)
 
         g.white(70)
         g.draw(image, self.position.x, self.position.y, 0, scale, scale / 1.5, image:getWidth() / 2, image:getHeight() / 2)
