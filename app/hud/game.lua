@@ -136,6 +136,15 @@ function hud:drawWaves()
 
   g.setFont(self.font)
 
+  do
+    if app.context.waves.grace > 0 then
+      g.white()
+      g.print(math.ceil(app.context.waves.grace), .02 * v, .1 * v)
+    end
+
+    return
+  end
+
   if app.context.lastEvent and app.context.events[1] then
     local previousTime = app.context.lastEvent.time
     local time = lib.tick.index * lib.tick.rate - previousTime

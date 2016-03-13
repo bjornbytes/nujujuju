@@ -23,7 +23,8 @@ puju.state = function()
     dead = false,
     lastHurt = -math.huge,
     attackTimer = 0,
-    yank = 0
+    yank = 0,
+    floatOffset = lib.tick.index
   }
 
   return state
@@ -76,6 +77,9 @@ function puju:bind()
 
         self.velocity.x = util.lerp(self.velocity.x, targetVelocityX * distanceFactor, lib.tick.getLerpFactor(self.config.acceleration))
         self.velocity.y = util.lerp(self.velocity.y, targetVelocityY * distanceFactor, lib.tick.getLerpFactor(self.config.acceleration))
+
+        self.velocity.x = self.velocity.x + math.sin((self.floatOffset + lib.tick.index) * lib.tick.rate * 2) * lib.tick.rate
+        self.velocity.y = self.velocity.y + math.cos((self.floatOffset + lib.tick.index) * lib.tick.rate * 2) * lib.tick.rate
 
         self.position.x = self.position.x + self.velocity.x
         self.position.y = self.position.y + self.velocity.y

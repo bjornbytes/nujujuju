@@ -16,29 +16,28 @@ overgrowth.objects = {
     }
   },
   { 'hud.game', key = 'hud' },
-  { 'input', key = 'input' }
-}
-
-overgrowth.events = {
-  {
-    kind = 'puju',
-    time = 5,
-    count = 1
-  },
-  {
-    kind = 'spuju',
-    time = 25,
-    count = 1
-  },
-  {
-    kind = 'spuju',
-    time = 40,
-    count = 2
-  },
-  {
-    kind = 'puju',
-    time = 55,
-    count = 3
+  { 'input', key = 'input' },
+  { 'waves',
+    key = 'waves',
+    waves = {
+      [1] = {
+        events = {
+          [1] = {
+            kind = 'puju',
+            count = 1,
+            time = 0
+          }
+        }
+      },
+      [2] = {
+        events = {
+          [1] = {
+            kind = 'spuju',
+            count = 1
+          }
+        }
+      }
+    }
   }
 }
 

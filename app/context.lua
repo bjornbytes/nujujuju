@@ -33,34 +33,14 @@ function context.load(scene)
     end
   end
 
-  context.events = util.copy(context.scene.events) or {}
-  context.timeline = love.update
+  love.keypressed
+    :filter(f.eq('p'))
     :subscribe(function()
-      if context.events[1] and lib.tick.index * lib.tick.rate >= context.events[1].time then
-        local event = table.remove(context.events, 1)
-
-        context.lastEvent = event
-
-        for i = 1, event.count do
-          local x = love.math.random() > .5 and context.scene.width - 50 or 50
-          local y = 100 + love.math.random() * (context.scene.height - 200)
-
-          local spuju = app.enemies[event.kind].object:new({
-            position = {
-              x = x,
-              y = y
-            }
-          })
-
-          context.objects[spuju] = spuju
-        end
-      end
+      app.context:createEnemy('puju')
     end)
 end
 
 function context.unload()
-  context.timeline:unsubscribe()
-
   for object in pairs(context.objects) do
     f.try(object.unbind, object)
   end
@@ -82,6 +62,20 @@ end
 
 function context:getObject(object)
   return self.objects[object]
+end
+
+function context:createEnemy(kind)
+  local x = love.math.random() > .5 and context.scene.width - 50 or 50
+  local y = 100 + love.math.random() * (context.scene.height - 200)
+
+  local enemy = app.enemies[kind].object:new({
+    position = {
+      x = x,
+      y = y
+    }
+  })
+
+  context.objects[enemy] = enemy
 end
 
 return context
