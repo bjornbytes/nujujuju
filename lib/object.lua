@@ -35,7 +35,7 @@ function object:new(state)
 
   setmetatable(instance, {__index = self})
 
-  self:dispose(f.try(instance.bind, instance))
+  instance:dispose(f.try(instance.bind, instance))
 
   return instance
 end
