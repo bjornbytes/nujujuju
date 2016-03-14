@@ -8,6 +8,11 @@ setmetatable(_G, {
       json = function(path)
         return (require 'lib/json').decode(love.filesystem.read(path))
       end
+    },
+    processors = {
+      abilities = function(ability, filename)
+        ability.tag = filename:gsub('%.lua$', ''):gsub('.+/', '')
+      end
     }
   })
 })

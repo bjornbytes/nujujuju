@@ -72,13 +72,15 @@ function input:bind()
 
           context.ability:cast(mx, my)
 
-          context.ability = nil
           context.active = false
+          context.x = mx
+          context.y = my
 
-          lib.flux.to(context, .3, { factor = 0 })
+          lib.flux.to(context, .35, { factor = 0 })
             :ease('cubicout')
             :oncomplete(function()
               context.owner = nil
+              context.ability = nil
             end)
         end
       end),
@@ -94,12 +96,15 @@ function input:draw()
     local points = {}
     local radius = 30
     local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
-    local dir = util.angle(ox, oy, mx, my)
-    local pointCount = 80
 
     if not context.active then
       radius = radius + 20 * (1 - context.factor)
+      mx = context.x
+      my = context.y
     end
+
+    local dir = util.angle(ox, oy, mx, my)
+    local pointCount = 80
 
     for i = 1, 80 do
       local x = mx + util.dx(radius, dir + (2 * math.pi * (i / 80)))
@@ -137,6 +142,14 @@ function input:draw()
       g.polygon('fill', points)
       g.setLineWidth(1)
     end
+
+    local image = app.art.icons[context.ability.tag]
+    local w, h = image:getDimensions()
+    local size = .75 * 2 * radius * context.factor
+    local scale = size / ((w > h) and w or h)
+
+    g.setColor(g.alpha(context.ability:getColor(), 255 * context.factor ^ 3))
+    g.draw(image, mx, my, 0, scale, scale, w / 2, h / 2)
   end
 
   return -1000

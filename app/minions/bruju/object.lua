@@ -30,7 +30,7 @@ bruju.state = function()
 end
 
 function bruju:bind()
-  self.activeAbility = app.minions.common.abilities.command:new({ owner = self })
+  self.activeAbility = app.abilities.command:new({ owner = self })
 
   self:setIsMinion()
 
@@ -138,8 +138,12 @@ function bruju:draw()
     g.setShader(app.shaders.colorize)
     self.animation:draw(self.position.x, self.position.y)
     g.setShader()
-  elseif not self:isInvincible() or util.round(util.timeSince(self.lastHurt) * 3) % 2 == 0 then
+  elseif not self:isInvincible() then-- or util.round(util.timeSince(self.lastHurt) * 4) % 2 == 0 then
     self.animation:draw(self.position.x, self.position.y)
+  else
+    self.animation.skeleton.a = .5
+    self.animation:draw(self.position.x, self.position.y)
+    self.animation.skeleton.a = 1
   end
 
   return -self.position.y

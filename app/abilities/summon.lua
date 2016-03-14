@@ -1,17 +1,21 @@
 local summon = lib.object.create()
 
+summon:include(lib.ability)
+
+function summon:getCost()
+  return #util.filter(app.context.objects, 'isMinion')
+end
+
 function summon:canCast()
-  local minionCount = #util.filter(app.context.objects, 'isMinion')
-  return self.owner.juju >= minionCount
+  return self.owner.juju >= self:getCost()
 end
 
 function summon:cast(x, y)
   if not self:canCast() then return false end
 
   local muju = self.owner
-  local minionCount = #util.filter(app.context.objects, 'isMinion')
 
-  muju:spendJuju(minionCount)
+  muju:spendJuju(self:getCost())
 
   local distance = muju.config.radius + app.minions.bruju.config.radius
   local angle = util.angle(muju.position.x, muju.position.y, x, y)

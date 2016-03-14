@@ -15,6 +15,7 @@ end
 function hud:bind()
   self.u, self.v = g.getDimensions()
   self.font = self.config.font(self.v * .04)
+  self.smallFont = self.config.font(self.v * .02)
 
   for i = 1, #app.context.objects.muju.abilities do
     self.abilityFactor[i] = i == 1 and 1 or 0
@@ -188,6 +189,30 @@ function hud:drawAbilities()
   for i = 1, count do
     g.setColor(0, 0, 0, 100 + 80 * self.abilityFactor[i])
     g.rectangle('fill', x - size / 2, 8, size, size)
+
+    local ability = p.abilities[i]
+    local image = app.art.icons[ability.tag]
+    local w, h = image:getDimensions()
+
+    local scale = (size * .75) / ((w > h) and w or h)
+
+    g.white(200 + 55 * self.abilityFactor[i])
+    g.draw(image, x, 8 + size / 2, 0, scale, scale, w / 2, h / 2)
+
+    local cost = ability:getCost()
+
+    if cost then
+      g.setFont(self.smallFont)
+      local image = app.art.juju
+      local scale = .02 * v / image:getWidth()
+      local padding = .01 * v
+      local totalWidth = image:getWidth() * scale + padding + g.getFont():getWidth(cost)
+      g.white(p.juju >= cost and 255 or 120)
+      g.draw(image, x - totalWidth / 2, 8 + size + .01 * v, 0, scale, scale)
+      g.white()
+      g.print(cost, x - totalWidth / 2 + image:getWidth() * scale + padding, 8 + size + .01 * v)
+    end
+
     x = x + inc
   end
 end

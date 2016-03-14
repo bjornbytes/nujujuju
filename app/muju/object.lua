@@ -35,8 +35,8 @@ function muju:bind()
   self.collisions = app.context.collision:add(self)
 
   self.abilities = {
-    app.muju.abilities.summon:new({ owner = self }),
-    app.muju.abilities.heal:new({ owner = self })
+    app.abilities.summon:new({ owner = self }),
+    app.abilities.heal:new({ owner = self })
   }
 
   self.activeAbility = self.abilities[1]

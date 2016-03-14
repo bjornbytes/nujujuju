@@ -1,5 +1,16 @@
 local command = lib.object.create()
 
+command:include(lib.ability)
+
+function command:getColor()
+  local entity = lib.target.objectAtPosition(app.context.view:worldPoint(love.mouse.getPosition()))
+  if entity and entity.isEnemy then
+    return { 255, 140, 140 }
+  else
+    return { 140, 255, 140 }
+  end
+end
+
 function command:canCast()
   return true
 end

@@ -58,7 +58,7 @@ function puju:bind()
 
         self.attackTimer = math.max(self.attackTimer - lib.tick.rate, 0)
         if self:isInRangeOf(self.target) then
-          if self.attackTimer == 0 then
+          if false and self.attackTimer == 0 then
             local angle = self:directionTo(self.target) + math.pi
             self.velocity.x = util.dx(3, angle)
             self.velocity.y = util.dy(3, angle)

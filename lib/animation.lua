@@ -45,7 +45,7 @@ function animation.create(spine, config)
     self.events:onNext(event)
   end
 
-  self.animationState.onEnd = function(track)
+  self.animationState.onComplete = function(track)
     local name = self.animationState.tracks[track].animation.name
     local state = self.states[name]
     self.completions:onNext(name)
@@ -109,7 +109,7 @@ end
 
 function animation:set(name)
   local state = self.states[name]
-  if state and not state.active then
+  if state and self.active ~= state then
     local track = state.track or 0
     local loop = state.loop
     state.active = true
