@@ -1,5 +1,5 @@
 return {
-  scale = .85,
+  scale = .6,
   offset = {
     x = 0,
     y = 10

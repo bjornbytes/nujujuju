@@ -96,7 +96,7 @@ function hud:drawHealthbar(unit)
   x, y = app.context.view:screenPoint(x, y)
 
   x = x - (inc * (unit.config.maxHealth - 1) / 2)
-  y = y - .15 * v
+  y = y - .18 * v
 
   for i = 1, unit.config.maxHealth do
     local image = app.art.heartFrame
