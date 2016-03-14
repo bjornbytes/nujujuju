@@ -30,7 +30,7 @@ function spuju:bind()
 
   self.target = self:closest('minion', 'player')
 
-  self:dispose({
+  return {
     love.update
       :subscribe(function()
         if not self.dead then
@@ -74,7 +74,7 @@ function spuju:bind()
 
     app.context.view.draw
       :subscribe(self:wrap(self.draw))
-  })
+  }
 end
 
 function spuju:draw()

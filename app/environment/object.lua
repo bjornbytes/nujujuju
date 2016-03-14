@@ -12,13 +12,15 @@ function environment:bind()
   background.image:setWrap('repeat', 'repeat')
   self.quad = g.newQuad(0, 0, g.getWidth(), g.getHeight() * background.perspective, background.image:getDimensions())
 
-  app.context.view.draw
-    :subscribe(function()
-      local background = self.config.background
-      g.white()
-      g.draw(background.image, self.quad, 0, 0, 0, 1, 1 / background.perspective)
-      return 0
-    end)
+  return {
+    app.context.view.draw
+      :subscribe(function()
+        local background = self.config.background
+        g.white()
+        g.draw(background.image, self.quad, 0, 0, 0, 1, 1 / background.perspective)
+        return 0
+      end)
+  }
 end
 
 return environment

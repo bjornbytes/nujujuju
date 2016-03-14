@@ -63,7 +63,7 @@ function hud:bind()
 
   self:selectScene('overgrowth')
 
-  self:dispose({
+  return {
     love.update:subscribe(function()
       local view = app.context.view
       local tx = self.config.world[self.selected].x
@@ -307,7 +307,7 @@ function hud:bind()
           app.context.load(selected)
         end
       end)
-  })
+  }
 end
 
 function hud:isSceneAvailable(key)

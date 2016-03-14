@@ -40,7 +40,7 @@ function view:bind()
   self.draw.onNext = f.self(self.doDraw, self)
   self.hud.onNext = f.self(self.doHud, self)
 
-  self:dispose({
+  return {
     love.update
       :subscribe(function()
         self:update()
@@ -51,7 +51,7 @@ function view:bind()
         self.draw:onNext()
         self.hud:onNext()
       end)
-  })
+  }
 end
 
 function view:update()

@@ -13,6 +13,8 @@ function object:wrap(fn)
 end
 
 function object:dispose(subscriptions)
+  if not subscriptions then return end
+
   self._subscriptions = self._subscriptions or {}
   for i = 1, #subscriptions do
     table.insert(self._subscriptions, subscriptions[i])
@@ -33,7 +35,7 @@ function object:new(state)
 
   setmetatable(instance, {__index = self})
 
-  f.try(instance.bind, instance)
+  self:dispose(f.try(instance.bind, instance))
 
   return instance
 end

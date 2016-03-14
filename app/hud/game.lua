@@ -20,7 +20,7 @@ function hud:bind()
     self.abilityFactor[i] = i == 1 and 1 or 0
   end
 
-  self:dispose({
+  return {
     app.context.view.hud
       :subscribe(function()
         self:drawJuju()
@@ -57,9 +57,7 @@ function hud:bind()
           lib.flux.to(self.abilityFactor, .25, { [i] = i == index and 1 or 0 }):ease('cubicout')
         end
       end)
-  })
-
-  return self
+  }
 end
 
 function hud:getElement(mx, my)

@@ -14,7 +14,7 @@ function waves:bind()
   self.current = 1
   self.event = 1
 
-  self:dispose({
+  return {
     love.update
       :subscribe(function()
         local events = self.waves[self.current].events
@@ -43,7 +43,7 @@ function waves:bind()
           self.event = 1
         end
       end)
-  })
+  }
 end
 
 function waves:spawn(kind, count)

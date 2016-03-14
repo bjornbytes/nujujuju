@@ -34,7 +34,7 @@ function bruju:bind()
 
   self:setIsMinion()
 
-  self:dispose({
+  return {
     love.update
       :subscribe(function()
         local sign
@@ -118,7 +118,7 @@ function bruju:bind()
 
     app.context.view.draw
       :subscribe(self:wrap(self.draw))
-  })
+  }
 end
 
 function bruju:draw()

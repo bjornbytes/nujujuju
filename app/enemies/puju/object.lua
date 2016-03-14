@@ -35,7 +35,7 @@ function puju:bind()
 
   self.target = self:closest('minion', 'player')
 
-  self:dispose({
+  return {
     love.update
       :subscribe(self:wrap(self.enclose)),
 
@@ -107,7 +107,7 @@ function puju:bind()
 
         return -self.position.y
       end)
-  })
+  }
 end
 
 puju.die = puju.remove

@@ -30,21 +30,23 @@ function inspector:bind()
   self.dropdown.label = 'subject'
   self.components = self.dropdown.value:map(self:wrap(self.setupComponents))
 
-  love.keypressed
-    :filter(f.eq('`'))
-    :subscribe(self:wrap(self.toggleActive))
+  return {
+    love.keypressed
+      :filter(f.eq('`'))
+      :subscribe(self:wrap(self.toggleActive)),
 
-  love.update
-    :subscribe(self:wrap(self.smoothX))
+    love.update
+      :subscribe(self:wrap(self.smoothX)),
 
-  love.mousemoved
-    :pack()
-    :combineLatest(self.components)
-    :subscribe(self:wrap(self.updateCursor))
+    love.mousemoved
+      :pack()
+      :combineLatest(self.components)
+      :subscribe(self:wrap(self.updateCursor)),
 
-  app.context.view.hud
-    :with(self.components)
-    :subscribe(self:wrap(self.draw))
+    app.context.view.hud
+      :with(self.components)
+      :subscribe(self:wrap(self.draw))
+  }
 end
 
 return inspector

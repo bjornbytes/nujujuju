@@ -22,18 +22,18 @@ function particles:bind()
     end
   end
 
-  app.context.view.draw:subscribe(function()
-    g.white()
-    for code, system in pairs(self.systems) do
-      system:update(lib.tick.delta)
-      g.setBlendMode(app.particles[code].blendMode or 'alpha')
-      g.draw(system)
-      g.setBlendMode('alpha')
-    end
-    return -800
-  end)
-
-  return self
+  return {
+    app.context.view.draw:subscribe(function()
+      g.white()
+      for code, system in pairs(self.systems) do
+        system:update(lib.tick.delta)
+        g.setBlendMode(app.particles[code].blendMode or 'alpha')
+        g.draw(system)
+        g.setBlendMode('alpha')
+      end
+      return -800
+    end)
+  }
 end
 
 function particles:emit(code, x, y, count, options)

@@ -41,10 +41,10 @@ function muju:bind()
 
   self.activeAbility = self.abilities[1]
 
-  self:dispose({
+  return {
     app.context.view.draw
       :subscribe(self:wrap(self.draw))
-  })
+  }
 end
 
 return muju

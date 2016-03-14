@@ -16,7 +16,7 @@ function juju:state()
 end
 
 function juju:bind()
-  return self:dispose({
+  return {
     love.update
       :subscribe(function()
         local closest = self:closest('minion')
@@ -30,7 +30,7 @@ function juju:bind()
       end),
 
     app.context.view.draw:subscribe(self:wrap(self.draw))
-  })
+  }
 end
 
 function juju:draw()

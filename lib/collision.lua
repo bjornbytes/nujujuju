@@ -38,20 +38,22 @@ collision.handlers = {
 }
 
 function collision:bind()
-  love.update
-    :subscribe(function()
-      for cell, objects in pairs(self.grid) do
-        for object in pairs(objects) do
-          self:refresh(object)
-          for neighbor in pairs(self:neighbors(object)) do
-            local dx, dy = self:resolve(object, neighbor)
-            if dx and dy then
-              object._collisions(neighbor, dx, dy)
+  return {
+    love.update
+      :subscribe(function()
+        for cell, objects in pairs(self.grid) do
+          for object in pairs(objects) do
+            self:refresh(object)
+            for neighbor in pairs(self:neighbors(object)) do
+              local dx, dy = self:resolve(object, neighbor)
+              if dx and dy then
+                object._collisions(neighbor, dx, dy)
+              end
             end
           end
         end
-      end
-    end)
+      end)
+  }
 end
 
 function collision:refresh(object)

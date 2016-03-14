@@ -23,7 +23,7 @@ input.state = function()
 end
 
 function input:bind()
-  self:dispose({
+  return {
 
     -- Autocast
     love.mousepressed
@@ -84,7 +84,7 @@ function input:bind()
       end),
 
     app.context.view.draw:subscribe(self:wrap(self.draw))
-  })
+  }
 end
 
 function input:draw()

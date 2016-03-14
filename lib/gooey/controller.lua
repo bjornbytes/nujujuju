@@ -15,41 +15,41 @@ gooey.state = function()
 end
 
 function gooey:bind()
-  love.update:subscribe(function()
-    self:call('update')
-  end)
+  return {
+    love.update:subscribe(function()
+      self:call('update')
+    end),
 
-  love.keypressed:subscribe(function(key)
-    self:call('keypressed', key)
-  end)
+    love.keypressed:subscribe(function(key)
+      self:call('keypressed', key)
+    end),
 
-  love.keyreleased:subscribe(function(key)
-    self:call('keyreleased', key)
-  end)
+    love.keyreleased:subscribe(function(key)
+      self:call('keyreleased', key)
+    end),
 
-  love.mousepressed:subscribe(function(mx, my, b)
-    self.hot = nil
-    self:call('mousepressed', mx, my, b)
-  end)
+    love.mousepressed:subscribe(function(mx, my, b)
+      self.hot = nil
+      self:call('mousepressed', mx, my, b)
+    end),
 
-  love.mousereleased:subscribe(function(mx, my, b)
-    self:call('mousereleased', mx, my, b)
-    self.hot = nil
-  end)
+    love.mousereleased:subscribe(function(mx, my, b)
+      self:call('mousereleased', mx, my, b)
+      self.hot = nil
+    end),
 
-  love.wheelmoved:subscribe(function(x, y)
-    self:call('wheelmoved', x, y)
-  end)
+    love.wheelmoved:subscribe(function(x, y)
+      self:call('wheelmoved', x, y)
+    end),
 
-  love.textinput:subscribe(function(char)
-    self:call('textinput', char)
-  end)
+    love.textinput:subscribe(function(char)
+      self:call('textinput', char)
+    end),
 
-  love.resize:subscribe(function()
-    self:call('resize')
-  end)
-
-  return self
+    love.resize:subscribe(function()
+      self:call('resize')
+    end)
+  }
 end
 
 function gooey:render(component)
