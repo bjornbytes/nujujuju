@@ -18,6 +18,7 @@ function puju:init()
   self.yank = 0
   self.floatOffset = lib.tick.index
   self.state = 'idle'
+  self.collisions = app.context.collision:add(self)
   self:setIsEnemy()
 end
 
@@ -35,12 +36,11 @@ function puju:bind()
     bindState('move'),
     bindState('attack'),
 
+    self.collisions:subscribe(self:wrap(self.resolveCollision)),
     love.update:subscribe(self:wrap(self.enclose)),
     love.update:subscribe(self:wrap(self.drift)),
     app.context.view.draw:subscribe(self:wrap(self.draw))
   }
 end
-
-puju.die = puju.remove
 
 return puju

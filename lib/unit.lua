@@ -1,5 +1,44 @@
 local unit = {}
 
+function unit:resolveCollision(other, dx, dy)
+  if other.isMinion then
+    local x1, y1, x2, y2 = self.position.x, self.position.y, other.position.x, other.position.y
+
+    local myFactor, theirFactor
+    local selfIsMoving, otherIsMoving = self:isMoving(), other:isMoving()
+
+    if selfIsMoving and not otherIsMoving then
+      myFactor, theirFactor = 0, .75
+    elseif not selfIsMoving and otherIsMoving then
+      myFactor, theirFactor = .75, 0
+    elseif selfIsMoving and otherIsMoving then
+      myFactor, theirFactor = 0, 0
+    else
+      myFactor, theirFactor = .5, .5
+    end
+
+    self.position.x = util.lerp(self.position.x, self.position.x - dx * myFactor, .05)
+    self.position.y = util.lerp(self.position.y, self.position.y - dy * myFactor, .05)
+
+    other.position.x = util.lerp(other.position.x, other.position.x + dx * theirFactor, .05)
+    other.position.y = util.lerp(other.position.y, other.position.y + dy * theirFactor, .05)
+
+    if not selfIsMoving and self.destination then
+      self.destination.x = self.destination.x + (self.position.x - x1)
+      self.destination.y = self.destination.y + (self.position.y - y1)
+    end
+
+    if not otherIsMoving and other.destination then
+      other.destination.x = other.destination.x + (other.position.x - x2)
+      other.destination.y = other.destination.y + (other.position.y - y2)
+    end
+  end
+end
+
+function unit:isMoving()
+  return self.state == 'move'
+end
+
 function unit:flipAnimation()
   local sign
 

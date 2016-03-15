@@ -16,6 +16,8 @@ function bruju:init()
 
   self.activeAbility = app.abilities.command:new({ owner = self })
 
+  self.collisions = app.context.collision:add(self)
+
   self:setIsMinion()
 end
 
@@ -34,6 +36,7 @@ function bruju:bind()
     bindState('move'),
     bindState('attack'),
 
+    self.collisions:subscribe(self:wrap(self.resolveCollision)),
     love.update:subscribe(self:wrap(self.flipAnimation)),
 
     self.animation.completions

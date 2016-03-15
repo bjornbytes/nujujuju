@@ -6,5 +6,7 @@ return {
   attackSpeed = 1,
   aggroRange = 180,
   stopDuration = .1,
-  damageFlashDuration = .12
+  damageFlashDuration = .12,
+  shape = 'ellipse',
+  perspective = 2
 }

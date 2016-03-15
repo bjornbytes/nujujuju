@@ -94,4 +94,12 @@ function puju:draw()
   return -self.position.y
 end
 
+function puju:die()
+  if self.attackThread then
+    lib.quilt.remove(self.attackThread)
+  end
+
+  self:remove()
+end
+
 return puju

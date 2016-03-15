@@ -26,6 +26,14 @@ function command:cast(x, y)
       return
     end
 
+    local muju = app.context.objects.muju
+    local distance, angle = util.vector(x, y, muju.position.x, muju.position.y)
+    local minDistance = self.owner.config.radius + muju.config.radius
+    if distance * (2 - math.abs(math.sin(angle))) < minDistance * (2 - math.abs(math.sin(angle))) then
+      x = muju.position.x + util.dx(minDistance + 4, angle + math.pi)
+      y = muju.position.y + util.dy(minDistance + 4, angle + math.pi) / 2
+    end
+
     self.owner.destination.x = x
     self.owner.destination.y = y
     self.owner.target = nil

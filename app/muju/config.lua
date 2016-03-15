@@ -1,5 +1,6 @@
 return {
   radius = 40,
   maxHealth = 3,
-  shape = 'circle'
+  shape = 'ellipse',
+  perspective = 2
 }
