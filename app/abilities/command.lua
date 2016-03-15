@@ -16,6 +16,14 @@ end
 function command:cast(x, y)
   local entity = lib.target.objectAtPosition(x, y)
 
+  -- Interrupt attacks
+  if self.owner.attackCooldown then
+    lib.quilt.remove(self.owner.attackCooldown)
+    self.owner.attackCooldown = nil
+    self.owner.state = 'move'
+    self.owner.attacking = nil
+  end
+
   if entity and (util.isa(entity, app.juju) or entity.isEnemy) then
     self.owner.target = entity
   else

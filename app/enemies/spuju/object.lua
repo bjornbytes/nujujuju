@@ -40,7 +40,12 @@ function spuju:bind()
       :pluck('data', 'name')
       :filter(f.eq('attack'))
       :subscribe(function()
-        self.target:hurt(1, self)
+        app.context:addObject(app.spells.skull, {
+          position = util.copy(self.position),
+          destination = util.copy(self.target.position),
+          owner = self,
+          damage = self.config.damage
+        })
       end),
 
     love.update

@@ -61,6 +61,7 @@ end
 
 function context:removeObject(object)
   self.objects[object] = nil
+  self.collision:remove(object)
   if object._key then
     self.objects[object._key] = nil
   end

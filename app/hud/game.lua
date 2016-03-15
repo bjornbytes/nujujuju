@@ -200,6 +200,12 @@ function hud:drawAbilities()
     g.white(200 + 55 * self.abilityFactor[i])
     g.draw(image, x, 8 + size / 2, 0, scale, scale, w / 2, h / 2)
 
+    if ability:isOnCooldown() then
+      local cooldown = ability:timeUntilReady() / ability:getCooldown()
+      g.setColor(255, 255, 255, 40)
+      g.rectangle('fill', x - size / 2, 8 + size * (1 - cooldown), size, size * cooldown)
+    end
+
     local cost = ability:getCost()
 
     if cost then

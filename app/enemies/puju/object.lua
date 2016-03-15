@@ -16,10 +16,16 @@ function puju:init()
   self.dead = false
   self.lastHurt = -math.huge
   self.yank = 0
-  self.floatOffset = lib.tick.index
+  self.floatOffset = love.math.random(1, 100)
   self.state = 'idle'
   self.collisions = app.context.collision:add(self)
   self:setIsEnemy()
+
+  self.speed = self.config.speed
+  self.chargeTime = self.config.chargeTime
+  self.range = self.config.range
+
+  self:randomizeStats('speed', 'chargeTime', 'range')
 end
 
 function puju:bind()

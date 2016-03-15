@@ -101,6 +101,12 @@ function input:draw()
       my = context.y
     end
 
+    local entity = lib.target.objectAtPosition(mx, my)
+    if entity and entity.isEnemy then
+      mx = util.lerp(mx, entity.position.x, .5)
+      my = util.lerp(my, entity.position.y, .5)
+    end
+
     local dir = util.angle(ox, oy, mx, my)
     local pointCount = 80
 

@@ -1,7 +1,7 @@
 local unit = {}
 
 function unit:resolveCollision(other, dx, dy)
-  if other.isMinion then
+  if other.isMinion or other.isEnemy then
     local x1, y1, x2, y2 = self.position.x, self.position.y, other.position.x, other.position.y
 
     local myFactor, theirFactor
@@ -51,6 +51,13 @@ function unit:flipAnimation()
   if sign ~= 0 then
     self.animation.flipped = sign < 0
   end
+end
+
+function unit:randomizeStats(stat, ...)
+  if not stat then return end
+  local val = self[stat]
+  self[stat] = util.clamp(love.math.randomNormal(val, val * .1), val - val * .33, val + val * .33)
+  return self:randomizeStats(...)
 end
 
 function unit:isInvincible()

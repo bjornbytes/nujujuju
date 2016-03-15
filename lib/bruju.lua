@@ -113,9 +113,11 @@ function bruju:draw()
   elseif not self:isInvincible() then-- or util.round(util.timeSince(self.lastHurt) * 4) % 2 == 0 then
     self.animation:draw(self.position.x, self.position.y)
   else
-    self.animation.skeleton.a = .5
     self.animation:draw(self.position.x, self.position.y)
-    self.animation.skeleton.a = 1
+    app.shaders.colorize:send('color', { 1, 0, 0, 1 * (1 - util.timeSince(self.lastHurt) / self.config.hurtGrace) })
+    g.setShader(app.shaders.colorize)
+    self.animation:draw(self.position.x, self.position.y)
+    g.setShader()
   end
 
   return -self.position.y

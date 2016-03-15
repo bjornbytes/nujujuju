@@ -2,7 +2,7 @@ local overgrowth = {}
 
 overgrowth.name = 'The Overgrowth'
 overgrowth.width = 960
-overgrowth.height = 600
+overgrowth.height = 540
 
 local w, h = overgrowth.width, overgrowth.height
 
@@ -24,7 +24,7 @@ overgrowth.objects = {
         events = {
           [1] = {
             kind = 'puju',
-            count = 3,
+            count = 2,
             time = 0
           }
         }

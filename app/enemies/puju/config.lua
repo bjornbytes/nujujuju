@@ -1,7 +1,7 @@
 return {
   radius = 30,
   maxHealth = 1,
-  speed = 80,
+  speed = 40,
   recoil = 5,
   acceleration = .05,
   attackCooldown = 2,
@@ -9,5 +9,6 @@ return {
   range = 150,
   aggroRange = 200,
   damageFlashDuration = .12,
-  shape = 'circle'
+  shape = 'ellipse',
+  perspective = 2
 }

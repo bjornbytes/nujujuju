@@ -3,12 +3,12 @@ local view = lib.object.create()
 function view:init()
   self.x = 0
   self.y = 0
-  self.width = 960
-  self.height = 600
+  self.width = app.context.scene.width
+  self.height = app.context.scene.height
   self.xmin = 0
   self.ymin = 0
-  self.xmax = 960
-  self.ymax = 600
+  self.xmax = self.width
+  self.ymax = self.height
   self.frame = {
     x = 0,
     y = 0,

@@ -53,7 +53,7 @@ function collision:bind()
             self:refresh(object)
             for neighbor in pairs(self:neighbors(object)) do
               local dx, dy = self:resolve(object, neighbor)
-              if dx and dy then
+              if dx and dy and object._collisions then
                 object._collisions(neighbor, dx, dy)
               end
             end
@@ -83,7 +83,7 @@ end
 
 function collision:remove(object)
   if object._collisions then
-    object._collisions:onComplete()
+    object._collisions:onCompleted()
     object._collisions = nil
   end
 

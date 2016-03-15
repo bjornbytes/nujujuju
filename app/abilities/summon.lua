@@ -1,11 +1,13 @@
 local summon = lib.object.create():include(lib.ability)
 
+summon.cooldown = 5
+
 function summon:getCost()
   return #util.filter(app.context.objects, 'isMinion')
 end
 
 function summon:canCast()
-  return self.owner.juju >= self:getCost()
+  return self.owner.juju >= self:getCost() and not self:isOnCooldown()
 end
 
 function summon:cast(x, y)
@@ -26,6 +28,8 @@ function summon:cast(x, y)
   })
 
   minion.activeAbility:cast(x, y)
+
+  self.lastCast = lib.tick.index
 
   self.owner.animation:set('summon')
 end

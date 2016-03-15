@@ -1,7 +1,7 @@
 return {
   radius = 40,
   maxHealth = 3,
-  hurtGrace = .5,
+  hurtGrace = 0,
   speed = 50,
   attackSpeed = 1,
   aggroRange = 180,
