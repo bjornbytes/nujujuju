@@ -5,14 +5,12 @@ function enemy:setIsEnemy()
 end
 
 function enemy:remove()
-  local juju = app.juju:new({
+  app.context:addObject(app.juju, {
     position = {
       x = self.position.x,
       y = self.position.y
     }
   })
-
-  app.context.objects[juju] = juju
 
   lib.unit.remove(self)
 end

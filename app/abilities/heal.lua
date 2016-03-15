@@ -1,6 +1,4 @@
-local heal = lib.object:new()
-
-heal:include(lib.ability)
+local heal = lib.object:new():include(lib.ability)
 
 heal.cost = 1
 heal.amount = 1

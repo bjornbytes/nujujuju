@@ -1,22 +1,18 @@
 local spuju = lib.object.create():include(lib.entity, lib.unit, lib.enemy)
 
-spuju.state = function()
-  local state = {
-    team = 'enemy',
-    position = {
-      x = app.context.scene.width / 2,
-      y = app.context.scene.height / 2
-    },
-    target = nil,
-    health = spuju.config.maxHealth,
-    dead = false,
-    lastHurt = -math.huge
+function spuju:init()
+  self.team = 'enemy'
+  self.position = {
+    x = app.context.scene.width / 2,
+    y = app.context.scene.height / 2
   }
+  self.target = nil
+  self.health = spuju.config.maxHealth
+  self.dead = false
+  self.lastHurt = -math.huge
 
-  state.animation = lib.animation.create(app.enemies.spuju.spine, app.enemies.spuju.animation)
-  state.animation.speed = 1
-
-  return state
+  self.animation = lib.animation.create(app.enemies.spuju.spine, app.enemies.spuju.animation)
+  self.animation.speed = 1
 end
 
 function spuju:bind()

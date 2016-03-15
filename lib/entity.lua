@@ -113,4 +113,67 @@ function entity:signTo(other)
   return -util.sign(self.position.x - other.position.x)
 end
 
+function entity:isInRangeOf(other)
+  return self:distanceTo(other) < self.config.range
+end
+
+function entity:moveIntoRangeOf(other, speed)
+  if not entity.inRangeOf(self, other) then
+    entity.moveTowards(self, other, speed)
+  end
+end
+
+function entity:moveTowards(other, speed)
+  return entity.moveTowardsPoint(self, other.position.x, other.position.y, speed)
+end
+
+function entity:moveTowardsPoint(x, y, speed)
+  local distance, direction = lib.entity.distanceToPoint(self, x, y), lib.entity.directionToPoint(self, x, y)
+  speed = math.min(distance, speed)
+  self.position.x = self.position.x + math.cos(direction) * speed
+  self.position.y = self.position.y + math.sin(direction) * speed
+end
+
+function entity:moveWithSpeed(speed, y)
+  local x
+  if y then
+    x = speed
+  else
+    x, y = speed.x, speed.y
+  end
+
+  self.position.x = self.position.x + x * lib.tick.rate
+  self.position.y = self.position.y + y * lib.tick.rate
+end
+
+function entity:moveInDirection(direction, speed)
+  self:moveWithSpeed(util.dx(speed, direction), util.dy(speed, direction))
+end
+
+function entity:isEscaped()
+  if self.config.shape == 'circle' or self.config.shape == 'ellipse' then
+    local r = self.config.radius
+    local x, y = self.position.x, self.position.y
+    local w, h = app.context.scene.width, app.context.scene.height
+    local x1, y1, x2, y2 = x - r, y - r, x + r, y + r
+    return x1 < 0 or y1 < 0 or x2 > w or y2 > h
+  end
+  return false
+end
+
+function entity:enclose()
+  if self.config.shape == 'circle' or self.config.shape == 'ellipse' then
+    local r = self.config.radius
+    local x, y = self.position.x, self.position.y
+    local w, h = app.context.scene.width, app.context.scene.height
+    self.position.x = util.clamp(x, r, w - r)
+    self.position.y = util.clamp(y, r, h - r)
+  end
+end
+
+function entity:remove()
+  self:unbind()
+  app.context:removeObject(self)
+end
+
 return entity

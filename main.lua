@@ -32,7 +32,6 @@ util = setmetatable(lib.util, { __index = lib.lume })
 
 app.context.load('overgrowth')
 
-love.update:subscribe(lib.quilt.update)
 love.update:subscribe(lib.flux.update)
 
 love.keypressed

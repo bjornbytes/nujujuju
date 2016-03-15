@@ -17,14 +17,13 @@ function summon:cast(x, y)
 
   local distance = muju.config.radius + app.minions.bruju.config.radius
   local angle = util.angle(muju.position.x, muju.position.y, x, y)
-  local minion = app.minions.bruju.object:new({
+
+  local minion = app.context:addObject(app.minions.bruju.object, {
     position = {
       x = muju.position.x + util.dx(distance, angle),
       y = muju.position.y + util.dy(distance, angle) / 2
     }
   })
-
-  app.context.objects[minion] = minion
 
   minion.activeAbility:cast(x, y)
 

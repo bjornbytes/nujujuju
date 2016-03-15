@@ -51,14 +51,12 @@ function waves:spawn(kind, count)
     local x = love.math.random() > .5 and app.context.scene.width - 50 or 50
     local y = 100 + love.math.random() * (app.context.scene.height - 200)
 
-    local enemy = app.enemies[kind].object:new({
+    app.context:addObject(app.enemies[kind].object, {
       position = {
         x = x,
         y = y
       }
     })
-
-    app.context.objects[enemy] = enemy
   end
 end
 

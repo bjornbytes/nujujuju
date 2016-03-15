@@ -53,6 +53,12 @@ function context.unload()
   context.collision:unbind()
 end
 
+function context:addObject(class, props)
+  local object = class:new(props)
+  self.objects[object] = object
+  return object
+end
+
 function context:removeObject(object)
   self.objects[object] = nil
   if object._key then
@@ -68,14 +74,12 @@ function context:createEnemy(kind)
   local x = love.math.random() > .5 and context.scene.width - 50 or 50
   local y = 100 + love.math.random() * (context.scene.height - 200)
 
-  local enemy = app.enemies[kind].object:new({
+  self:addObject(app.enemies[kind].object, {
     position = {
       x = x,
       y = y
     }
   })
-
-  context.objects[enemy] = enemy
 end
 
 return context
