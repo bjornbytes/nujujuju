@@ -24,7 +24,7 @@ overgrowth.objects = {
         events = {
           [1] = {
             kind = 'puju',
-            count = 1,
+            count = 2,
             time = 0
           }
         }
@@ -33,7 +33,15 @@ overgrowth.objects = {
         events = {
           [1] = {
             kind = 'spuju',
-            count = 1
+            count = 2
+          }
+        }
+      },
+      [3] = {
+        events = {
+          [1] = {
+            kind = 'puju',
+            count = 3
           }
         }
       }

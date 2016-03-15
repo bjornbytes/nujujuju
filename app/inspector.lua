@@ -1,6 +1,4 @@
-local inspector = lib.object.create()
-
-inspector:include(lib.inspector)
+local inspector = lib.object.create():include(lib.inspector)
 
 inspector.config = {
   width = 160,
@@ -8,19 +6,14 @@ inspector.config = {
   initialObject = 'muju'
 }
 
-inspector.state = function()
-  local state = {
-    active = false,
-    editing = 'muju',
-    x = -inspector.config.width,
-    gooey = lib.gooey.controller:new()
-  }
-
-  state.dropdown = state.gooey:add(lib.gooey.dropdown, 'inspector.editing', {
+function inspector:init()
+  self.active = false
+  self.editing = 'muju'
+  self.x = -inspector.config.width
+  self.gooey = lib.gooey.controller:new()
+  self.dropdown = self.gooey:add(lib.gooey.dropdown, 'inspector.editing', {
     value = inspector.config.initialObject
   })
-
-  return state
 end
 
 function inspector:bind()

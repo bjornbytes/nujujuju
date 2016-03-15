@@ -6,12 +6,10 @@ gooey.cursors = {
   --hand = love.mouse.getSystemCursor('hand')
 }
 
-gooey.state = function()
-  return {
-    font = fonts['04B_03'](8),
-    components = {},
-    focused = nil
-  }
+function gooey:init()
+  self.font = fonts['04B_03'](8)
+  self.components = {}
+  self.focused = nil
 end
 
 function gooey:bind()

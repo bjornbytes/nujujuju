@@ -1,33 +1,23 @@
-local puju = lib.object.create()
+local puju = lib.object.create():include(lib.entity, lib.unit, lib.enemy)
 
-puju:include(lib.entity)
-puju:include(lib.unit)
-puju:include(lib.enemy)
-
-puju.config = app.enemies.puju.config
-
-puju.state = function()
-  local state = {
-    team = 'enemy',
-    position = {
-      x = app.context.scene.width / 2,
-      y = app.context.scene.height / 2
-    },
-    direction = 1,
-    velocity = {
-      x = 0,
-      y = 0
-    },
-    target = nil,
-    health = puju.config.maxHealth,
-    dead = false,
-    lastHurt = -math.huge,
-    attackTimer = 0,
-    yank = 0,
-    floatOffset = lib.tick.index
+function puju:init()
+  self.team = 'enemy'
+  self.position = {
+    x = app.context.scene.width / 2,
+    y = app.context.scene.height / 2
   }
-
-  return state
+  self.velocity = {
+    x = 0,
+    y = 0
+  }
+  self.direction = 1
+  self.target = nil
+  self.health = puju.config.maxHealth
+  self.dead = false
+  self.lastHurt = -math.huge
+  self.attackTimer = 0
+  self.yank = 0
+  self.floatOffset = lib.tick.index
 end
 
 function puju:bind()
@@ -58,7 +48,7 @@ function puju:bind()
 
         self.attackTimer = math.max(self.attackTimer - lib.tick.rate, 0)
         if self:isInRangeOf(self.target) then
-          if false and self.attackTimer == 0 then
+          if self.attackTimer == 0 then
             local angle = self:directionTo(self.target) + math.pi
             self.velocity.x = util.dx(3, angle)
             self.velocity.y = util.dy(3, angle)

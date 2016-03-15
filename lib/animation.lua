@@ -50,8 +50,8 @@ function animation.create(spine, config)
     local state = self.states[name]
     self.completions:onNext(name)
     state.active = false
-    if state.next then
-      self:set(state.next)
+    if state.after then
+      self:set(state.after)
     end
   end
 

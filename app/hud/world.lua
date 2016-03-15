@@ -27,17 +27,15 @@ hud.config = {
   }
 }
 
-hud.state = function()
-  return {
-    selected = nil,
-    dragStart = {
-      x = nil,
-      y = nil
-    },
-    bursts = {},
-    tooltipFactor = 0,
-    shakeFactors = {}
+function hud:init()
+  self.selected = nil
+  self.dragStart = {
+    x = nil
+    y = nil
   }
+  self.bursts = {}
+  self.tooltipFactor = 0
+  self.shakeFactors = {}
 end
 
 function hud:bind()

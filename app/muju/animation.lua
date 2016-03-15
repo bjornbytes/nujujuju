@@ -19,7 +19,7 @@ return {
 
     stop = {
       speed = .75,
-      next = 'idle'
+      after = 'idle'
     },
 
     attack = {
@@ -30,7 +30,7 @@ return {
 
     summon = {
       speed = 1.85,
-      next = 'idle'
+      after = 'idle'
     },
 
     death = {

@@ -40,6 +40,20 @@ function unit:adjustSpeedToVector(length, direction, smooth)
   return self.speed
 end
 
+function unit:flipAnimation()
+  local sign
+
+  if self.target then
+    sign = self:signTo(self.target)
+  else
+    sign = util.sign(self.destination.x - self.position.x)
+  end
+
+  if sign ~= 0 then
+    self.animation.flipped = sign < 0
+  end
+end
+
 function unit:isEscaped()
   if self.config.shape == 'circle' or self.config.shape == 'ellipse' then
     local r = self.config.radius
@@ -62,7 +76,7 @@ function unit:enclose()
 end
 
 function unit:isInvincible()
-  return self.lastHurt and self.config.hurtGrace and (lib.tick.index - self.lastHurt) * lib.tick.rate <= self.config.hurtGrace
+  return self.state == 'spawn' or (self.lastHurt and self.config.hurtGrace and (lib.tick.index - self.lastHurt) * lib.tick.rate <= self.config.hurtGrace)
 end
 
 function unit:hurt(amount, source)

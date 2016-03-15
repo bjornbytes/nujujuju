@@ -1,6 +1,4 @@
-local summon = lib.object.create()
-
-summon:include(lib.ability)
+local summon = lib.object.create():include(lib.ability)
 
 function summon:getCost()
   return #util.filter(app.context.objects, 'isMinion')

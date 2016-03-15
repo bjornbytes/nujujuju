@@ -8,17 +8,15 @@ function input:isCasting()
   return self.castContext.active
 end
 
-input.state = function()
-  return {
-    castContext = {
-      active = false,
-      ox = nil,
-      oy = nil,
-      owner = nil,
-      ability = nil,
-      tick = nil,
-      factor = 0
-    }
+function input:init()
+  self.castContext = {
+    active = false,
+    ox = nil,
+    oy = nil,
+    owner = nil,
+    ability = nil,
+    tick = nil,
+    factor = 0
   }
 end
 

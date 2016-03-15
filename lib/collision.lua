@@ -1,12 +1,10 @@
 local collision = lib.object.create()
 
-collision.state = function()
-  return {
-    grid = {},
-    gridSize = {
-      x = 70,
-      y = 70 / 1.5
-    }
+function collision:init()
+  self.grid = {}
+  self.gridSize = {
+    x = 70,
+    y = 70 / 1.5
   }
 end
 

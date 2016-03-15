@@ -1,11 +1,9 @@
 local waves = lib.object.create()
 
-function waves:state()
-  return {
-    current = 1,
-    event = 1,
-    grace = 0
-  }
+function waves:init()
+  self.current = 1
+  self.event = 1
+  self.grace = 0
 end
 
 function waves:bind()

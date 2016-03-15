@@ -1,6 +1,4 @@
-local command = lib.object.create()
-
-command:include(lib.ability)
+local command = lib.object.create():include(lib.ability)
 
 function command:getColor()
   local entity = lib.target.objectAtPosition(app.context.view:worldPoint(love.mouse.getPosition()))

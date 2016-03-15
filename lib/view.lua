@@ -1,34 +1,32 @@
 local view = lib.object.create()
 
-view.state = function()
-  return {
+function view:init()
+  self.x = 0
+  self.y = 0
+  self.width = 960
+  self.height = 600
+  self.xmin = 0
+  self.ymin = 0
+  self.xmax = 960
+  self.ymax = 600
+  self.frame = {
     x = 0,
     y = 0,
-    width = 960,
-    height = 600,
-    xmin = 0,
-    ymin = 0,
-    xmax = 960,
-    ymax = 600,
-    frame = {
-      x = 0,
-      y = 0,
-      width = g.getWidth(),
-      height = g.getHeight()
-    },
-
-    viewId = 0,
-    draws = {},
-    guis = {},
-    effects = {},
-    toRemove = {},
-    target = nil,
-
-    prevx = 0,
-    prevy = 0,
-    prevscale = 1,
-    shake = 0
+    width = g.getWidth(),
+    height = g.getHeight()
   }
+
+  self.viewId = 0
+  self.draws = {}
+  self.guis = {}
+  self.effects = {}
+  self.toRemove = {}
+  self.target = nil
+
+  self.prevx = 0
+  self.prevy = 0
+  self.prevscale = 1
+  self.shake = 0
 end
 
 function view:bind()

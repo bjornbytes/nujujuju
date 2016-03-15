@@ -1,33 +1,20 @@
-local muju = lib.object.create()
+local muju = lib.object.create():include(lib.entity, lib.muju)
 
-muju.tag = 'muju'
-
-muju:include(lib.entity)
-muju:include(lib.muju)
-
-muju.config = app.muju.config
-
-muju.state = function()
-  local state = {
-    team = 'player',
-    position = {
-      x = app.context.scene.width / 2,
-      y = app.context.scene.height / 2
-    },
-    health = muju.config.maxHealth,
-    juju = 0,
-    totalJuju = 0,
-    dead = false,
-    squishFactor = 0,
-    squishActive = false
+function muju:init()
+  self.team = 'player'
+  self.position = {
+    x = app.context.scene.width / 2,
+    y = app.context.scene.height / 2
   }
+  self.health = muju.config.maxHealth
+  self.juju = 5
+  self.totalJuju = 0
+  self.dead = false
 
-  state.animation = lib.animation.create(app.muju.spine, app.muju.animation)
-  state.animation.speed = 1
-  state.animation.flipped = true
-  state.animation:set('idle')
-
-  return state
+  self.animation = lib.animation.create(app.muju.spine, app.muju.animation)
+  self.animation.speed = 1
+  self.animation.flipped = true
+  self.animation:set('idle')
 end
 
 function muju:bind()

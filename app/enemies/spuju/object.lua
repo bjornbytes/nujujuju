@@ -1,10 +1,4 @@
-local spuju = lib.object.create()
-
-spuju:include(lib.entity)
-spuju:include(lib.unit)
-spuju:include(lib.enemy)
-
-spuju.config = app.enemies.spuju.config
+local spuju = lib.object.create():include(lib.entity, lib.unit, lib.enemy)
 
 spuju.state = function()
   local state = {

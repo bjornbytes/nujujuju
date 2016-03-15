@@ -4,8 +4,10 @@ function object.create()
   return setmetatable({}, {__index = object})
 end
 
-function object:include(source)
+function object:include(source, ...)
+  if not source then return self end
   util.merge(source, self)
+  return self:include(...)
 end
 
 function object:wrap(fn)
@@ -29,12 +31,10 @@ function object:unbind()
 end
 
 function object:new(state)
-  local baseState = type(self.state) == 'function' and self.state() or {}
-  local instance = util.merge(baseState, {})
+  local instance = setmetatable({}, { __index = self })
+
+  f.try(instance.init, instance)
   instance = util.merge(state or {}, instance)
-
-  setmetatable(instance, {__index = self})
-
   instance:dispose(f.try(instance.bind, instance))
 
   return instance

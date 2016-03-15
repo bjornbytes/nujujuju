@@ -4,10 +4,8 @@ particles.config = {
   list = {'dust'}
 }
 
-particles.state = function()
-  return {
-    systems = {}
-  }
+function particles:init()
+  self.systems = {}
 end
 
 function particles:bind()

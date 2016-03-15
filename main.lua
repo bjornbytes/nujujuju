@@ -12,6 +12,12 @@ setmetatable(_G, {
     processors = {
       abilities = function(ability, filename)
         ability.tag = filename:gsub('%.lua$', ''):gsub('.+/', '')
+      end,
+      ['%.lua'] = function(object, filename)
+        local configFile = filename:gsub('[^/]+%.lua', 'config.lua')
+        if love.filesystem.exists(configFile) then
+          object.config = love.filesystem.load(configFile)()
+        end
       end
     }
   })
@@ -26,9 +32,8 @@ util = setmetatable(lib.util, { __index = lib.lume })
 
 app.context.load('overgrowth')
 
-love.update:subscribe(function()
-  lib.flux.update(lib.tick.rate)
-end)
+love.update:subscribe(lib.quilt.update)
+love.update:subscribe(lib.flux.update)
 
 love.keypressed
   :filter(f.eq('escape'))

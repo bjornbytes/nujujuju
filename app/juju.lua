@@ -1,17 +1,13 @@
-local juju = lib.object.create()
-
-juju:include(lib.entity)
+local juju = lib.object.create():include(lib.entity)
 
 juju.config = {
   radius = 15
 }
 
-function juju:state()
-  return {
-    position = {
-      x = nil,
-      y = nil
-    }
+function juju:init()
+  self.position = {
+    x = nil,
+    y = nil
   }
 end
 

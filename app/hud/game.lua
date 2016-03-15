@@ -6,10 +6,8 @@ hud.config = {
   padding = .015
 }
 
-function hud:state()
-  return {
-    abilityFactor = {}
-  }
+function hud:init()
+  self.abilityFactor = {}
 end
 
 function hud:bind()
@@ -118,12 +116,15 @@ function hud:drawJuju()
   local margin = .02 * v
   local scale = (.05 * v) / image:getWidth()
   local inc = .05 * v + margin
-  local x = margin
+  local ox = margin
+  local oy = margin
+  local perRow = 5
 
   for i = 1, p.juju do
+    local x = ox + (inc * ((i - 1) % perRow))
+    local y = oy + (inc * math.floor((i - 1) / perRow))
     g.white()
-    g.draw(image, x, margin, 0, scale, scale)
-    x = x + inc
+    g.draw(image, x, y, 0, scale, scale)
   end
 end
 
