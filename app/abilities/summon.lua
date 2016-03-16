@@ -1,6 +1,6 @@
 local summon = lib.object.create():include(lib.ability)
 
-summon.cooldown = 5
+summon.cooldown = 1
 
 function summon:getCost()
   return #util.filter(app.context.objects, 'isMinion')
