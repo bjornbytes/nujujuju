@@ -130,51 +130,55 @@ end
 
 function hud:drawWaves()
   local u, v = self.u, self.v
-  local timeScale = 10
-  local width = 300
-  local height = 80
 
   g.setFont(self.font)
 
-  do
-    if app.context.waves.grace > 0 then
-      g.white()
-      g.print(math.ceil(app.context.waves.grace), .02 * v, .1 * v)
+  if app.context.waves.grace > 0 then
+    g.white()
+
+    local font = g.getFont()
+    local fh = font:getHeight()
+    local padding = .02 * v
+    local portraitSize = .1 * v
+    local y = v - padding - fh - padding - portraitSize - padding - fh - padding - fh
+
+    local str = math.ceil(app.context.waves.grace)
+    g.print(str, .5 * u - font:getWidth(str) / 2, y)
+
+    y = y + fh + padding
+
+    local str = 'Incoming wave'
+    g.print(str, .5 * u - font:getWidth(str) / 2, y)
+
+    y = y + fh + padding
+
+    local groups = {}
+    local events = app.context.waves.waves[app.context.waves.current + 1].events
+    for i = 1, #events do
+      local event = events[i]
+      if not groups[event.kind] then
+        table.insert(groups, event.kind)
+        groups[event.kind] = 0
+      end
+
+      groups[event.kind] = groups[event.kind] + event.count
     end
 
-    return
-  end
+    local count = #groups
+    local inc = portraitSize + .05 * v
+    local x = u * .5 - (inc * (count - 1) / 2)
 
-  if app.context.lastEvent and app.context.events[1] then
-    local previousTime = app.context.lastEvent.time
-    local time = lib.tick.index * lib.tick.rate - previousTime
-    local percent = time / (app.context.events[1].time - previousTime)
-    local alpha = (1 - percent) * 255
-    local width = (app.context.events[1].time - previousTime) * timeScale
-    local x = -width * percent
-    g.setColor(0, 0, 0, alpha)
-    g.rectangle('fill', x, v - height, width, height)
+    for _, kind in ipairs(groups) do
+      local image = app.art.portraits[kind]
+      local scale = portraitSize / image:getHeight()
 
-    g.white()
-    local str = app.context.lastEvent.count
-    g.print(str, x + width * .25 - g.getFont():getWidth(str), v - height * .5 - g.getFont():getHeight() / 2)
-  end
-
-  for i = 1, #app.context.events do
-    local event = app.context.events[i]
-    local x = (event.time - lib.tick.index * lib.tick.rate) * timeScale + 3 * i
-    local width
-    if app.context.events[i + 1] then
-      width = (app.context.events[i + 1].time - event.time) * timeScale
-    else
-      width = 120
+      g.draw(image, x, y, 0, scale, scale, image:getWidth() / 2, 0)
+      local str = groups[kind]
+      g.print(str, x - font:getWidth(str) / 2, y + portraitSize + padding)
+      x = x + inc
     end
-    g.setColor(0, 0, 0, i == 1 and 255 or 150)
-    g.rectangle('fill', x, v - height, width, height)
 
-    g.white()
-    local str = event.count
-    g.print(str, x + width * .25 - g.getFont():getWidth(str) / 2, v - height * .5 - g.getFont():getHeight() / 2)
+    y = y + portraitSize + padding + fh + padding
   end
 end
 

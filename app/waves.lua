@@ -9,16 +9,20 @@ end
 function waves:bind()
   self.waves = self.waves or {}
 
-  self.current = 1
+  self.current = 0
   self.event = 1
+  self.grace = 5
+  self.waveStart = lib.tick.index
 
   return {
     love.update
       :subscribe(function()
+        if not self.waves[self.current] then return end
+
         local events = self.waves[self.current].events
         local event = events[self.event]
 
-        if event and lib.tick.index * lib.tick.rate >= (event.time or 0) then
+        if event and (lib.tick.index - self.waveStart) * lib.tick.rate >= (event.time or 0) then
           self:spawn(event.kind, event.count)
           self.event = self.event + 1
         end
@@ -28,7 +32,7 @@ function waves:bind()
       :subscribe(function()
         local enemyCount = #util.filter(app.context.objects, 'isEnemy')
         if self.grace == 0 and self.current < #self.waves and self.event > #self.waves[self.current].events and enemyCount == 0 then
-          self.grace = 10
+          self.grace = 5
         end
       end),
 
@@ -39,6 +43,7 @@ function waves:bind()
         if self.grace == 0 then
           self.current = self.current + 1
           self.event = 1
+          self.waveStart = lib.tick.index
         end
       end)
   }

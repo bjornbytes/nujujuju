@@ -2,7 +2,7 @@ local skull = lib.object.create():include(lib.entity)
 
 skull.config = {
   gravity = 700,
-  explosionSize = 40
+  explosionSize = 30
 }
 
 function skull:bind()
