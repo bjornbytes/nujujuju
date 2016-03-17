@@ -1,10 +1,5 @@
 local muju = {}
 
-function muju:selectAbility(index)
-  if index < 1 or index > #self.abilities then error('Tried to select invalid ability ' .. index) end
-  self.activeAbility = self.abilities[index]
-end
-
 function muju:tint(r, g, b)
   for _, slot in pairs({'robebottom', 'torso', 'front_upper_arm', 'rear_upper_arm', 'front_bracer', 'rear_bracer'}) do
     local slot = self.animation.skeleton:findSlot(slot)

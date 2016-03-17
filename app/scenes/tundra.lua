@@ -16,7 +16,7 @@ tundra.objects = {
     }
   },
   { 'hud.game', key = 'hud' },
-  { 'input', key = 'input' }
+  { 'abilities', key = 'abilities' }
 }
 
 tundra.events = {

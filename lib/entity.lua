@@ -16,7 +16,7 @@ end
 function entity:drawRing(r, gg, b)
   local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
   local isHovered = lib.target.objectAtPosition(mx, my) == self
-  local isCasting = app.context.input:isCasting() and app.context.input.castContext.owner == self
+  local isCasting = app.context.abilities:isCasting() and app.context.abilities.castContext.owner == self
   local alpha = (isHovered or isCasting) and 1 or 0.5
   local radius = self.config.radius
 

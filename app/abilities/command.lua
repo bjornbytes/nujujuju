@@ -14,38 +14,6 @@ function command:canCast()
 end
 
 function command:cast(x, y)
-  local entity = lib.target.objectAtPosition(x, y)
-
-  -- Interrupt attacks
-  if self.owner.attackCooldown then
-    lib.quilt.remove(self.owner.attackCooldown)
-    self.owner.attackCooldown = nil
-    self.owner.state = 'move'
-    self.owner.attacking = nil
-  end
-
-  if entity and (util.isa(entity, app.juju) or entity.isEnemy) then
-    self.owner.target = entity
-  else
-
-    -- Moving to a juju picks it up
-    if util.isa(entity, app.juju) then
-      self.owner.target = entity
-      return
-    end
-
-    local muju = app.context.objects.muju
-    local distance, angle = util.vector(x, y, muju.position.x, muju.position.y)
-    local minDistance = self.owner.config.radius + muju.config.radius
-    if distance * (2 - math.abs(math.sin(angle))) < minDistance * (2 - math.abs(math.sin(angle))) then
-      x = muju.position.x + util.dx(minDistance + 4, angle + math.pi)
-      y = muju.position.y + util.dy(minDistance + 4, angle + math.pi) / 2
-    end
-
-    self.owner.destination.x = x
-    self.owner.destination.y = y
-    self.owner.target = nil
-  end
 end
 
 return command

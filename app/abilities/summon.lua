@@ -6,32 +6,30 @@ function summon:getCost()
   return #util.filter(app.context.objects, 'isMinion')
 end
 
-function summon:canCast()
-  return self.owner.juju >= self:getCost() and not self:isOnCooldown()
+function summon:canCast(owner)
+  return owner == app.context.objects.muju and owner.juju >= self:getCost() and not self:isOnCooldown()
 end
 
-function summon:cast(x, y)
-  if not self:canCast() then return false end
+function summon:cast(owner, x, y)
+  if not self:canCast(owner) then return false end
 
-  local muju = self.owner
+  owner:spendJuju(self:getCost())
 
-  muju:spendJuju(self:getCost())
-
-  local distance = muju.config.radius + app.minions.bruju.config.radius
-  local angle = util.angle(muju.position.x, muju.position.y, x, y)
+  local distance = owner.config.radius + app.minions.bruju.config.radius
+  local angle = util.angle(owner.position.x, owner.position.y, x, y)
 
   local minion = app.context:addObject(app.minions.bruju.object, {
     position = {
-      x = muju.position.x + util.dx(distance, angle),
-      y = muju.position.y + util.dy(distance, angle) / 2
+      x = owner.position.x + util.dx(distance, angle),
+      y = owner.position.y + util.dy(distance, angle) / 2
     }
   })
 
-  minion.activeAbility:cast(x, y)
+  minion:command(x, y)
 
   self.lastCast = lib.tick.index
 
-  self.owner.animation:set('summon')
+  owner.animation:set('summon')
 end
 
 return summon

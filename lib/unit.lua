@@ -1,5 +1,40 @@
 local unit = {}
 
+function unit:command(x, y)
+  local entity = lib.target.objectAtPosition(x, y)
+
+  -- Interrupt attacks
+  if self.attackCooldown then
+    lib.quilt.remove(self.attackCooldown)
+    self.attackCooldown = nil
+    self.state = 'move'
+    self.attacking = nil
+  end
+
+  if entity and (util.isa(entity, app.juju) or entity.isEnemy) then
+    self.target = entity
+  else
+
+    -- Moving to a juju picks it up
+    if util.isa(entity, app.juju) then
+      self.target = entity
+      return
+    end
+
+    local muju = app.context.objects.muju
+    local distance, angle = util.vector(x, y, muju.position.x, muju.position.y)
+    local minDistance = self.config.radius + muju.config.radius
+    if distance * (2 - math.abs(math.sin(angle))) < minDistance * (2 - math.abs(math.sin(angle))) then
+      x = muju.position.x + util.dx(minDistance + 4, angle + math.pi)
+      y = muju.position.y + util.dy(minDistance + 4, angle + math.pi) / 2
+    end
+
+    self.destination.x = x
+    self.destination.y = y
+    self.target = nil
+  end
+end
+
 function unit:resolveCollision(other, dx, dy)
   if other.isMinion or other.isEnemy then
     local x1, y1, x2, y2 = self.position.x, self.position.y, other.position.x, other.position.y

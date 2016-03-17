@@ -15,8 +15,8 @@ function hud:bind()
   self.font = self.config.font(self.v * .04)
   self.smallFont = self.config.font(self.v * .02)
 
-  for i = 1, #app.context.objects.muju.abilities do
-    self.abilityFactor[i] = i == 1 and 1 or 0
+  for i = 1, #app.context.abilities.muju do
+    self.abilityFactor[i] = 1
   end
 
   return {
@@ -48,24 +48,20 @@ function hud:bind()
       :map(self:wrap(self.getElement))
       :filter(f.eq('ability'))
       :subscribe(function(ability, index)
-        local muju = app.context.objects.muju
-
-        muju:selectAbility(index)
-
-        for i = 1, #muju.abilities do
-          lib.flux.to(self.abilityFactor, .25, { [i] = i == index and 1 or 0 }):ease('cubicout')
+        if app.context.abilities.muju[index]:canCast(app.context.objects.muju) then
+          app.context.abilities.selected = app.context.abilities.muju[index]
         end
       end)
   }
 end
 
 function hud:getElement(mx, my)
-  local p = app.context.objects.muju
+  local abilities = app.context.abilities
 
   local u, v = self.u, self.v
   local size = .06 * u
   local inc = .08 * u
-  local count = #p.abilities
+  local count = #abilities.muju
   local x = u / 2 - (inc * (count - 1) / 2)
 
   for i = 1, count do
@@ -184,18 +180,19 @@ end
 
 function hud:drawAbilities()
   local p = app.context.objects.muju
+  local abilities = app.context.abilities
 
   local u, v = self.u, self.v
   local size = .06 * u
   local inc = .08 * u
-  local count = #p.abilities
+  local count = #abilities.muju
   local x = u / 2 - (inc * (count - 1) / 2)
 
   for i = 1, count do
     g.setColor(0, 0, 0, 100 + 80 * self.abilityFactor[i])
     g.rectangle('fill', x - size / 2, 8, size, size)
 
-    local ability = p.abilities[i]
+    local ability = abilities.muju[i]
     local image = app.art.icons[ability.tag]
     local w, h = image:getDimensions()
 

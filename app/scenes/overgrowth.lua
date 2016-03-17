@@ -15,8 +15,8 @@ overgrowth.objects = {
       y = h / 2
     }
   },
+  { 'abilities.manager', key = 'abilities' },
   { 'hud.game', key = 'hud' },
-  { 'input', key = 'input' },
   { 'waves',
     key = 'waves',
     waves = {

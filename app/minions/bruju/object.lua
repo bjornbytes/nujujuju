@@ -14,8 +14,6 @@ function bruju:init()
   self.animation = lib.animation.create(app.minions.bruju.spine, app.minions.bruju.animation)
   self.animation.speed = 1
 
-  self.activeAbility = app.abilities.command:new({ owner = self })
-
   self.collisions = app.context.collision:add(self)
 
   self:setIsMinion()
