@@ -7,7 +7,6 @@ function context.load(scene)
 
   context.view = lib.view:new()
   context.particles = lib.particles:new()
-  context.inspector = app.inspector:new()
   context.collision = lib.collision:new()
 
   context.view.xmax = context.scene.width
@@ -49,7 +48,6 @@ function context.unload()
 
   context.view:unbind()
   context.particles:unbind()
-  context.inspector:unbind()
   context.collision:unbind()
 end
 

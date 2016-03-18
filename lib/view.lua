@@ -3,8 +3,8 @@ local view = lib.object.create()
 function view:init()
   self.x = 0
   self.y = 0
-  self.width = app.context.scene.width
-  self.height = app.context.scene.height
+  self.width = 960
+  self.height = 540
   self.xmin = 0
   self.ymin = 0
   self.xmax = self.width

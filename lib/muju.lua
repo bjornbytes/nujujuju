@@ -41,13 +41,6 @@ function muju:draw()
   self.animation:tick(lib.tick.delta)
   self.animation:draw(self.position.x, self.position.y)
 
-  if app.context.inspector.active then
-    g.setLineWidth(3)
-    g.white(30)
-    g.circle('line', self.position.x, self.position.y, self.config.radius, 64)
-    g.setLineWidth(1)
-  end
-
   return -self.position.y
 end
 
