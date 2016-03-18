@@ -405,6 +405,36 @@ function hud:bind()
           file:close()
         end
         self.editing.world = nil
+      end),
+
+    love.mousepressed
+      :filter(function() return self.editing.active end)
+      :filter(isLeft)
+      :map(function() return app.context.view:worldMouseX(), app.context.view:worldMouseY() end)
+      :map(function(x, y)
+        local _, key = util.match(self.config.world, function(info)
+          local dir = util.angle(info.x, info.y, x, y)
+          return util.distance(info.x, info.y, x, y) <= self.config.markerSize * 2 / (1.5 - math.abs(math.cos(dir)) * .5)
+        end)
+
+        return key
+      end)
+      :filter(f.id)
+      :flatMapLatest(function(key)
+        local x1, y1 = app.context.view:worldMouseX(), app.context.view:worldMouseY()
+        return love.mousereleased
+          :filter(isLeft)
+          :take(1)
+          :map(function()
+            return app.context.view:worldMouseX(), app.context.view:worldMouseY()
+          end)
+          :filter(function(x2, y2)
+            return x1 == x2 and y1 == y2
+          end)
+          :map(f.val(key))
+      end)
+      :subscribe(function(key)
+        -- The user has clicked on a level in edit mode
       end)
   }
 end

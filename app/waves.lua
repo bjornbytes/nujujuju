@@ -11,7 +11,7 @@ function waves:bind()
 
   self.current = 0
   self.event = 1
-  self.grace = 5
+  self.grace = 10
   self.waveStart = lib.tick.index
 
   return {
@@ -32,7 +32,7 @@ function waves:bind()
       :subscribe(function()
         local enemyCount = #util.filter(app.context.objects, 'isEnemy')
         if self.grace == 0 and self.current < #self.waves and self.event > #self.waves[self.current].events and enemyCount == 0 then
-          self.grace = 5
+          self.grace = 10
         end
       end),
 
@@ -44,6 +44,7 @@ function waves:bind()
           self.current = self.current + 1
           self.event = 1
           self.waveStart = lib.tick.index
+          app.context.objects.muju:addJuju(1)
         end
       end)
   }

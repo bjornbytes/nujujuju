@@ -16,6 +16,7 @@ function hud:bind()
   self.u, self.v = g.getDimensions()
   self.font = self.config.font(self.v * .04)
   self.smallFont = self.config.font(self.v * .02)
+  self.bigFont = self.config.font(self.v * .065)
 
   for i = 1, #app.context.abilities.list do
     self.abilityFactor[i] = 1
@@ -69,7 +70,11 @@ function hud:bind()
       :map(self:wrap(self.getElement))
       :filter(f.eq('ability'))
       :subscribe(function(ability, index)
-        app.context.abilities.selected = app.context.abilities.list[index]
+        if app.context.abilities.selected ~= app.context.abilities.list[index] then
+          app.context.abilities.selected = app.context.abilities.list[index]
+        else
+          app.context.abilities.selected = nil
+        end
       end)
   }
 end
@@ -146,6 +151,12 @@ end
 function hud:drawWaves()
   local u, v = self.u, self.v
 
+  g.setFont(self.smallFont)
+  g.white()
+
+  g.print('Wave ' .. app.context.waves.current .. ' / ' .. #app.context.waves.waves, .01 * v, v - g.getFont():getHeight() - .01 * v)
+  g.print(math.floor(lib.tick.index * lib.tick.rate), .01 * v, v - g.getFont():getHeight() * 2 - .01 * v * 2)
+
   g.setFont(self.font)
 
   if app.context.waves.grace > 0 then
@@ -153,14 +164,17 @@ function hud:drawWaves()
 
     local font = g.getFont()
     local fh = font:getHeight()
+    local bfh = self.bigFont:getHeight()
     local padding = .02 * v
     local portraitSize = .1 * v
-    local y = v - padding - fh - padding - portraitSize - padding - fh - padding - fh
+    local y = v - padding - fh - padding - portraitSize - padding - fh - padding - bfh
 
     local str = math.ceil(app.context.waves.grace)
-    g.print(str, .5 * u - font:getWidth(str) / 2, y)
+    g.setFont(self.bigFont)
+    g.print(str, .5 * u - g.getFont():getWidth(str) / 2, y)
+    g.setFont(self.font)
 
-    y = y + fh + padding
+    y = y + bfh + padding
 
     local str = 'Incoming wave'
     g.print(str, .5 * u - font:getWidth(str) / 2, y)

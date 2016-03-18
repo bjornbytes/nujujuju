@@ -30,12 +30,12 @@ function object:unbind()
   end
 end
 
-function object:new(state)
+function object:new(state, ...)
   local instance = setmetatable({}, { __index = self })
 
-  f.try(instance.init, instance)
+  f.try(instance.init, instance, ...)
   instance = util.merge(state or {}, instance)
-  instance:dispose(f.try(instance.bind, instance))
+  instance:dispose(f.try(instance.bind, instance, ...))
 
   return instance
 end

@@ -1,13 +1,13 @@
 local context = {}
 
-function context.load(scene)
+function context.load(scene, config)
   lib.tick.index = 1
 
   context.scene = app.scenes[scene]
 
-  context.view = lib.view:new()
-  context.particles = lib.particles:new()
-  context.collision = lib.collision:new()
+  context.view = lib.view:new(nil, config)
+  context.particles = lib.particles:new(nil, config)
+  context.collision = lib.collision:new(nil, config)
 
   context.view.xmax = context.scene.width
   context.view.ymax = context.scene.height
@@ -15,10 +15,11 @@ function context.load(scene)
   context.objects = {}
 
   for _, entry in ipairs(context.scene.objects) do
+
     local path = entry[1]
 
     local object = util.get(app, path .. '.object') or util.get(app, path)
-    local instance = object:new(util.copy(entry))
+    local instance = object:new(util.copy(entry), config)
 
     context.objects[instance] = instance
 
