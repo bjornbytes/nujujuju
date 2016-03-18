@@ -23,7 +23,14 @@ function hud:init()
   self.bursts = {}
   self.tooltipFactor = 0
   self.shakeFactors = {}
-  self.editing = false
+  self.editing = {
+    active = false,
+    world = nil,
+    offset = {
+      x = nil,
+      y = nil
+    }
+  }
 
   self.targetScale = app.context.view.scale
   self.originalScale = self.targetScale
@@ -56,8 +63,8 @@ function hud:bind()
     love.keypressed
       :filter(f.eq('`'))
       :subscribe(function()
-        self.editing = not self.editing
-        if self.editing then
+        self.editing.active = not self.editing.active
+        if self.editing.active then
           self:deselect()
         else
           self:selectScene(self.selected)
@@ -79,30 +86,35 @@ function hud:bind()
       end),
 
     love.update
+      :filter(function() return self.editing.active end)
+      :subscribe(function()
+        local view = app.context.view
+
+        if not self.editing.world and love.mouse.isDown(1) then
+          local dx = love.mouse.getX() - self.dragStart.x
+          local dy = love.mouse.getY() - self.dragStart.y
+          view.x = util.lerp(view.x, self.dragStart.vx - dx / 2, lib.tick.getLerpFactor(.2))
+          view.y = util.lerp(view.y, self.dragStart.vy - dy / 2, lib.tick.getLerpFactor(.2))
+          view:contain()
+        end
+
+        local prevw, prevh = view.width, view.height
+        local xf, yf = .5, .5
+        view.scale = util.lerp(view.scale, self.targetScale, lib.tick.getLerpFactor(.2))
+        view.width = g.getWidth() / view.scale
+        view.height = g.getHeight() / view.scale
+        view.x = view.x + (prevw - view.width) * xf
+        view.y = view.y + (prevh - view.height) * yf
+
+        return
+      end),
+
+    love.update
+      :filter(function() return not self.editing.active end)
       :subscribe(function()
         local view = app.context.view
         local tx = self.config.world[self.selected].x
         local ty = self.config.world[self.selected].y
-
-        if self.editing then
-          if not self.dragging and love.mouse.isDown(1) then
-            local dx = love.mouse.getX() - self.dragStart.x
-            local dy = love.mouse.getY() - self.dragStart.y
-            view.x = util.lerp(view.x, self.dragStart.vx - dx / 2, lib.tick.getLerpFactor(.2))
-            view.y = util.lerp(view.y, self.dragStart.vy - dy / 2, lib.tick.getLerpFactor(.2))
-            view:contain()
-          end
-
-          local prevw, prevh = view.width, view.height
-          local xf, yf = .5, .5
-          view.scale = util.lerp(view.scale, self.targetScale, lib.tick.getLerpFactor(.2))
-          view.width = g.getWidth() / view.scale
-          view.height = g.getHeight() / view.scale
-          view.x = view.x + (prevw - view.width) * xf
-          view.y = view.y + (prevh - view.height) * yf
-
-          return
-        end
 
         if love.mouse.isDown(1) then
           local dis, dir = util.vector(self.dragStart.x, self.dragStart.y, love.mouse.getPosition())
@@ -250,7 +262,7 @@ function hud:bind()
 
     -- Selects scenes on tap, but only if mouse hasn't moved very far
     love.mousepressed
-      :filter(function() return not self.editing end)
+      :filter(function() return not self.editing.active end)
       :filter(isLeft)
       :flatMapLatest(function(x1, y1)
         return love.mousemoved
@@ -327,7 +339,7 @@ function hud:bind()
       end),
 
     love.mousereleased
-      :filter(function() return not self.editing end)
+      :filter(function() return not self.editing.active end)
       :filter(isLeft)
       :subscribe(function(x, y)
         if not self.selected then return nil end
@@ -355,7 +367,7 @@ function hud:bind()
       end),
 
     love.mousepressed
-      :filter(function() return self.editing end)
+      :filter(function() return self.editing.active end)
       :filter(isLeft)
       :map(function() return app.context.view:worldMouseX(), app.context.view:worldMouseY() end)
       :map(function(x, y)
@@ -368,10 +380,9 @@ function hud:bind()
       end)
       :filter(f.id)
       :tap(function(key)
-        self.dragging = key
-        self.editOffset = {}
-        self.editOffset.x = app.context.view:worldMouseX() - self.config.world[key].x
-        self.editOffset.y = app.context.view:worldMouseY() - self.config.world[key].y
+        self.editing.world = key
+        self.editing.offset.x = app.context.view:worldMouseX() - self.config.world[key].x
+        self.editing.offset.y = app.context.view:worldMouseY() - self.config.world[key].y
       end)
       :flatMapLatest(function()
         return love.mousemoved
@@ -380,12 +391,12 @@ function hud:bind()
           :takeUntil(love.mousereleased:filter(isLeft))
       end)
       :subscribe(function(x, y)
-        self.config.world[self.dragging].x = x - self.editOffset.x
-        self.config.world[self.dragging].y = y - self.editOffset.y
+        self.config.world[self.editing.world].x = x - self.editing.offset.x
+        self.config.world[self.editing.world].y = y - self.editing.offset.y
       end, print),
 
     love.mousereleased
-      :filter(function() return self.editing end)
+      :filter(function() return self.editing.active end)
       :filter(isLeft)
       :subscribe(function()
         local file = io.open(love.filesystem.getWorkingDirectory() .. '/app/hud/worldPositions.lua', 'w+')
@@ -393,7 +404,7 @@ function hud:bind()
           file:write('return ' .. util.serialize(self.config.world))
           file:close()
         end
-        self.dragging = nil
+        self.editing.world = nil
       end)
   }
 end
