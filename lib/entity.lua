@@ -95,6 +95,43 @@ function entity.closestToPoint(x, y, ...)
   return nil
 end
 
+function entity.inRange(x, y, range, ...)
+  local getEntries = {
+    enemy = function(result)
+      util.each(util.filter(app.context.objects, 'isEnemy'), function(enemy)
+        local distance = entity.distanceToPoint(enemy, x, y)
+        if distance <= range then
+          table.insert(result, enemy)
+        end
+      end)
+    end,
+
+    minion = function(result)
+      util.each(util.filter(app.context.objects, 'isMinion'), function(minion)
+        local distance = entity.distanceToPoint(minion, x, y)
+        if distance <= range then
+          table.insert(result, minion)
+        end
+      end)
+    end,
+
+    player = function(result)
+      local player = app.context.objects.muju
+      local distance = entity.distanceToPoint(player, x, y)
+      if distance <= range then
+        table.insert(result, player)
+      end
+    end
+  }
+
+  local kinds = {...}
+  local targets = {}
+
+  util.each(kinds, function(kind) getEntries[kind](targets) end)
+
+  return targets
+end
+
 function entity:distanceTo(other)
   return entity.distanceToPoint(self, other.position.x, other.position.y)
 end

@@ -19,9 +19,12 @@ function abilities:init()
   self.tick = nil
   self.factor = 0
 
-  self.muju = {
+  -- TODO group these eventually once UI is decided
+  self.list = {
     app.abilities.summon:new(),
-    app.abilities.heal:new()
+    app.abilities.heal:new(),
+
+    app.abilities.burst:new()
   }
 end
 
@@ -77,7 +80,7 @@ function abilities:bind()
 
     autoCast
       :filter(function(owner)
-        return owner.isMinion or self.muju[1]:canCast(owner)
+        return owner.isMinion or self.list[1]:canCast(owner)
       end)
       :tap(function(owner)
         self.casting = true
@@ -100,7 +103,7 @@ function abilities:bind()
         if self.owner.isMinion then
           self.owner:command(mx, my)
         else
-          self.muju[1]:cast(self.owner, mx, my)
+          self.list[1]:cast(self.owner, mx, my)
         end
 
         lib.flux.to(self, .35, { factor = 0 })

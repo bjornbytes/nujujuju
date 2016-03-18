@@ -8,6 +8,19 @@ function ability:getCost()
   return self.cost
 end
 
+function ability:canPayJuju()
+  return app.context.objects.muju.juju >= self:getCost()
+end
+
+function ability:payJuju()
+  if self:canPayJuju() then
+    app.context.objects.muju:spendJuju(self:getCost())
+    return true
+  end
+
+  return false
+end
+
 function ability:getCooldown()
   return self.cooldown
 end

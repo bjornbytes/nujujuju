@@ -17,7 +17,7 @@ function hud:bind()
   self.font = self.config.font(self.v * .04)
   self.smallFont = self.config.font(self.v * .02)
 
-  for i = 1, #app.context.abilities.muju do
+  for i = 1, #app.context.abilities.list do
     self.abilityFactor[i] = 1
   end
 
@@ -69,9 +69,7 @@ function hud:bind()
       :map(self:wrap(self.getElement))
       :filter(f.eq('ability'))
       :subscribe(function(ability, index)
-        if app.context.abilities.muju[index]:canCast(app.context.objects.muju) then
-          app.context.abilities.selected = app.context.abilities.muju[index]
-        end
+        app.context.abilities.selected = app.context.abilities.list[index]
       end)
   }
 end
@@ -82,7 +80,7 @@ function hud:getElement(mx, my)
   local u, v = self.u, self.v
   local size = .06 * u
   local inc = .08 * u
-  local count = #abilities.muju
+  local count = #abilities.list
   local x = u / 2 - (inc * (count - 1) / 2)
 
   for i = 1, count do
@@ -206,21 +204,21 @@ function hud:drawAbilities()
   local u, v = self.u, self.v
   local size = .06 * u
   local inc = .08 * u
-  local count = #abilities.muju
+  local count = #abilities.list
   local x = u / 2 - (inc * (count - 1) / 2)
 
   for i = 1, count do
     g.setColor(0, 0, 0, 100 + 80 * self.abilityFactor[i])
     g.rectangle('fill', x - size / 2, 8, size, size)
 
-    if app.context.abilities.selected == abilities.muju[i] then
+    if app.context.abilities.selected == abilities.list[i] then
       g.setLineWidth(3)
       g.setColor(255, 255, 255, 100 + 80 * self.abilityFactor[i])
       g.rectangle('line', x - size / 2, 8, size, size)
       g.setLineWidth(1)
     end
 
-    local ability = abilities.muju[i]
+    local ability = abilities.list[i]
     local image = app.art.icons[ability.tag]
     local w, h = image:getDimensions()
 

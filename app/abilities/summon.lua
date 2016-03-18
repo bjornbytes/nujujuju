@@ -7,13 +7,14 @@ function summon:getCost()
 end
 
 function summon:canCast(owner)
-  return owner == app.context.objects.muju and owner.juju >= self:getCost() and not self:isOnCooldown()
+  local muju = app.context.objects.muju
+  return owner == muju and self:canPayJuju() and not self:isOnCooldown()
 end
 
 function summon:cast(owner, x, y)
   if not self:canCast(owner) then return false end
 
-  owner:spendJuju(self:getCost())
+  self:payJuju()
 
   local distance = owner.config.radius + app.minions.bruju.config.radius
   local angle = util.angle(owner.position.x, owner.position.y, x, y)
