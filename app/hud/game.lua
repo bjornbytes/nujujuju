@@ -176,7 +176,7 @@ function hud:drawWaves()
 
     y = y + bfh + padding
 
-    local str = 'Incoming wave'
+    local str = 'Next wave'
     g.print(str, .5 * u - font:getWidth(str) / 2, y)
 
     y = y + fh + padding

@@ -33,6 +33,7 @@ function waves:bind()
         local enemyCount = #util.filter(app.context.objects, 'isEnemy')
         if self.grace == 0 and self.current < #self.waves and self.event > #self.waves[self.current].events and enemyCount == 0 then
           self.grace = 10
+          app.context.objects.muju:addJuju(1)
         end
       end),
 
@@ -41,11 +42,15 @@ function waves:bind()
       :subscribe(function()
         self.grace = math.max(self.grace - lib.tick.rate, 0)
         if self.grace == 0 then
-          self.current = self.current + 1
-          self.event = 1
-          self.waveStart = lib.tick.index
-          app.context.objects.muju:addJuju(1)
+          self:nextWave()
         end
+      end),
+
+    love.keypressed
+      :filter(f.eq('space'))
+      :filter(function() return self.grace > 0 end)
+      :subscribe(function()
+        self:nextWave()
       end)
   }
 end
@@ -64,6 +69,13 @@ function waves:spawn(kind, count)
       }
     })
   end
+end
+
+function waves:nextWave()
+  self.current = self.current + 1
+  self.event = 1
+  self.waveStart = lib.tick.index
+  self.grace = 0
 end
 
 return waves
