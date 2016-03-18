@@ -62,11 +62,22 @@ function hud:bind()
       end),
 
     love.update
-      :filter(function() return not self.editing end)
       :subscribe(function()
         local view = app.context.view
         local tx = self.config.world[self.selected].x
         local ty = self.config.world[self.selected].y
+
+        if self.editing then
+          if not self.dragging and love.mouse.isDown(1) then
+            local dx = love.mouse.getX() - self.dragStart.x
+            local dy = love.mouse.getY() - self.dragStart.y
+            view.x = util.lerp(view.x, self.dragStart.vx - dx / 2, lib.tick.getLerpFactor(.2))
+            view.y = util.lerp(view.y, self.dragStart.vy - dy / 2, lib.tick.getLerpFactor(.2))
+            view:contain()
+          end
+
+          return
+        end
 
         if love.mouse.isDown(1) then
           local dis, dir = util.vector(self.dragStart.x, self.dragStart.y, love.mouse.getPosition())
@@ -275,11 +286,12 @@ function hud:bind()
       end),
 
     love.mousepressed
-      :filter(function() return not self.editing end)
       :filter(isLeft)
       :subscribe(function(x, y)
         self.dragStart.x = x
         self.dragStart.y = y
+        self.dragStart.vx = app.context.view.x
+        self.dragStart.vy = app.context.view.y
       end),
 
     love.mousereleased
@@ -324,7 +336,7 @@ function hud:bind()
       end)
       :filter(f.id)
       :tap(function(key)
-        self.editing = key
+        self.dragging = key
         self.editOffset = {}
         self.editOffset.x = app.context.view:worldMouseX() - self.config.world[key].x
         self.editOffset.y = app.context.view:worldMouseY() - self.config.world[key].y
@@ -336,8 +348,8 @@ function hud:bind()
           :takeUntil(love.mousereleased:filter(isLeft))
       end)
       :subscribe(function(x, y)
-        self.config.world[self.editing].x = x - self.editOffset.x
-        self.config.world[self.editing].y = y - self.editOffset.y
+        self.config.world[self.dragging].x = x - self.editOffset.x
+        self.config.world[self.dragging].y = y - self.editOffset.y
       end, print),
 
     love.mousereleased
@@ -349,6 +361,7 @@ function hud:bind()
           file:write('return ' .. util.serialize(self.config.world))
           file:close()
         end
+        self.dragging = nil
       end)
   }
 end
