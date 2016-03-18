@@ -5,10 +5,10 @@ function view:init()
   self.y = 0
   self.width = 960
   self.height = 540
-  self.xmin = 0
-  self.ymin = 0
-  self.xmax = self.width
-  self.ymax = self.height
+  self.xmin = -math.huge
+  self.ymin = -math.huge
+  self.xmax = math.huge--self.width
+  self.ymax = math.huge--self.height
   self.frame = {
     x = 0,
     y = 0,
@@ -174,8 +174,8 @@ function view:threeDepth(x, y, z)
 end
 
 function view:contain()
-  self.x = util.clamp(self.x, 0, self.xmax - self.width)
-  self.y = util.clamp(self.y, 0, self.ymax - self.height)
+  --self.x = util.clamp(self.x, self.xmin, self.xmax - self.width)
+  --self.y = util.clamp(self.y, self.ymin, self.ymax - self.height)
 end
 
 function view:worldPoint(x, y)

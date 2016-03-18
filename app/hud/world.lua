@@ -24,6 +24,9 @@ function hud:init()
   self.tooltipFactor = 0
   self.shakeFactors = {}
   self.editing = false
+
+  self.targetScale = app.context.view.scale
+  self.originalScale = self.targetScale
 end
 
 function hud:bind()
@@ -61,6 +64,20 @@ function hud:bind()
         end
       end),
 
+    love.keypressed
+      :filter(f.eq('='))
+      :filter(function() return love.keyboard.isDown('lgui') end)
+      :subscribe(function()
+        self.targetScale = self.targetScale * 1.5
+      end),
+
+    love.keypressed
+      :filter(f.eq('-'))
+      :filter(function() return love.keyboard.isDown('lgui') end)
+      :subscribe(function()
+        self.targetScale = self.targetScale / 1.5
+      end),
+
     love.update
       :subscribe(function()
         local view = app.context.view
@@ -75,6 +92,14 @@ function hud:bind()
             view.y = util.lerp(view.y, self.dragStart.vy - dy / 2, lib.tick.getLerpFactor(.2))
             view:contain()
           end
+
+          local prevw, prevh = view.width, view.height
+          local xf, yf = .5, .5
+          view.scale = util.lerp(view.scale, self.targetScale, lib.tick.getLerpFactor(.2))
+          view.width = g.getWidth() / view.scale
+          view.height = g.getHeight() / view.scale
+          view.x = view.x + (prevw - view.width) * xf
+          view.y = view.y + (prevh - view.height) * yf
 
           return
         end
@@ -93,6 +118,13 @@ function hud:bind()
 
         view.x = util.lerp(view.x, tx, lib.tick.getLerpFactor(.16))
         view.y = util.lerp(view.y, ty, lib.tick.getLerpFactor(.16))
+        local prevw, prevh = view.width, view.height
+        local xf, yf = .5, .5
+        view.scale = util.lerp(view.scale, self.originalScale, lib.tick.getLerpFactor(.1))
+        view.width = g.getWidth() / view.scale
+        view.height = g.getHeight() / view.scale
+        view.x = view.x + (prevw - view.width) * xf
+        view.y = view.y + (prevh - view.height) * yf
       end),
 
     app.context.view.draw:subscribe(function()
