@@ -4,7 +4,7 @@ heal.cost = 1
 heal.amount = 1
 
 function heal:canCast(owner)
-  return owner.juju >= self.cost
+  return owner == app.context.objects.muju and owner.juju >= self.cost
 end
 
 function heal:cast(owner, x, y)

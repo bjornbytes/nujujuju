@@ -1,5 +1,7 @@
 local hud = lib.object.create()
 
+local function isLeft(_, _, b) return b == 1 end
+
 hud.config = {
   font = fonts.roundedElegance,
   margin = .03,
@@ -18,6 +20,26 @@ function hud:bind()
   for i = 1, #app.context.abilities.muju do
     self.abilityFactor[i] = 1
   end
+
+  local tap = love.mousepressed
+    :filter(isLeft)
+    :flatMapLatest(function(ox, oy)
+      return love.mousemoved
+        :startWith(ox, oy)
+        :map(function(x, y)
+          return util.distance(ox, oy, x, y)
+        end)
+        :takeUntil(
+          love.mousereleased
+            :filter(isLeft)
+            :take(1)
+        )
+        :max()
+        :filter(function(d) return d < 16 end)
+        :map(function()
+          return love.mouse.getPosition()
+        end)
+    end)
 
   return {
     app.context.view.hud
@@ -43,8 +65,7 @@ function hud:bind()
         return -1000
       end),
 
-    love.mousepressed
-      :filter(function(_, _, b) return b == 1 end)
+    tap
       :map(self:wrap(self.getElement))
       :filter(f.eq('ability'))
       :subscribe(function(ability, index)
@@ -191,6 +212,13 @@ function hud:drawAbilities()
   for i = 1, count do
     g.setColor(0, 0, 0, 100 + 80 * self.abilityFactor[i])
     g.rectangle('fill', x - size / 2, 8, size, size)
+
+    if app.context.abilities.selected == abilities.muju[i] then
+      g.setLineWidth(3)
+      g.setColor(255, 255, 255, 100 + 80 * self.abilityFactor[i])
+      g.rectangle('line', x - size / 2, 8, size, size)
+      g.setLineWidth(1)
+    end
 
     local ability = abilities.muju[i]
     local image = app.art.icons[ability.tag]

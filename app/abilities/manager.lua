@@ -26,67 +26,87 @@ function abilities:init()
 end
 
 function abilities:bind()
+  local abilityCast, autoCast = love.mousepressed
+    :filter(isLeft)
+    :map(function(...)
+      return app.context.view:worldPoint(...)
+    end)
+    :map(lib.target.objectAtPosition)
+    :filter(f.id)
+    :filter(function(owner)
+      return owner.isMinion or owner == app.context.objects.muju
+    end)
+    :partition(function(owner)
+      return self.selected
+    end)
+
   return {
 
-    -- Autocast
-    love.mousepressed
-      :filter(isLeft)
-      :map(function(...)
-        return app.context.view:worldPoint(...)
-      end)
-      :map(lib.target.objectAtPosition)
-      :filter(f.id)
+    abilityCast
       :filter(function(owner)
-        return owner.isMinion or owner == app.context.objects.muju
-      end)
-      :filter(function(owner)
-        if not self.selected or self.selected == 'auto' then
-          if owner == app.context.objects.muju then
-            return self.muju[1]:canCast(owner)
-          end
-
-          return true
-        end
-
         return self.selected:canCast(owner)
       end)
       :tap(function(owner)
-        self.selected = self.selected or 'auto'
         self.casting = true
         self.ox = app.context.view:worldMouseX()
         self.oy = app.context.view:worldMouseY()
         self.owner = owner
         self.tick = lib.tick.index
         self.factor = 0
+
         lib.flux.to(self, .3, { factor = 1 }):ease('backinout')
       end)
-      :flatMapLatest(function()
-        return love.update
-          :takeUntil(love.mousereleased)
-          :sample(love.mousereleased:filter(isLeft):take(1))
-      end)
+      :flatMapLatest(function() return love.mousereleased:filter(isLeft):take(1) end)
       :subscribe(function()
         local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
-
-        if self.selected == 'auto' then
-          if self.owner.isMinion then
-            self.owner:command(mx, my)
-          else
-            self.muju[1]:cast(self.owner, mx, my)
-          end
-        else
-          self.selected:cast(self.owner, mx, my)
-        end
 
         self.casting = false
         self.x = mx
         self.y = my
 
+        self.selected:cast(self.owner, mx, my)
+
         lib.flux.to(self, .35, { factor = 0 })
           :ease('cubicout')
           :oncomplete(function()
-            self.owner = nil
-            self.selected = nil
+            if not self.casting then self.owner = nil end
+          end)
+
+        self.selected = nil
+      end),
+
+    autoCast
+      :filter(function(owner)
+        return owner.isMinion or self.muju[1]:canCast(owner)
+      end)
+      :tap(function(owner)
+        self.casting = true
+        self.ox = app.context.view:worldMouseX()
+        self.oy = app.context.view:worldMouseY()
+        self.owner = owner
+        self.tick = lib.tick.index
+        self.factor = 0
+
+        lib.flux.to(self, .3, { factor = 1 }):ease('backinout')
+      end)
+      :flatMapLatest(function() return love.mousereleased:filter(isLeft):take(1) end)
+      :subscribe(function()
+        local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
+
+        self.casting = false
+        self.x = mx
+        self.y = my
+
+        if self.owner.isMinion then
+          self.owner:command(mx, my)
+        else
+          self.muju[1]:cast(self.owner, mx, my)
+        end
+
+        lib.flux.to(self, .35, { factor = 0 })
+          :ease('cubicout')
+          :oncomplete(function()
+            if not self.casting then self.owner = nil end
           end)
       end),
 
@@ -153,9 +173,11 @@ function abilities:draw()
       g.setLineWidth(1)
     end
 
-    local image
-    local color
-    if self.selected == 'auto' then
+    local image, color
+    if self.selected then
+      image = app.art.icons[self.selected.tag]
+      color = { 255, 255, 255 }
+    else
       if self.owner.isMinion then
         image = app.art.icons.command
         color = (entity and entity.isEnemy) and { 255, 140, 140 } or { 140, 255, 140 }
@@ -163,10 +185,8 @@ function abilities:draw()
         image = app.art.icons.summon
         color = { 255, 255, 255 }
       end
-    else
-      image = app.art.icons[self.selected.tag]
-      color = { 255, 255, 255 }
     end
+
     local w, h = image:getDimensions()
     local size = .75 * 2 * radius * self.factor
     local scale = size / ((w > h) and w or h)

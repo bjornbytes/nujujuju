@@ -29,6 +29,8 @@ function entity:drawRing(r, gg, b)
   g.white(self.ringAlpha * 160)
   g.setLineWidth(1 + 2 * (alpha - .5))
   g.ellipse('line', self.position.x, self.position.y, radius, radius / 2)
+
+  g.setLineWidth(1)
 end
 
 function entity.closest(source, ...)
