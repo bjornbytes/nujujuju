@@ -240,6 +240,14 @@ function hud:drawWaves()
 
     y = y + portraitSize + padding + fh + padding
   end
+
+  if app.context.waves.current == #app.context.waves.waves and #util.filter(app.context.objects, 'isEnemy') == 0 then
+    g.setFont(self.bigFont)
+    local x = u / 2
+    local str = 'You win'
+    g.white()
+    g.print(str, x - g.getFont():getWidth(str) / 2, v * .75)
+  end
 end
 
 function hud:drawAbilities()
