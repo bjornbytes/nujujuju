@@ -7,7 +7,7 @@ function muju:init()
     y = app.context.scene.height / 2
   }
   self.health = muju.config.maxHealth
-  self.juju = 15
+  self.juju = 0
   self.totalJuju = 0
   self.dead = false
 
