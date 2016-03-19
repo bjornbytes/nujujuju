@@ -1,1 +1,1 @@
-return {["hollow"]={["y"]=854,["x"]=1169},["tundra"]={["y"]=1030,["x"]=1050},["overgrowth"]={["y"]=895,["x"]=879}}
+return {["overgrowth"]={["y"]=895,["x"]=879}}
