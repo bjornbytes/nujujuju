@@ -15,12 +15,13 @@ end
 
 function entity:drawRing(r, gg, b)
   local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
-  local isHovered = lib.target.objectAtPosition(mx, my) == self
-  local isCasting = app.context.abilities:isCasting() and app.context.abilities.castContext.owner == self
-  local alpha = (isHovered or isCasting) and 1 or 0.5
-  local radius = self.config.radius
+  local isCasting = app.context.abilities:isCasting() and app.context.abilities.owner == self
+  local isTargeted = app.context.abilities:isCasting() and self.isEnemy and lib.target.objectAtPosition(mx, my) == self
+  local alpha = (isCasting or isTargeted) and 1 or 0.5
 
   self.ringAlpha = util.lerp(self.ringAlpha or 0, alpha, 8 * lib.tick.delta)
+
+  local radius = self.config.radius * (1 + .5 * (self.ringAlpha - .5))
 
   g.setColor(r, gg, b, self.ringAlpha * 80)
   g.setLineWidth(2 + 3 * alpha)

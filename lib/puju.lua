@@ -64,6 +64,24 @@ function puju:attack()
   self.velocity.y = util.lerp(self.velocity.y, 0, lib.tick.getLerpFactor(self.config.acceleration))
 end
 
+function puju:isHovered(x, y)
+  local hoverAllowanceFactor = 1.5
+  local dis = util.distance(self.position.x, self.position.y, x, y)
+  local dir = util.angle(self.position.x, self.position.y, x, y)
+  local ellipseHover = dis < self.config.radius * hoverAllowanceFactor / (2 - math.abs(math.cos(dir)))
+
+  local image = app.art.puju
+  local baseScale = self:getBaseScale()
+  local scale = g.imageScale(image, 35 * baseScale)
+  local width, height = self.config.radius * 2, image:getHeight() * scale
+  local offset = math.sin(lib.tick.index * lib.tick.rate * 3) * 4
+  local x1 = self.position.x - width / 2
+  local y1 = self.position.y - 20 + offset - height
+  local mouseHover = util.inside(x, y, x1, y1, width, height)
+
+  return self:isTargetable() and (mouseHover or ellipseHover)
+end
+
 function puju:drift()
   self.velocity.x = self.velocity.x + math.sin((self.floatOffset + lib.tick.index) * lib.tick.rate * 2) * lib.tick.rate
   self.velocity.y = self.velocity.y + math.cos((self.floatOffset + lib.tick.index) * lib.tick.rate * 2) * lib.tick.rate
@@ -75,8 +93,12 @@ function puju:drift()
   self.yank = util.lerp(self.yank, yank, lib.tick.getLerpFactor(.02))
 end
 
+function puju:getBaseScale()
+  return self.chargeStart and 1 + ((lib.tick.index - self.chargeStart) * lib.tick.rate / self.config.chargeTime) * .5 or 1
+end
+
 function puju:draw()
-  local baseScale = self.chargeStart and 1 + ((lib.tick.index - self.chargeStart) * lib.tick.rate / self.config.chargeTime) * .5 or 1
+  local baseScale = self:getBaseScale()
   local image = app.art.shadow
   local offset = math.sin(lib.tick.index * lib.tick.rate * 3) * 4
   local scale = g.imageScale(image, (70 + offset) * baseScale)

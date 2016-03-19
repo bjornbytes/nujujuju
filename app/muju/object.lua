@@ -15,6 +15,8 @@ function muju:init()
   self.animation.speed = 1
   self.animation.flipped = true
   self.animation:set('idle')
+
+  app.context.view.target = self
 end
 
 function muju:bind()

@@ -5,7 +5,7 @@ local function isLeft(x, y, b)
 end
 
 function abilities:isCasting()
-  return self.active
+  return self.casting
 end
 
 function abilities:init()
