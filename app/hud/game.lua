@@ -10,6 +10,9 @@ hud.config = {
 
 function hud:init()
   self.abilityFactor = {}
+  self.jujuCostFactor = 0
+  self.jujuCostExitTween = nil
+  self.jujuSpendIndex = nil
 end
 
 function hud:bind()
@@ -134,17 +137,45 @@ function hud:drawJuju()
   local p = app.context.objects.muju
   local image = app.art.juju
   local margin = .02 * v
-  local scale = (.05 * v) / image:getWidth()
+  local baseScale = (.05 * v) / image:getWidth()
   local inc = .05 * v + margin
-  local ox = margin
+  local ox = margin + image:getWidth() * baseScale / 2
   local oy = margin
   local perRow = 5
+
+  if app.context.abilities.casting then
+    self.jujuCostExitTween = nil
+    local cost
+    if app.context.abilities.selected == nil and app.context.abilities.casting then
+      local owner = app.context.abilities.owner
+      cost = owner == app.context.objects.muju and app.context.abilities.list[1]:getCost(owner) or nil
+    else
+      cost = app.context.abilities.selected:getCost()
+    end
+
+    if cost then
+      if not self.jujuSpendIndex then
+        self.jujuSpendIndex = p.juju - cost
+        lib.flux.to(self, 1, { jujuCostFactor = 1 }):ease('quintout')
+      end
+    end
+  else
+    if self.jujuCostFactor > 0 then
+      self.jujuCostExitTween = lib.flux.to(self, .5, { jujuCostFactor = 0 })
+        :ease('quintout')
+        :oncomplete(function()
+          self.jujuCostExitTween = nil
+          self.jujuSpendIndex = nil
+        end)
+    end
+  end
 
   for i = 1, p.juju do
     local x = ox + (inc * ((i - 1) % perRow))
     local y = oy + (inc * math.floor((i - 1) / perRow))
+    local scale = baseScale + ((self.jujuSpendIndex and i > self.jujuSpendIndex) and self.jujuCostFactor or 0) * .3
     g.white()
-    g.draw(image, x, y, 0, scale, scale)
+    g.draw(image, x, y, 0, scale, scale, image:getWidth() / 2)
   end
 end
 

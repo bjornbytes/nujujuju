@@ -78,6 +78,14 @@ function abilities:bind()
         self.selected = nil
       end),
 
+    love.mousereleased
+      :filter(function()
+        return self.selected and not self.casting and not self.owner
+      end)
+      :subscribe(function()
+        self.selected = nil
+      end),
+
     autoCast
       :filter(function(owner)
         return owner.isMinion or self.list[1]:canCast(owner)
