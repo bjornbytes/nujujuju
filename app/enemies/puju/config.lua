@@ -5,7 +5,7 @@ return {
   recoil = 5,
   acceleration = .05,
   attackCooldown = 1,
-  chargeTime = 1.5,
+  chargeTime = 1,
   range = 150,
   aggroRange = 200,
   damageFlashDuration = .12,

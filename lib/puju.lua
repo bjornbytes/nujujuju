@@ -29,7 +29,7 @@ function puju:move()
   self.velocity.x = util.lerp(self.velocity.x, targetVelocityX * distanceFactor, lib.tick.getLerpFactor(self.config.acceleration))
   self.velocity.y = util.lerp(self.velocity.y, targetVelocityY * distanceFactor, lib.tick.getLerpFactor(self.config.acceleration))
 
-  if self:isInRangeOf(self.target) and love.math.random() < lib.tick.rate then
+  if self:isInRangeOf(self.target) and love.math.random() < lib.tick.rate * 2 then
     self.state = 'attack'
   end
 end
