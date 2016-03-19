@@ -27,17 +27,9 @@ function context.load(scene, config)
       instance._key = entry.key
       context.objects[entry.key] = instance
 
-      if not context[entry.key] then
-        context[entry.key] = instance
-      end
+      context[entry.key] = instance
     end
   end
-
-  love.keypressed
-    :filter(f.eq('p'))
-    :subscribe(function()
-      app.context:createEnemy('puju')
-    end)
 end
 
 function context.unload()
@@ -68,18 +60,6 @@ end
 
 function context:getObject(object)
   return self.objects[object]
-end
-
-function context:createEnemy(kind)
-  local x = love.math.random() > .5 and context.scene.width - 50 or 50
-  local y = 100 + love.math.random() * (context.scene.height - 200)
-
-  self:addObject(app.enemies[kind].object, {
-    position = {
-      x = x,
-      y = y
-    }
-  })
 end
 
 return context
