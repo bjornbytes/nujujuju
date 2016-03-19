@@ -2,7 +2,8 @@ local burst = lib.object.create():include(lib.ability)
 
 burst.cooldown = 3
 burst.cost = 1
-burst.range = 100
+burst.range = 150
+burst.damage = 3
 
 function burst:canCast(owner)
   return util.isa(owner, app.minions.bruju.object) and not self:isOnCooldown() and self:canPayJuju()
@@ -17,7 +18,7 @@ function burst:cast(owner, x, y)
   })
 
   util.each(lib.entity.inRange(owner.position.x, owner.position.y, self.range, 'enemy'), function(enemy)
-    enemy:hurt(3, owner)
+    enemy:hurt(self.damage, owner)
   end)
 
   owner:hurt(owner.health, owner)

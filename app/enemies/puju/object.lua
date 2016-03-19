@@ -20,6 +20,7 @@ function puju:init()
   self.state = 'idle'
   self.collisions = app.context.collision:add(self)
   self:setIsEnemy()
+  self.alpha = 1
 
   self.speed = self.config.speed
   self.chargeTime = self.config.chargeTime

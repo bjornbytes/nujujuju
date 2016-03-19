@@ -81,7 +81,7 @@ function puju:draw()
   local offset = math.sin(lib.tick.index * lib.tick.rate * 3) * 4
   local scale = g.imageScale(image, (70 + offset) * baseScale)
 
-  g.white(70)
+  g.white(70 * self.alpha)
   g.draw(image, self.position.x, self.position.y, 0, scale, scale / 1.5, image:getWidth() / 2, image:getHeight() / 2)
 
   self:drawRing(255, 40, 40)
@@ -89,7 +89,7 @@ function puju:draw()
   local image = app.art.puju
   local scale = g.imageScale(image, 35 * baseScale)
 
-  g.white()
+  g.white(self.alpha * 255)
   g.draw(image, self.position.x, self.position.y - 20 + offset - image:getHeight() * scale, self.yank * .4, scale * self.direction, scale, image:getWidth() / 2, 0)
 
   return -self.position.y
@@ -100,7 +100,13 @@ function puju:die()
     lib.quilt.remove(self.attackThread)
   end
 
-  self:remove()
+  if self.dead then return end
+
+  self.dead = true
+
+  lib.flux.to(self, .4, { alpha = 0 }):ease('cubicout'):oncomplete(function()
+    self:remove()
+  end)
 end
 
 return puju
