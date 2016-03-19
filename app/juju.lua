@@ -50,6 +50,11 @@ function juju:bind()
           self.velocity.z = self.velocity.z + self.config.gravity * lib.tick.rate
         end
 
+        if self.velocity.z == 0 then
+          self.velocity.x = util.lerp(self.velocity.x, 0, lib.tick.getLerpFactor(.1))
+          self.velocity.y = util.lerp(self.velocity.y, 0, lib.tick.getLerpFactor(.1))
+        end
+
         if self.position.z > 0 then
           self.velocity.x = self.velocity.x * .7
           self.velocity.y = self.velocity.y * .7
@@ -59,8 +64,6 @@ function juju:bind()
             self.velocity.z = math.abs(self.velocity.z) * -.5
             self.position.z = -1
           else
-            self.velocity.x = 0
-            self.velocity.y = 0
             self.velocity.z = 0
             self.position.z = 0
           end
