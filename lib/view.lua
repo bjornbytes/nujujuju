@@ -39,6 +39,11 @@ function view:bind()
   self.hud.onNext = f.self(self.doHud, self)
 
   return {
+    love.resize
+      :subscribe(function()
+        self:resize()
+      end),
+
     love.update
       :subscribe(function()
         self:update()
@@ -91,14 +96,14 @@ function view:doDraw()
   g.white()
   g.draw(source)
 
-  local fr = self.frame
+  --[[local fr = self.frame
   local fx, fy, fw, fh = fr.x, fr.y, fr.width, fr.height
 
   g.setColor(0, 0, 0)
   g.rectangle('fill', 0, 0, w, fy)
   g.rectangle('fill', 0, 0, fx, h)
   g.rectangle('fill', 0, fy + fh, w, h - (fy + fh))
-  g.rectangle('fill', fx + fw, 0, w - (fx + fw), h)
+  g.rectangle('fill', fx + fw, 0, w - (fx + fw), h)]]
 end
 
 function view:doHud()
@@ -122,7 +127,7 @@ function view:resize()
   local ratio = w / h
 
   self.frame.x, self.frame.y, self.frame.width, self.frame.height = 0, 0, self.width, self.height
-  if (self.width / self.height) > (w / h) then
+  if true or (self.width / self.height) > (w / h) then
     self.scale = w / self.width
     local margin = math.max(util.round(((h - w * (self.height / self.width)) / 2)), 0)
     self.frame.y = margin

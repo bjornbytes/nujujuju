@@ -60,6 +60,11 @@ function hud:bind()
   self:selectScene('overgrowth')
 
   return {
+    love.resize
+      :subscribe(function()
+        self.u, self.v = g.getDimensions()
+      end),
+
     love.keypressed
       :filter(f.eq('`'))
       :subscribe(function()

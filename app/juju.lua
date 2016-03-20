@@ -13,8 +13,8 @@ function juju:init()
     y = nil
   }
   self.velocity = {
-    x = love.math.randomNormal(50),
-    y = love.math.randomNormal(50),
+    x = love.math.randomNormal(40),
+    y = love.math.randomNormal(40),
     z = -500
   }
 

@@ -102,6 +102,27 @@ function bruju:draw()
 
   self:drawRing(40, 200, 40)
 
+  if self.state == 'move' or self.state == 'attack' then
+    g.setLineWidth(2)
+    local alpha = 1 + math.sin(lib.tick.index * lib.tick.rate * 5) / 2
+
+    if self.state == 'attack' or self.target then
+      g.setColor(200, 40, 40, 20 + 60 * alpha)
+    else
+      g.setColor(40, 200, 40, 20 + 60 * alpha)
+    end
+
+    local x, y
+    if self.target then
+      x, y = self.target.position.x, self.target.position.y
+    else
+      x, y = self.destination.x, self.destination.y
+    end
+
+    g.line(self.position.x, self.position.y, x, y)
+    g.setLineWidth(1)
+  end
+
   self.animation:tick(lib.tick.delta)
 
   if util.timeSince(self.lastHurt) < self.config.damageFlashDuration then

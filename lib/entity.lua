@@ -1,7 +1,7 @@
 local entity = {}
 
 function entity:isHovered(x, y)
-  local hoverAllowanceFactor = 1.5
+  local hoverAllowanceFactor = 2
   local dis = util.distance(self.position.x, self.position.y, x, y)
   local dir = util.angle(self.position.x, self.position.y, x, y)
   local ellipseHover = dis < self.config.radius * hoverAllowanceFactor / (2 - math.abs(math.cos(dir)))
