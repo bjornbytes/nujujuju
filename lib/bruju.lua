@@ -63,13 +63,15 @@ function bruju:move()
 end
 
 function bruju:attack()
-  if not self.attackCooldown then
-    if not self.attacking or self.attacking.dead then
-      self.state = 'idle'
-      self.attacking = nil
-      return
-    end
+  if not self.attacking or self.attacking.dead then
+    self.state = 'idle'
+    self.attacking = nil
+    lib.quilt.remove(self.attackCooldown)
+    self.attackCooldown = nil
+    return
+  end
 
+  if not self.attackCooldown then
     self.animation:set('attack')
     self.attackCooldown = lib.quilt.add(function()
       coroutine.yield(self.config.attackSpeed)
@@ -77,12 +79,18 @@ function bruju:attack()
       self.attacking = nil
       self.state = 'idle'
     end)
+  elseif self.animation.active ~= self.animation.states.attack and self:distanceTo(self.attacking) > self.config.radius * 2 + self.attacking.config.radius then
+    self.state = 'move'
+    self.target = self.attacking
+    self.attacking = nil
+    lib.quilt.remove(self.attackCooldown)
+    self.attackCooldown = nil
   end
 end
 
 function bruju:onAttack()
   if self.attacking then
-    self.attacking:hurt(1, self)
+    self.attacking:hurt(self.config.damage, self)
 
     if self.attacking.dead then
       self.destination.x = self.position.x

@@ -92,7 +92,7 @@ function hud:getElement(mx, my)
   local x = u / 2 - (inc * (count - 1) / 2)
 
   for i = 1, count do
-    if util.inside(mx, my, x - size / 2, 8, size, size) then
+    if util.inside(mx, my, x - size / 2, v - 8 - size, size, size) then
       return 'ability', i
     end
 
@@ -125,6 +125,9 @@ function hud:drawHealthbar(unit)
 
     if unit.health >= i then
       local image = app.art.heart
+      g.draw(image, x, y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
+    elseif unit.health >= i - .5 then
+      local image = app.art.heartHalf
       g.draw(image, x, y, 0, scale, scale, image:getWidth() / 2, image:getHeight() / 2)
     end
 
@@ -198,14 +201,14 @@ function hud:drawWaves()
     local bfh = self.bigFont:getHeight()
     local padding = .02 * v
     local portraitSize = .1 * v
-    local y = v - padding - fh - padding - portraitSize - padding - fh - padding - bfh
+    local y = padding--v - padding - fh - padding - portraitSize - padding - fh - padding - bfh
 
     local str = math.ceil(app.context.waves.grace)
     g.setFont(self.bigFont)
-    g.print(str, .5 * u - g.getFont():getWidth(str) / 2, y)
+    g.print(str, .5 * u - g.getFont():getWidth(str) / 2, v * .675)
     g.setFont(self.font)
 
-    y = y + bfh + padding
+    --y = y + bfh + padding
 
     local str = 'Next wave'
     g.print(str, .5 * u - font:getWidth(str) / 2, y)
@@ -246,7 +249,7 @@ function hud:drawWaves()
     local x = u / 2
     local str = 'You win'
     g.white()
-    g.print(str, x - g.getFont():getWidth(str) / 2, v * .75)
+    g.print(str, x - g.getFont():getWidth(str) / 2, v * .2)
   end
 end
 
@@ -262,12 +265,12 @@ function hud:drawAbilities()
 
   for i = 1, count do
     g.setColor(0, 0, 0, 100 + 80 * self.abilityFactor[i])
-    g.rectangle('fill', x - size / 2, 8, size, size)
+    g.rectangle('fill', x - size / 2, v - 8 - size, size, size)
 
     if app.context.abilities.selected == abilities.list[i] then
       g.setLineWidth(3)
       g.setColor(255, 255, 255, 100 + 80 * self.abilityFactor[i])
-      g.rectangle('line', x - size / 2, 8, size, size)
+      g.rectangle('line', x - size / 2, v - 8 - size, size, size)
       g.setLineWidth(1)
     end
 
@@ -278,12 +281,12 @@ function hud:drawAbilities()
     local scale = (size * .75) / ((w > h) and w or h)
 
     g.white(200 + 55 * self.abilityFactor[i])
-    g.draw(image, x, 8 + size / 2, 0, scale, scale, w / 2, h / 2)
+    g.draw(image, x, v - 8 - size / 2, 0, scale, scale, w / 2, h / 2)
 
     if ability:isOnCooldown() then
       local cooldown = ability:timeUntilReady() / ability:getCooldown()
       g.setColor(255, 255, 255, 40)
-      g.rectangle('fill', x - size / 2, 8 + size * (1 - cooldown), size, size * cooldown)
+      g.rectangle('fill', x - size / 2, v - 8 - size + size * (1 - cooldown), size, size * cooldown)
     end
 
     local cost = ability:getCost()
@@ -295,9 +298,9 @@ function hud:drawAbilities()
       local padding = .01 * v
       local totalWidth = image:getWidth() * scale + padding + g.getFont():getWidth(cost)
       g.white(p.juju >= cost and 255 or 120)
-      g.draw(image, x - totalWidth / 2, 8 + size + .01 * v, 0, scale, scale)
+      g.draw(image, x - totalWidth / 2, v - 8 - size - .03 * v, 0, scale, scale)
       g.white()
-      g.print(cost, x - totalWidth / 2 + image:getWidth() * scale + padding, 8 + size + .01 * v)
+      g.print(cost, x - totalWidth / 2 + image:getWidth() * scale + padding, v - 8 - size - .03 * v)
     end
 
     x = x + inc

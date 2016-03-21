@@ -26,6 +26,10 @@ function puju:init()
   self.chargeTime = self.config.chargeTime
   self.range = self.config.range
 
+  self.animation = lib.animation.create(app.enemies.puju.spine, app.enemies.puju.animation)
+  self.animation.speed = 1
+  self.animation:set('leafocopter')
+
   self:randomizeStats('speed', 'chargeTime', 'range')
 end
 

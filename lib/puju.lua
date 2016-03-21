@@ -17,7 +17,15 @@ function puju:move()
 
   self.target = self:closest('minion', 'player')
 
-  self.direction = -self:signTo(self.target)
+  if self.target then
+    sign = self:signTo(self.target)
+  else
+    sign = util.sign(self.destination.x - self.position.x)
+  end
+
+  if sign ~= 0 then
+    self.animation.flipped = sign > 0
+  end
 
   local distance = self:distanceTo(self.target)
   local angle = self:directionTo(self.target)
@@ -40,7 +48,11 @@ function puju:attack()
 
     self.chargeStart = lib.tick.index
 
+    self.animation:set('mouthsuck')
+
     coroutine.yield(self.config.chargeTime)
+
+    self.animation:set('mouthblow')
 
     self.chargeStart = nil
 
@@ -108,11 +120,16 @@ function puju:draw()
 
   self:drawRing(255, 40, 40)
 
+  g.white()
+  self.animation:tick(lib.tick.delta)
+  self.animation.skeleton:findBone('copter').worldRotation = self.yank * .4
+  self.animation:draw(self.position.x, self.position.y)
+
   local image = app.art.puju
   local scale = g.imageScale(image, 35 * baseScale)
 
   g.white(self.alpha * 255)
-  g.draw(image, self.position.x, self.position.y - 20 + offset - image:getHeight() * scale, self.yank * .4, scale * self.direction, scale, image:getWidth() / 2, 0)
+  --g.draw(image, self.position.x, self.position.y - 20 + offset - image:getHeight() * scale, self.yank * .4, scale * self.direction, scale, image:getWidth() / 2, 0)
 
   return -self.position.y
 end

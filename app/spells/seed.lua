@@ -24,7 +24,7 @@ function seed:bind()
     self.collisions
       :filter(function(other) return other.isMinion or other == app.context.objects.muju end)
       :subscribe(function(other)
-        other:hurt(1, self.owner)
+        other:hurt(self.owner.config.damage, self.owner)
         self:unbind()
         app.context:removeObject(self)
       end),

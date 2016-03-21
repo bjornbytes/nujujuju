@@ -129,7 +129,7 @@ function abilities:draw()
   if self.factor > 0 and self.owner then
     local ox, oy = self.owner.position.x, self.owner.position.y
     local points = {}
-    local radius = 30
+    local radius = 35
     local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
 
     if not self.casting then
@@ -142,6 +142,7 @@ function abilities:draw()
     if entity and entity.isEnemy then
       mx = util.lerp(mx, entity.position.x, .5)
       my = util.lerp(my, entity.position.y, .5)
+      radius = radius + 10
     end
 
     local dir = util.angle(ox, oy, mx, my)

@@ -7,5 +7,5 @@ return {
   damageFlashDuration = .12,
   shape = 'ellipse',
   perspective = 2,
-  damage = 2
+  damage = 1
 }
