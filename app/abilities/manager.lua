@@ -4,20 +4,18 @@ local function isLeft(x, y, b)
   return b == 1
 end
 
+local function hasTouch(id)
+  return util.find(love.touch.getTouches(), id)
+end
+
 function abilities:isCasting()
   return self.casting
 end
 
 function abilities:init()
   self.selected = nil
-  self.casting = false
-  self.ox = nil
-  self.oy = nil
-  self.x = nil
-  self.y = nil
-  self.owner = nil
-  self.tick = nil
-  self.factor = 0
+
+  self.casts = {}
 
   -- TODO group these eventually once UI is decided
   self.list = {
@@ -29,95 +27,125 @@ function abilities:init()
 end
 
 function abilities:bind()
-  local abilityCast, autoCast = love.mousepressed
-    :filter(isLeft)
-    :map(function(...)
-      return app.context.view:worldPoint(...)
+  local abilityCast, autoCast = love.touchpressed
+    :map(function(id, x, y)
+      return id, lib.target.objectAtPosition(app.context.view:worldPoint(x, y))
     end)
-    :map(lib.target.objectAtPosition)
-    :filter(f.id)
-    :filter(function(owner)
-      return owner.isMinion or owner == app.context.objects.muju
+    :filter(function(id, owner)
+      return owner and (owner.isMinion or owner == app.context.objects.muju)
     end)
-    :partition(function(owner)
+    :partition(function()
       return self.selected
     end)
 
   return {
 
     abilityCast
-      :filter(function(owner)
-        return self.selected:canCast(owner)
+      :filter(function(id, owner)
+        return owner:canCast(self.selected)
       end)
-      :tap(function(owner)
-        self.casting = true
-        self.ox = app.context.view:worldMouseX()
-        self.oy = app.context.view:worldMouseY()
-        self.owner = owner
-        self.tick = lib.tick.index
-        self.factor = 0
+      :tap(function(id, owner)
+        local ox, oy = app.context.view:worldPoint(love.touch.getPosition(id))
 
-        lib.flux.to(self, .3, { factor = 1 }):ease('backinout')
+        self.casts[id] = {
+          id = id,
+          ability = self.selected,
+          owner = owner,
+          ox = ox,
+          oy = oy,
+          active = true,
+          factor = 0,
+          tick = lib.tick.index
+        }
+
+        lib.flux.to(self.casts[id], .3, { factor = 1 }):ease('backinout')
       end)
-      :flatMapLatest(function() return love.mousereleased:filter(isLeft):take(1) end)
-      :subscribe(function()
-        local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
+      :flatMapLatest(function(id, owner)
+        return love.touchreleased
+          :filter(f.eq(id))
+          :take(1)
+          :map(f.val(id))
+      end)
+      :subscribe(function(id)
+        local mx, my = app.context.view:worldPoint(love.touch.getPosition(id))
+        local cast = self.casts[id]
 
-        self.casting = false
-        self.x = mx
-        self.y = my
+        if not cast then return end
 
-        self.selected:cast(self.owner, mx, my)
+        cast.active = false
+        cast.x = mx
+        cast.y = my
 
-        lib.flux.to(self, .35, { factor = 0 })
+        cast.ability:cast(cast.owner, mx, my)
+
+        lib.flux.to(cast, .35, { factor = 0 })
           :ease('cubicout')
           :oncomplete(function()
-            if not self.casting then self.owner = nil end
+            if not hasTouch(id) then
+              self.casts[id] = nil
+            end
           end)
 
         self.selected = nil
       end),
 
-    love.mousereleased
+    love.touchreleased
       :filter(function()
-        return self.selected and not self.casting and not self.owner
+        local casting = util.match(self.casts, function(cast) return cast.active end)
+        return self.selected and not casting
       end)
       :subscribe(function()
         self.selected = nil
       end),
 
     autoCast
-      :filter(function(owner)
-        return owner.isMinion or self.list[1]:canCast(owner)
+      :filter(function(id, owner)
+        return owner.isMinion or owner:canCast(self.list[1])
       end)
-      :tap(function(owner)
-        self.casting = true
-        self.ox = app.context.view:worldMouseX()
-        self.oy = app.context.view:worldMouseY()
-        self.owner = owner
-        self.tick = lib.tick.index
-        self.factor = 0
+      :tap(function(id, owner)
+        local ox, oy = app.context.view:worldPoint(love.touch.getPosition(id))
 
-        lib.flux.to(self, .3, { factor = 1 }):ease('backinout')
+        self.casts[id] = {
+          id = id,
+          ability = nil,
+          owner = owner,
+          ox = ox,
+          oy = oy,
+          active = true,
+          factor = 0,
+          tick = lib.tick.index
+        }
+
+        lib.flux.to(self.casts[id], .3, { factor = 1 }):ease('backinout')
       end)
-      :flatMapLatest(function() return love.mousereleased:filter(isLeft):take(1) end)
-      :subscribe(function()
-        local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
+      :flatMapLatest(function(id)
+        return love.touchreleased
+          :filter(f.eq(id))
+          :take(1)
+          :map(f.val(id))
+      end)
+      :subscribe(function(id)
+        local mx, my = app.context.view:worldPoint(love.touch.getPosition(id))
+        local cast = self.casts[id]
 
-        self.casting = false
-        self.x = mx
-        self.y = my
+        if not cast then return end
 
-        if self.owner.isMinion then
-          self.owner:command(mx, my)
+        cast.active = false
+        cast.x = mx
+        cast.y = my
+
+        if cast.owner.isMinion then
+          cast.owner:command(mx, my)
         else
-          self.list[1]:cast(self.owner, mx, my)
+          cast.owner:cast(self.list[1], mx, my)
         end
 
-        lib.flux.to(self, .35, { factor = 0 })
+        lib.flux.to(cast, .35, { factor = 0 })
           :ease('cubicout')
           :oncomplete(function()
-            if not self.casting then self.owner = nil end
+            if not hasTouch(id) then
+              self.casts[id] = nil
+            end
           end)
       end),
 
@@ -126,86 +154,91 @@ function abilities:bind()
 end
 
 function abilities:draw()
-  if self.factor > 0 and self.owner then
-    local ox, oy = self.owner.position.x, self.owner.position.y
-    local points = {}
-    local radius = 35
-    local mx, my = app.context.view:worldPoint(love.mouse.getPosition())
+  util.each(self.casts, function(cast)
+    if cast.factor > 0 and cast.owner then
+      local ox, oy = cast.owner.position.x, cast.owner.position.y
+      local points = {}
+      local radius = 35
+      local tx, ty = app.context.view:worldPoint(love.touch.getPosition(cast.id))
 
-    if not self.casting then
-      radius = radius + 20 * (1 - self.factor)
-      mx = self.x
-      my = self.y
-    end
-
-    local entity = lib.target.objectAtPosition(mx, my)
-    if entity and entity.isEnemy then
-      mx = util.lerp(mx, entity.position.x, .5)
-      my = util.lerp(my, entity.position.y, .5)
-      radius = radius + 10
-    end
-
-    local dir = util.angle(ox, oy, mx, my)
-    local pointCount = 80
-
-    for i = 1, 80 do
-      local x = mx + util.dx(radius, dir + (2 * math.pi * (i / 80)))
-      local y = my + util.dy(radius, dir + (2 * math.pi * (i / 80)))
-      local mouseDir = util.angle(x, y, mx, my)
-
-      if util.distance(ox, oy, mx, my) >= radius then
-        local max = math.pi / 2 + (math.pi / 2) * util.distance(ox, oy, mx, my) / 500 -- how bulbous it is
-        local dif = (max - util.clamp(math.abs(util.anglediff(mouseDir, dir)), 0, max)) / max
-        if self.casting then
-          x = util.lerp(ox, x, self.factor ^ 2)
-          y = util.lerp(oy, y, self.factor ^ 2)
-        end
-        x = util.lerp(x, ox, dif ^ 5)
-        y = util.lerp(y, oy, dif ^ 5)
+      if not cast.active then
+        radius = radius + 20 * (1 - cast.factor)
+        tx = cast.x
+        ty = cast.y
       end
 
-      if util.distance(x, y, ox, oy) < 1 then
-        table.insert(points, x)
-        table.insert(points, y)
-      else
-        if util.distance(ox, oy, mx, my) >= radius then
-          local sign = util.sign(util.anglediff(mouseDir, dir))
-          x = x + 2 * math.cos(dir + (math.pi / 2) * sign)
-          y = y + 2 * math.sin(dir + (math.pi / 2) * sign)
-        end
-        table.insert(points, x)
-        table.insert(points, y)
+      local entity = lib.target.objectAtPosition(tx, ty)
+      if entity and entity.isEnemy then
+        tx = util.lerp(tx, entity.position.x, .5)
+        ty = util.lerp(ty, entity.position.y, .5)
+        radius = radius + 10
       end
-    end
 
-    if #points >= 3 then
-      g.white(40 * self.factor)
-      g.setLineWidth(3)
-      g.polygon('fill', points)
-      g.setLineWidth(1)
-    end
+      local dir = util.angle(ox, oy, tx, ty)
+      local pointCount = 80
 
-    local image, color
-    if self.selected then
-      image = app.art.icons[self.selected.tag]
-      color = { 255, 255, 255 }
-    else
-      if self.owner.isMinion then
-        image = app.art.icons.command
-        color = (entity and entity.isEnemy) and { 255, 140, 140 } or { 140, 255, 140 }
-      else
-        image = app.art.icons.summon
+      for i = 1, 80 do
+        local x = tx + util.dx(radius, dir + (2 * math.pi * (i / 80)))
+        local y = ty + util.dy(radius, dir + (2 * math.pi * (i / 80)))
+        local mouseDir = util.angle(x, y, tx, ty)
+
+        if util.distance(ox, oy, tx, ty) >= radius then
+          local max = math.pi / 2 + (math.pi / 2) * util.distance(ox, oy, tx, ty) / 500 -- how bulbous it is
+          local dif = (max - util.clamp(math.abs(util.anglediff(mouseDir, dir)), 0, max)) / max
+          if cast.active then
+            x = util.lerp(ox, x, cast.factor ^ 2)
+            y = util.lerp(oy, y, cast.factor ^ 2)
+          end
+          x = util.lerp(x, ox, dif ^ 5)
+          y = util.lerp(y, oy, dif ^ 5)
+        end
+
+        if util.distance(x, y, ox, oy) < 1 then
+          table.insert(points, x)
+          table.insert(points, y)
+        else
+          if util.distance(ox, oy, tx, ty) >= radius then
+            local sign = util.sign(util.anglediff(mouseDir, dir))
+            x = x + 2 * math.cos(dir + (math.pi / 2) * sign)
+            y = y + 2 * math.sin(dir + (math.pi / 2) * sign)
+          end
+          table.insert(points, x)
+          table.insert(points, y)
+        end
+      end
+
+      if #points >= 3 then
+        g.white(40 * cast.factor)
+        g.setLineWidth(3)
+        g.polygon('fill', points)
+        g.setLineWidth(1)
+      end
+
+      local image, color, angle
+      if self.selected then
+        image = app.art.icons[self.selected.tag]
         color = { 255, 255, 255 }
+        angle = 0
+      else
+        if cast.owner.isMinion then
+          image = app.art.icons.command
+          color = (entity and entity.isEnemy) and { 255, 140, 140 } or { 140, 255, 140 }
+          angle = dir - math.pi / 4
+        else
+          image = app.art.icons.summon
+          color = { 255, 255, 255 }
+          angle = 0
+        end
       end
+
+      local w, h = image:getDimensions()
+      local size = .75 * 2 * radius * cast.factor
+      local scale = size / ((w > h) and w or h)
+
+      g.setColor(g.alpha(color, 255 * cast.factor ^ 3))
+      g.draw(image, tx, ty, angle, scale, scale, w / 2, h / 2)
     end
-
-    local w, h = image:getDimensions()
-    local size = .75 * 2 * radius * self.factor
-    local scale = size / ((w > h) and w or h)
-
-    g.setColor(g.alpha(color, 255 * self.factor ^ 3))
-    g.draw(image, mx, my, 0, scale, scale, w / 2, h / 2)
-  end
+  end)
 
   return -1000
 end

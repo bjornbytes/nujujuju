@@ -81,10 +81,10 @@ end
 --- Notify the Observer that an error has occurred.
 -- @arg {string=} message - A string describing what went wrong.
 function Observer:onError(message)
-  if not self.stopped then
+  --if not self.stopped then
     self.stopped = true
     self._onError(message)
-  end
+  --end
 end
 
 --- Notify the Observer that the sequence has completed and will produce no more values.

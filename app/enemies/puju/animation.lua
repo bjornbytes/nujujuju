@@ -1,9 +1,9 @@
 return {
-  scale = .3,
+  scale = .22,
   flipped = true,
   offset = {
     x = 0,
-    y = 0
+    y = -16
   },
   default = 'leafocopter',
   states = {
@@ -19,12 +19,12 @@ return {
     },
 
     mouthblow = {
-      speed = 1
+      speed = .75
     },
 
     leafocopter = {
       loop = true,
-      speed = .1,
+      speed = 2,
       track = 1
     }
   }

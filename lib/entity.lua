@@ -216,4 +216,13 @@ function entity:remove()
   app.context:removeObject(self)
 end
 
+-- Sugar
+function entity:canCast(ability, ...)
+  return ability:canCast(self, ...)
+end
+
+function entity:cast(ability, ...)
+  return ability:cast(self, ...)
+end
+
 return entity
