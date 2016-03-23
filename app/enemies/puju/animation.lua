@@ -19,13 +19,19 @@ return {
     },
 
     mouthblow = {
-      speed = .75
+      speed = .75,
+      after = 'walk'
     },
 
     leafocopter = {
       loop = true,
       speed = 2,
       track = 1
+    },
+
+    walk = {
+      loop = true,
+      speed = .4
     }
   }
 }
