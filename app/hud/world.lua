@@ -266,22 +266,26 @@ function hud:bind()
     end),
 
     -- Selects scenes on tap, but only if mouse hasn't moved very far
-    love.mousepressed
+    love.touchpressed
       :filter(function() return not self.editing.active end)
-      :filter(isLeft)
-      :flatMapLatest(function(x1, y1)
-        return love.mousemoved
-          :startWith(x1, y1)
-          :map(function(x2, y2)
+      :flatMapLatest(function(id, x1, y1)
+        local x, y = x1, y1
+        return love.touchmoved
+          :startWith(id, x1, y1)
+          :filter(f.eq(id))
+          :map(function(id, x2, y2)
+            x, y = x2, y2
             return util.distance(x1, y1, x2, y2)
           end)
-          :takeUntil(love.mousereleased:take(1))
+          :takeUntil(love.touchreleased:filter(f.eq(id)):take(1))
           :max()
+          :filter(function(distance)
+            return distance < self.config.maxTapDistance
+          end)
+          :map(function()
+            return app.context.view:worldPoint(x, y)
+          end)
       end)
-      :filter(function(distance)
-        return distance < self.config.maxTapDistance
-      end)
-      :map(function() return app.context.view:worldMouseX(), app.context.view:worldMouseY() end)
       :map(function(x, y)
         local _, key = util.match(self.config.world, function(info)
           local dir = util.angle(info.x, info.y, x, y)
@@ -334,19 +338,17 @@ function hud:bind()
         self:selectScene(key)
       end),
 
-    love.mousepressed
-      :filter(isLeft)
-      :subscribe(function(x, y)
+    love.touchpressed
+      :subscribe(function(id, x, y)
         self.dragStart.x = x
         self.dragStart.y = y
         self.dragStart.vx = app.context.view.x
         self.dragStart.vy = app.context.view.y
       end),
 
-    love.mousereleased
+    love.touchreleased
       :filter(function() return not self.editing.active end)
-      :filter(isLeft)
-      :subscribe(function(x, y)
+      :subscribe(function(id, x, y)
         if not self.selected then return nil end
 
         local u, v = self.u, self.v

@@ -25,23 +25,23 @@ function hud:bind()
     self.abilityFactor[i] = 1
   end
 
-  local tap = love.mousepressed
-    :filter(isLeft)
-    :flatMapLatest(function(ox, oy)
-      return love.mousemoved
-        :startWith(ox, oy)
-        :map(function(x, y)
+  local tap = love.touchpressed
+    :flatMapLatest(function(id, ox, oy)
+      return love.touchmoved
+        :startWith(id, ox, oy)
+        :filter(f.eq(id))
+        :map(function(id, x, y)
           return util.distance(ox, oy, x, y)
         end)
         :takeUntil(
-          love.mousereleased
-            :filter(isLeft)
+          love.touchreleased
+            :filter(f.eq(id))
             :take(1)
         )
         :max()
         :filter(function(d) return d < 16 end)
         :map(function()
-          return love.mouse.getPosition()
+          return ox, oy
         end)
     end)
 
