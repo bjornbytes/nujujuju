@@ -19,7 +19,7 @@ return {
     },
 
     mouthblow = {
-      speed = .75,
+      speed = 2,
       after = 'walk'
     },
 

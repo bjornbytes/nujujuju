@@ -32,7 +32,7 @@ return {
 
     hurt = {
       speed = .8
-    }
+    },
 
     death = {
       length = 1
