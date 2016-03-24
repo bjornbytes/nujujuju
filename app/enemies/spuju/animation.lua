@@ -30,6 +30,10 @@ return {
       speed = 1
     },
 
+    hurt = {
+      speed = .8
+    }
+
     death = {
       length = 1
     }
