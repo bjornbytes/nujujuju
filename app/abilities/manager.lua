@@ -243,4 +243,13 @@ function abilities:draw()
   return -1000
 end
 
+function abilities:isValidCastTarget(entity)
+  --[[util.match(self.casts, function(cast)
+    print(cast.ability)
+    return cast.ability and cast.ability:canCast(entity)
+  end)]]
+
+  return self.selected and self.selected:canCast(entity)
+end
+
 return abilities

@@ -23,12 +23,21 @@ function entity:drawRing(r, gg, b)
 
   local radius = self.config.radius * (1 + .5 * (self.ringAlpha - .5))
 
+  if app.context.abilities:isValidCastTarget(self) then
+    radius = radius * (1 + math.abs(math.sin(lib.tick.index * lib.tick.rate * 4)) * .2)
+
+    g.white(50)
+    g.ellipse('fill', self.position.x, self.position.y, radius, radius / 2)
+  else
+    radius = radius * (1 + math.abs(math.sin(lib.tick.index * lib.tick.rate * 4)) * .05)
+  end
+
   g.setColor(r, gg, b, self.ringAlpha * 80)
-  g.setLineWidth(2 + 3 * alpha)
+  g.setLineWidth(4 + 3 * alpha)
   g.ellipse('line', self.position.x, self.position.y, radius, radius / 2)
 
   g.white(self.ringAlpha * 160)
-  g.setLineWidth(1 + 2 * (alpha - .5))
+  g.setLineWidth(2 + 2 * (alpha - .5))
   g.ellipse('line', self.position.x, self.position.y, radius, radius / 2)
 
   g.setLineWidth(1)
