@@ -1,4 +1,4 @@
-local spuju = lib.object.create():include(lib.entity, lib.unit, lib.enemy)
+local spuju = lib.object.create():include(lib.entity, lib.unit, lib.enemy, lib.spuju)
 
 function spuju:init()
   self.team = 'enemy'
@@ -6,21 +6,38 @@ function spuju:init()
     x = app.context.scene.width / 2,
     y = app.context.scene.height / 2
   }
+  self.destination = util.copy(self.position)
+  self.direction = 0
+  self.targetDirection = 0
   self.target = nil
   self.health = spuju.config.maxHealth
   self.dead = false
   self.lastHurt = -math.huge
 
+  self.state = 'idle'
+
+  self.collisions = app.context.collision:add(self)
+
   self.animation = lib.animation.create(app.enemies.spuju.spine, app.enemies.spuju.animation)
   self.animation.speed = 1
+
+  self:setIsEnemy()
 end
 
 function spuju:bind()
-  self:setIsEnemy()
-
-  self.target = self:closest('minion', 'player')
+  local function bindState(state)
+    return love.update
+      :reject(function() return self.dead end)
+      :map(function() return self.state end)
+      :filter(f.eq(state))
+      :subscribe(self:wrap(self[state]))
+  end
 
   return {
+    bindState('idle'),
+    bindState('move'),
+    bindState('attack'),
+
     love.update
       :subscribe(function()
         if not self.dead then
@@ -48,7 +65,7 @@ function spuju:bind()
         })
       end),
 
-    love.update
+    --[[love.update
       :subscribe(function()
         if self.target and self.target.isMinion and self.target.dead then
           self.target = nil
@@ -65,36 +82,11 @@ function spuju:bind()
           self:moveTowards(self.target, speed)
           self.animation:set('walk')
         end
-      end),
+      end),]]
 
     app.context.view.draw
       :subscribe(self:wrap(self.draw))
   }
-end
-
-function spuju:draw()
-  local image = app.art.shadow
-  local scale = 60 / image:getWidth()
-
-  g.white(70)
-  g.draw(image, self.position.x, self.position.y, 0, scale, scale / 1.5, image:getWidth() / 2, image:getHeight() / 2)
-
-  self:drawRing(255, 40, 40)
-
-  self.animation:tick(lib.tick.delta)
-
-  if util.timeSince(self.lastHurt) < self.config.damageFlashDuration then
-    self.animation:draw(self.position.x, self.position.y)
-    app.shaders.colorize:send('color', { 1, 1, 1, 1 - util.timeSince(self.lastHurt) / self.config.damageFlashDuration })
-    g.setShader(app.shaders.colorize)
-    self.animation:draw(self.position.x, self.position.y)
-    g.setShader()
-  else
-    self.animation:draw(self.position.x, self.position.y)
-  end
-
-
-  return -self.position.y
 end
 
 return spuju

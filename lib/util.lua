@@ -9,6 +9,11 @@ function util.inside(px, py, rx, ry, rw, rh) return px >= rx and px <= rx + rw a
 function util.insideCircle(px, py, cx, cy, r) return math.distance(px, py, cx, cy) <= r end
 function util.sign(x) if x == 0 then return 0 else return lib.lume.sign(x) end end
 function util.vector(...) return util.distance(...), util.angle(...) end
+function util.anglerp(d1, d2, z) return d1 + (util.anglediff(d1, d2) * z) end
+
+function util.choose(...)
+  return lib.lume.randomchoice({...})
+end
 
 function util.dx(dis, dir)
   return dis * math.cos(dir)
