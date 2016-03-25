@@ -9,7 +9,7 @@ return {
 
     idle = {
       loop = true,
-      speed = .4
+      speed = .6
     },
 
     walk = {

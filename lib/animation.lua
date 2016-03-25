@@ -80,12 +80,12 @@ function animation:tick(delta)
         local speed = animation.duration / state.length
         self.animationState.tracks[i].timeScale = speed
       else
-        self.animationState.tracks[i].timeScale = 1
+        self.animationState.tracks[i].timeScale = state.speed
       end
     end
   end
 
-  self.animationState:update(delta * (self.active.speed or 1))
+  self.animationState:update(delta)
   self.animationState:apply(self.skeleton)
 end
 
