@@ -167,7 +167,7 @@ function entity:isInRangeOf(other)
 end
 
 function entity:moveIntoRangeOf(other, speed)
-  if not entity.inRangeOf(self, other) then
+  if not entity.isInRangeOf(self, other) then
     entity.moveTowards(self, other, speed)
   end
 end

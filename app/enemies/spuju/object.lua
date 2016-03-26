@@ -21,6 +21,10 @@ function spuju:init()
   self.animation = lib.animation.create(app.enemies.spuju.spine, app.enemies.spuju.animation)
   self.animation.speed = 1
 
+  self.abilities = {
+    fear = app.abilities.fear:new()
+  }
+
   self:setIsEnemy()
 end
 
@@ -37,6 +41,7 @@ function spuju:bind()
     bindState('idle'),
     bindState('move'),
     bindState('attack'),
+    bindState('fear'),
 
     love.update
       :subscribe(function()
@@ -53,36 +58,33 @@ function spuju:bind()
       :filter(f.eq('death'))
       :subscribe(self:wrap(self.remove)),
 
+    self.animation.completions
+      :filter(f.eq('fear'))
+      :subscribe(function()
+        self.state = 'move'
+      end),
+
+    self.animation.completions
+      :filter(f.eq('attack'))
+      :subscribe(function()
+        self.state = 'move'
+      end),
+
     self.animation.events
       :pluck('data', 'name')
       :filter(f.eq('attack'))
       :subscribe(function()
-        app.context:addObject(app.spells.skull, {
-          position = util.copy(self.position),
-          destination = util.copy(self.target.position),
-          owner = self,
-          damage = self.config.damage
-        })
+        for i = 1, self.config.skullCount do
+          app.context:addObject(app.spells.skull, {
+            position = util.copy(self.position),
+            destination = util.copy(self.target.position),
+            owner = self,
+            damage = self.config.damage
+          })
+        end
+
+        self.state = 'move'
       end),
-
-    --[[love.update
-      :subscribe(function()
-        if self.target and self.target.isMinion and self.target.dead then
-          self.target = nil
-        end
-
-        if self.dead then return end
-
-        self.target = self:closest('minion', 'player')
-        local distance = self:distanceTo(self.target)
-        local speed = math.min(self.config.speed * lib.tick.rate, distance)
-        if self:isInRangeOf(self.target) then
-          self.animation:set('attack')
-        else
-          self:moveTowards(self.target, speed)
-          self.animation:set('walk')
-        end
-      end),]]
 
     app.context.view.draw
       :subscribe(self:wrap(self.draw))

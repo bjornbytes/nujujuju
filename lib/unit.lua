@@ -83,6 +83,10 @@ function unit:flipAnimation()
     sign = util.sign(self.destination.x - self.position.x)
   end
 
+  if self.buffs and self.buffs:getFear() then
+    sign = -sign
+  end
+
   if sign ~= 0 then
     self.animation.flipped = sign < 0
   end
@@ -133,6 +137,25 @@ end
 function unit:remove()
   self.dead = true
   return lib.entity.remove(self)
+end
+
+function unit:runIfFeared()
+  local fear = self.buffs:getFear()
+  if fear then
+    local direction = self:directionTo(fear.source)
+    self:moveInDirection(direction + math.pi, self.config.speed / 2)
+    return true
+  end
+end
+
+function unit:drawBuffs()
+  local fear = self.buffs:getFear()
+  if fear then
+    g.white()
+    local image = app.art.fear
+    local scale = g.imageScale(image, 40 + (1 + math.cos(math.sin(lib.tick.index) / 3) / 5))
+    g.draw(image, self.position.x, self.position.y - 80, math.cos(lib.tick.index / 3) / 6, scale, scale, 53, 83)
+  end
 end
 
 return unit

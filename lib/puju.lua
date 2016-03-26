@@ -65,6 +65,8 @@ function puju:attack()
     self.velocity.x = util.dx(self.config.recoil, self.attackDirection + math.pi)
     self.velocity.y = util.dy(self.config.recoil, self.attackDirection + math.pi)
 
+    self.yank = -self.velocity.x / 2
+
     coroutine.yield(self.config.attackCooldown)
 
     self.state = 'idle'
@@ -122,7 +124,7 @@ function puju:draw()
 
   g.white()
   self.animation:tick(lib.tick.delta)
-  self.animation.skeleton:findBone('copter').worldRotation = self.yank * .4
+  self.animation.skeleton:findBone('body').rotation = 270 + self.yank * 20 * (self.animation.flipped and 1 or -1)
   self.animation:draw(self.position.x, self.position.y)
 
   local image = app.art.puju

@@ -9,35 +9,34 @@ function spuju:idle()
 end
 
 function spuju:move()
-  self.moveThread = self.moveThread or lib.quilt.add(function()
-    while true do
-      self.target = self:closest('minion', 'player')
+  self.target = self:closest('minion', 'player')
 
-      if self:inRange(self.target) and love.math.random() < .5 then
-        --[[self.state = 'attack'
-        self.moveThread = nil
-        break}]]
-      end
+  local isInRange = self:isInRangeOf(self.target)
+  local distanceToTarget = self:distanceTo(self.target) - self.config.radius - self.target.config.radius
+  local directionToTarget = self:directionTo(self.target)
 
-      local stdev = .1
-      local targetx, targety
-      repeat
-        local angle = self.target:directionTo(self) + love.math.randomNormal(stdev)
-        local range = self.config.range * 1
-        targetx = self.target.position.x + util.dx(range, angle)
-        targety = self.target.position.y + util.dy(range, angle)
-        stdev = stdev + .1
-      until targetx >= 0 and targetx <= app.context.scene.width and targety >= 0 and targety <= app.context.scene.height
-      self.targetDirection = self:directionToPoint(targetx, targety)
-
-      coroutine.yield(1)
+  if isInRange and love.math.random() < lib.tick.rate * 2 then
+    if distanceToTarget < self.config.fearRange and love.math.random() < .25 and self.abilities.fear:canCast(self) then
+      local x, y = self.target.position.x, self.target.position.y
+      self.abilities.fear:cast(self, x, y)
+      self.animation:set('fear')
+      self.state = 'fear'
+    elseif not self.lastAttack or (lib.tick.index - self.lastAttack) * lib.tick.rate >= 5 then
+      self.animation:set('attack')
+      self.state = 'attack'
     end
-  end)
+  elseif not isInRange then
+    self.animation:set('walk')
+    self.targetDirection = directionToTarget
+    self.direction = util.anglerp(self.direction, self.targetDirection, lib.tick.getLerpFactor(.1))
 
-  self.direction = util.anglerp(self.direction, self.targetDirection, 1)--lib.tick.getLerpFactor(.02))
-  self.animation:set('walk')
-
-  self:moveInDirection(self.direction, self.config.speed)
+    self:moveInDirection(self.direction, self.config.speed)
+  else
+    local flip = (math.floor(lib.tick.index * lib.tick.rate / 2) % 2) == 0
+    self.targetDirection = flip and (directionToTarget + math.pi * .5) or (directionToTarget - math.pi * .5)
+    self.direction = util.anglerp(self.direction, self.targetDirection, lib.tick.getLerpFactor(.1))
+    self:moveInDirection(self.direction, self.config.speed / 2)
+  end
 
   if self:isEscaped() then
     self:enclose()
@@ -45,7 +44,23 @@ function spuju:move()
 end
 
 function spuju:attack()
-  --
+  self.lastAttack = lib.tick.index
+end
+
+function spuju:fear()
+  -- wait for animation to complete
+end
+
+function spuju:hurt(...)
+  if self.abilities.fear:isOnCooldown() and self.abilities.fear.lastCast then
+    self.abilities.fear.lastCast = self.abilities.fear.lastCast + (1 / lib.tick.rate)
+  end
+
+  if self.lastAttack then
+    self.lastAttack = self.lastAttack + (1 / lib.tick.rate)
+  end
+
+  return lib.unit.hurt(self, ...)
 end
 
 function spuju:draw()

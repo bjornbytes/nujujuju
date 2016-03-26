@@ -15,6 +15,7 @@ function bruju:init()
   self.animation.speed = 1
 
   self.collisions = app.context.collision:add(self)
+  self.buffs = app.buffs.manager:new({ owner = self })
 
   self:setIsMinion()
 end

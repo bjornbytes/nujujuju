@@ -5,6 +5,8 @@ function bruju:spawn()
 end
 
 function bruju:idle()
+  if self:runIfFeared() then return end
+
   if self.target or self:distanceToPoint(self.destination.x, self.destination.y) > 0 then
     self.state = 'move'
     return
@@ -28,6 +30,8 @@ function bruju:move()
     self.target = nil
     self.state = 'idle'
   end
+
+  if self:runIfFeared() then return end
 
   if self.target then
     local distance = self:distanceTo(self.target)
@@ -68,6 +72,12 @@ function bruju:attack()
     self.attacking = nil
     lib.quilt.remove(self.attackCooldown)
     self.attackCooldown = nil
+    return
+  end
+
+  if self:runIfFeared() then
+    self.state = 'walk'
+    self.animation:set('walk')
     return
   end
 
@@ -148,6 +158,8 @@ function bruju:draw()
     self.animation:draw(self.position.x, self.position.y)
     g.setShader()
   end
+
+  self:drawBuffs()
 
   return -self.position.y
 end

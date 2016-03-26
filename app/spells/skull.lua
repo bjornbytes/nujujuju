@@ -2,16 +2,17 @@ local skull = lib.object.create():include(lib.entity)
 
 skull.config = {
   gravity = 700,
-  explosionSize = 40
+  explosionSize = 40,
+  spread = 40
 }
 
 function skull:bind()
   self.position.z = -1
 
-  self.destination.x = self.destination.x + love.math.randomNormal(self.config.explosionSize / 2)
-  self.destination.y = self.destination.y + love.math.randomNormal(self.config.explosionSize / 2)
+  self.destination.x = self.destination.x + love.math.randomNormal(self.config.spread)
+  self.destination.y = self.destination.y + love.math.randomNormal(self.config.spread)
 
-  local v = 850
+  local v = love.math.random(700, 900)
   local d = util.distance(self.position.x, self.position.y, self.destination.x, self.destination.y)
   local angle = util.angle(self.position.x, self.position.y, self.destination.x, self.destination.y)
   local gr = self.config.gravity

@@ -79,4 +79,6 @@ function funk.method(key)
   end
 end
 
+function funk.noop() end
+
 return funk

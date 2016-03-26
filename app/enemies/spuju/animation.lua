@@ -22,12 +22,14 @@ return {
     },
 
     attack = {
-      loop = true,
-      length = 2.5
+      loop = false,
+      length = 2.5,
+      after = 'idle'
     },
 
     fear = {
-      speed = 1
+      speed = 1,
+      after = 'idle'
     },
 
     hurt = {
