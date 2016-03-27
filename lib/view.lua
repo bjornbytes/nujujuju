@@ -4,7 +4,7 @@ function view:init()
   self.x = 0
   self.y = 0
   self.width = 960
-  self.height = 540
+  self.height = 720
   self.xmin = -math.huge
   self.ymin = -math.huge
   self.xmax = math.huge--self.width

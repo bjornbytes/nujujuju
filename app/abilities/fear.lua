@@ -1,6 +1,6 @@
 local fear = lib.object.create():include(lib.ability)
 
-fear.cooldown = 10
+fear.cooldown = 12
 
 function fear:canCast()
   return not self:isOnCooldown()

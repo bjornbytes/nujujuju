@@ -39,7 +39,7 @@ function hud:bind()
             :take(1)
         )
         :max()
-        :filter(function(d) return d < 16 end)
+        :filter(function(d) return d < 64 end)
         :map(function()
           return ox, oy
         end)
@@ -264,7 +264,14 @@ function hud:drawAbilities()
   local x = u / 2 - (inc * (count - 1) / 2)
 
   for i = 1, count do
-    g.setColor(0, 0, 0, 100 + 80 * self.abilityFactor[i])
+    local ability = abilities.list[i]
+    local image = app.art.icons[ability.tag]
+    local w, h = image:getDimensions()
+
+    local cost = ability:getCost()
+    local canAfford = not cost or p.juju >= cost
+
+    g.setColor(0, 0, 0, (100 + 80 * self.abilityFactor[i]) * (canAfford and 1 or .5))
     g.rectangle('fill', x - size / 2, v - 8 - size, size, size)
 
     if app.context.abilities.selected == abilities.list[i] then
@@ -274,13 +281,9 @@ function hud:drawAbilities()
       g.setLineWidth(1)
     end
 
-    local ability = abilities.list[i]
-    local image = app.art.icons[ability.tag]
-    local w, h = image:getDimensions()
-
     local scale = (size * .75) / ((w > h) and w or h)
 
-    g.white(200 + 55 * self.abilityFactor[i])
+    g.white((200 + 55 * self.abilityFactor[i]) * (canAfford and 1 or .5))
     g.draw(image, x, v - 8 - size / 2, 0, scale, scale, w / 2, h / 2)
 
     if ability:isOnCooldown() then
@@ -289,15 +292,13 @@ function hud:drawAbilities()
       g.rectangle('fill', x - size / 2, v - 8 - size + size * (1 - cooldown), size, size * cooldown)
     end
 
-    local cost = ability:getCost()
-
     if cost then
       g.setFont(self.smallFont)
       local image = app.art.juju
       local scale = .02 * v / image:getWidth()
       local padding = .01 * v
       local totalWidth = image:getWidth() * scale + padding + g.getFont():getWidth(cost)
-      g.white(p.juju >= cost and 255 or 120)
+      g.white(canAfford and 255 or 120)
       g.draw(image, x - totalWidth / 2, v - 8 - size - .03 * v, 0, scale, scale)
       g.white()
       g.print(cost, x - totalWidth / 2 + image:getWidth() * scale + padding, v - 8 - size - .03 * v)

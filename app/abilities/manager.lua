@@ -64,10 +64,9 @@ function abilities:bind()
         return love.touchreleased
           :filter(f.eq(id))
           :take(1)
-          :map(f.val(id))
       end)
-      :subscribe(function(id)
-        local mx, my = app.context.view:worldPoint(love.touch.getPosition(id))
+      :subscribe(function(id, x, y)
+        local mx, my = app.context.view:worldPoint(x, y)
         local cast = self.casts[id]
 
         if not cast then return end
@@ -90,8 +89,8 @@ function abilities:bind()
       end),
 
     love.touchreleased
-      :filter(function()
-        local casting = util.match(self.casts, function(cast) return cast.active end)
+      :filter(function(id)
+        local casting = util.match(self.casts, function(cast) return cast.active and cast.id == id end)
         return self.selected and not casting
       end)
       :subscribe(function()
@@ -122,10 +121,9 @@ function abilities:bind()
         return love.touchreleased
           :filter(f.eq(id))
           :take(1)
-          :map(f.val(id))
       end)
-      :subscribe(function(id)
-        local mx, my = app.context.view:worldPoint(love.touch.getPosition(id))
+      :subscribe(function(id, x, y)
+        local mx, my = app.context.view:worldPoint(x, y)
         local cast = self.casts[id]
 
         if not cast then return end
@@ -159,13 +157,17 @@ function abilities:draw()
       local ox, oy = cast.owner.position.x, cast.owner.position.y
       local points = {}
       local radius = 35
-      local tx, ty = app.context.view:worldPoint(love.touch.getPosition(cast.id))
+      local tx, ty
 
-      if not cast.active then
+      if cast.active and (util.find(love.touch.getTouches(), cast.id) or cast.id == 'm') then
+        tx, ty = app.context.view:worldPoint(love.touch.getPosition(cast.id))
+      else
         radius = radius + 20 * (1 - cast.factor)
         tx = cast.x
         ty = cast.y
       end
+
+      if not tx or not ty then return end
 
       local entity = lib.target.objectAtPosition(tx, ty)
       if entity and entity.isEnemy then

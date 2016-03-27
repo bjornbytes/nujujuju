@@ -3,7 +3,7 @@ local burst = lib.object.create():include(lib.ability)
 burst.cooldown = 3
 burst.cost = 1
 burst.range = 150
-burst.damage = 3
+burst.damage = 2
 
 function burst:canCast(owner)
   return util.isa(owner, app.minions.bruju.object) and not self:isOnCooldown() and self:canPayJuju()

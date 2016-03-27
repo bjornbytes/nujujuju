@@ -21,20 +21,20 @@ function spuju:move()
       self.abilities.fear:cast(self, x, y)
       self.animation:set('fear')
       self.state = 'fear'
-    elseif not self.lastAttack or (lib.tick.index - self.lastAttack) * lib.tick.rate >= 5 then
+    elseif not self.lastAttack or (lib.tick.index - self.lastAttack) * lib.tick.rate >= self.config.attackCooldown then
       self.animation:set('attack')
       self.state = 'attack'
     end
   elseif not isInRange then
     self.animation:set('walk')
     self.targetDirection = directionToTarget
-    self.direction = util.anglerp(self.direction, self.targetDirection, lib.tick.getLerpFactor(.1))
+    self.direction = util.anglerp(self.direction, self.targetDirection, lib.tick.getLerpFactor(.05))
 
     self:moveInDirection(self.direction, self.config.speed)
   else
     local flip = (math.floor(lib.tick.index * lib.tick.rate / 2) % 2) == 0
     self.targetDirection = flip and (directionToTarget + math.pi * .5) or (directionToTarget - math.pi * .5)
-    self.direction = util.anglerp(self.direction, self.targetDirection, lib.tick.getLerpFactor(.1))
+    self.direction = util.anglerp(self.direction, self.targetDirection, lib.tick.getLerpFactor(.05))
     self:moveInDirection(self.direction, self.config.speed / 2)
   end
 

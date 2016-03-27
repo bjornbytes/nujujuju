@@ -45,20 +45,23 @@ love.keypressed
     app.context.load('overgrowth')
   end)
 
-love.mousepressed:subscribe(function(x, y)
-  love.touchpressed('m', x, y)
-end)
+local os = love.system.getOS()
+if os ~= 'Android' and os ~= 'iOS' then
+  love.mousepressed:subscribe(function(x, y)
+    love.touchpressed('m', x, y)
+  end)
 
-love.mousemoved:subscribe(function(x, y)
-  love.touchmoved('m', x, y)
-end)
+  love.mousemoved:subscribe(function(x, y)
+    love.touchmoved('m', x, y)
+  end)
 
-love.mousereleased:subscribe(function(x, y)
-  love.touchreleased('m', x, y)
-end)
+  love.mousereleased:subscribe(function(x, y)
+    love.touchreleased('m', x, y)
+  end)
 
-local getTouchPosition = love.touch.getPosition
-love.touch.getPosition = function(id)
-  if id == 'm' then return love.mouse.getPosition() end
-  return love.touch.getPosition(id)
+  local getTouchPosition = love.touch.getPosition
+  love.touch.getPosition = function(id)
+    if id == 'm' then return love.mouse.getPosition() end
+    return love.touch.getPosition(id)
+  end
 end

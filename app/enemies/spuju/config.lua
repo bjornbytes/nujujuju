@@ -9,5 +9,6 @@ return {
   shape = 'ellipse',
   perspective = 2,
   damage = 1,
-  skullCount = 2
+  skullCount = 2,
+  attackCooldown = 5
 }

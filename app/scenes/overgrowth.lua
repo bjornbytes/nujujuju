@@ -2,7 +2,7 @@ local overgrowth = {}
 
 overgrowth.name = 'The Overgrowth'
 overgrowth.width = 960
-overgrowth.height = 540
+overgrowth.height = 720
 
 local w, h = overgrowth.width, overgrowth.height
 
