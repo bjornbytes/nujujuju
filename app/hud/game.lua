@@ -18,7 +18,7 @@ end
 function hud:bind()
   self.u, self.v = g.getDimensions()
   self.font = self.config.font(self.v * .04)
-  self.smallFont = self.config.font(self.v * .02)
+  self.smallFont = self.config.font(self.v * .03)
   self.bigFont = self.config.font(self.v * .065)
 
   for i = 1, #app.context.abilities.list do
@@ -140,46 +140,23 @@ function hud:drawJuju()
   local p = app.context.objects.muju
   local image = app.art.juju
   local margin = .02 * v
-  local baseScale = (.05 * v) / image:getWidth()
-  local inc = .05 * v + margin
-  local ox = margin + image:getWidth() * baseScale / 2
-  local oy = margin
-  local perRow = 5
+  local size = (.05 * v)
 
-  if app.context.abilities.casting then
-    self.jujuCostExitTween = nil
-    local cost
-    if app.context.abilities.selected == nil and app.context.abilities.casting then
-      local owner = app.context.abilities.owner
-      cost = owner == app.context.objects.muju and app.context.abilities.list[1]:getCost(owner) or nil
-    else
-      cost = app.context.abilities.selected:getCost()
-    end
+  local image = app.art.juju
+  local size = .05 * v
+  local scale = g.imageScale(image, size)
 
-    if cost then
-      if not self.jujuSpendIndex then
-        self.jujuSpendIndex = p.juju - cost
-        lib.flux.to(self, 1, { jujuCostFactor = 1 }):ease('quintout')
-      end
-    end
-  else
-    if self.jujuCostFactor > 0 then
-      self.jujuCostExitTween = lib.flux.to(self, .5, { jujuCostFactor = 0 })
-        :ease('quintout')
-        :oncomplete(function()
-          self.jujuCostExitTween = nil
-          self.jujuSpendIndex = nil
-        end)
-    end
-  end
+  g.setFont(self.font)
 
-  for i = 1, p.juju do
-    local x = ox + (inc * ((i - 1) % perRow))
-    local y = oy + (inc * math.floor((i - 1) / perRow))
-    local scale = baseScale + ((self.jujuSpendIndex and i > self.jujuSpendIndex) and self.jujuCostFactor or 0) * .3
-    g.white()
-    g.draw(image, x, y, 0, scale, scale, image:getWidth() / 2)
-  end
+  local height = margin + size + margin
+
+  g.setColor(0, 0, 0, 100)
+  g.rectangle('fill', 0, v - height, margin + size + margin + g.getFont():getWidth(p.juju) + margin, height)
+
+  g.white()
+  g.draw(image, margin, v - margin - size, 0, scale, scale)
+
+  g.print(p.juju, margin + size + margin, v - margin - size / 2 - g.getFont():getHeight() / 2)
 end
 
 function hud:drawWaves()
@@ -187,9 +164,6 @@ function hud:drawWaves()
 
   g.setFont(self.smallFont)
   g.white()
-
-  g.print('Wave ' .. app.context.waves.current .. ' / ' .. #app.context.waves.waves, .01 * v, v - g.getFont():getHeight() - .01 * v)
-  g.print(math.floor(lib.tick.index * lib.tick.rate), .01 * v, v - g.getFont():getHeight() * 2 - .01 * v * 2)
 
   g.setFont(self.font)
 
@@ -201,14 +175,12 @@ function hud:drawWaves()
     local bfh = self.bigFont:getHeight()
     local padding = .02 * v
     local portraitSize = .1 * v
-    local y = padding--v - padding - fh - padding - portraitSize - padding - fh - padding - bfh
+    local y = padding
 
     local str = math.ceil(app.context.waves.grace)
     g.setFont(self.bigFont)
     g.print(str, .5 * u - g.getFont():getWidth(str) / 2, v * .675)
     g.setFont(self.font)
-
-    --y = y + bfh + padding
 
     local str = 'Next wave'
     g.print(str, .5 * u - font:getWidth(str) / 2, y)
@@ -299,9 +271,9 @@ function hud:drawAbilities()
       local padding = .01 * v
       local totalWidth = image:getWidth() * scale + padding + g.getFont():getWidth(cost)
       g.white(canAfford and 255 or 120)
-      g.draw(image, x - totalWidth / 2, v - 8 - size - .03 * v, 0, scale, scale)
-      g.white()
-      g.print(cost, x - totalWidth / 2 + image:getWidth() * scale + padding, v - 8 - size - .03 * v)
+      g.draw(image, x - totalWidth / 2, v - 8 - size - g.getFont():getHeight() / 2, 0, scale, scale, 0, image:getHeight() / 2)
+      g.setColor(canAfford and {255, 255, 255} or {255, 100, 100})
+      g.print(cost, x - totalWidth / 2 + image:getWidth() * scale + padding, v - 8 - size - g.getFont():getHeight())
     end
 
     x = x + inc
