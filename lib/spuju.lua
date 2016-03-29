@@ -15,7 +15,7 @@ function spuju:move()
   local distanceToTarget = self:distanceTo(self.target) - self.config.radius - self.target.config.radius
   local directionToTarget = self:directionTo(self.target)
 
-  if isInRange and love.math.random() < lib.tick.rate then
+  if isInRange and love.math.random() < .25 / lib.tick.rate then
     if distanceToTarget < self.config.fearRange and love.math.random() < .25 and self.abilities.fear:canCast(self) then
       local x, y = self.target.position.x, self.target.position.y
       self.abilities.fear:cast(self, x, y)
