@@ -1,14 +1,12 @@
 local summon = lib.object.create():include(lib.ability)
 
-summon.cooldown = 1
-
 function summon:getCost()
   return #util.filter(app.context.objects, 'isMinion')
 end
 
 function summon:canCast(owner)
   local muju = app.context.objects.muju
-  return owner == muju and self:canPayJuju() and not self:isOnCooldown()
+  return owner == muju and self:canPayJuju()
 end
 
 function summon:cast(owner, x, y)
