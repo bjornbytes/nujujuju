@@ -5,7 +5,7 @@ local function isLeft(x, y, b)
 end
 
 local function hasTouch(id)
-  return util.find(love.touch.getTouches(), id)
+  return util.find(love.touch.getTouches(), id) or (id == 'm' and love.mouse.isDown(1))
 end
 
 function abilities:isCasting()
@@ -60,7 +60,7 @@ function abilities:bind()
 
         lib.flux.to(self.casts[id], .3, { factor = 1 }):ease('backinout')
       end)
-      :flatMapLatest(function(id, owner)
+      :flatMap(function(id, owner)
         return love.touchreleased
           :filter(f.eq(id))
           :take(1)
@@ -117,7 +117,7 @@ function abilities:bind()
 
         lib.flux.to(self.casts[id], .3, { factor = 1 }):ease('backinout')
       end)
-      :flatMapLatest(function(id)
+      :flatMap(function(id)
         return love.touchreleased
           :filter(f.eq(id))
           :take(1)
@@ -125,8 +125,6 @@ function abilities:bind()
       :subscribe(function(id, x, y)
         local mx, my = app.context.view:worldPoint(x, y)
         local cast = self.casts[id]
-
-        if not cast then return end
 
         cast.active = false
         cast.x = mx
