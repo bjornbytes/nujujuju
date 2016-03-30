@@ -30,7 +30,7 @@ f = lib.funk
 g = love.graphics
 util = setmetatable(lib.util, { __index = lib.lume })
 
-app.context.load('world')
+app.context.load('overgrowth')
 
 love.update:subscribe(lib.flux.update)
 

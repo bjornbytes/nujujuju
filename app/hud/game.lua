@@ -65,6 +65,7 @@ function hud:bind()
         end)
 
         self:drawAbilities()
+        self:drawGodTest()
 
         return -1000
       end),
@@ -278,6 +279,24 @@ function hud:drawAbilities()
 
     x = x + inc
   end
+end
+
+function hud:drawGodTest()
+  local u, v = self.u, self.v
+
+  self.godCanvas = self.godCanvas or g.newCanvas(u, v)
+  g.setCanvas(self.godCanvas)
+  g.clear(0, 0, 0, 0)
+
+  g.white()
+  g.rectangle('fill', u * .5 - 100, v * .5 - 100, 200, 200)
+
+  g.setCanvas()
+
+  app.shaders.godray:send('time', lib.tick.index)
+  g.setShader(app.shaders.godray)
+  g.draw(self.godCanvas)
+  g.setShader()
 end
 
 return hud
