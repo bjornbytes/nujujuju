@@ -284,12 +284,12 @@ end
 function hud:drawGodTest()
   local u, v = self.u, self.v
 
-  self.godCanvas = self.godCanvas or g.newCanvas(u, v)
+  self.godCanvas = self.godCanvas or g.newCanvas(v, v)
   g.setCanvas(self.godCanvas)
   g.clear(0, 0, 0, 0)
 
   g.white()
-  g.rectangle('fill', u * .5 - 100, v * .5 - 100, 200, 200)
+  g.rectangle('fill', v * .5 - 100, v * .5 - 100, 200, 200)
 
   g.setCanvas()
 
