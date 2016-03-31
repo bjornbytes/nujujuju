@@ -12,8 +12,8 @@ vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) 
 
   float xfactor = .7 + cos(ox * 100 + time / 50) / 20;
   float yfactor = .7 + sin(oy * 100 + time / 50) / 20;
-  xfactor *= 1 + abs(cos(time / 50 + direction * 3)) / 1;
-  yfactor *= 1 + abs(sin(time / 50 + direction * 3)) / 1;
+  xfactor *= 1 + abs(cos(time / 20 + (11 + cos(direction) * 5))) / 1.25;
+  yfactor *= 1 + abs(cos(.25 + time / 20 + (11 + sin(direction) * 5))) / 1.25;
   float factor = xfactor / 2 + yfactor / 2;
   vec2 rayCoords = vec2(((texture_coords.x - .5) / factor) + .5, ((texture_coords.y - .5) / factor) + .5);
   vec4 rayColor = Texel(texture, rayCoords) / 1;
