@@ -49,7 +49,7 @@ function hud:bind()
     app.context.view.hud
       :subscribe(function()
         self:drawJuju()
-        self:drawWaves()
+        --self:drawWaves()
 
         app.art.heartFrame:setFilter('nearest')
         app.art.heart:setFilter('nearest')
@@ -138,25 +138,29 @@ end
 function hud:drawJuju()
   local u, v = self.u, self.v
   local p = app.context.objects.muju
-  local image = app.art.juju
-  local margin = .02 * v
-  local size = (.05 * v)
+  local str = p.juju
+  local xpadding = (18 / 720) * v
+  local ypadding = (8 / 720) * v
+  local spacer = (12 / 720) * v
+  local height = (42 / 720) * v
+  local textNudge = (-1 / 720) * v
+  local icon = app.art.juju
+  local scale = (height - (2 * ypadding)) / icon:getHeight()
+  local font = fonts.rawengulk((30 / 720) * v)
+  local width = xpadding + icon:getWidth() * scale + spacer + font:getWidth(str) + xpadding
 
-  local image = app.art.juju
-  local size = .05 * v
-  local scale = g.imageScale(image, size)
+  local x = u * .5 - width * .5
+  local y = (14 / 720) * v
 
-  g.setFont(self.font)
-
-  local height = margin + size + margin
-
-  g.setColor(0, 0, 0, 100)
-  g.rectangle('fill', 0, v - height, margin + size + margin + g.getFont():getWidth(p.juju) + margin, height)
+  g.setColor(0, 0, 0, 90)
+  g.rectangle('fill', x, y, width, height, height / 2, height / 2)
 
   g.white()
-  g.draw(image, margin, v - margin - size, 0, scale, scale)
+  g.draw(icon, x + xpadding, y + ypadding, 0, scale, scale)
 
-  g.print(p.juju, margin + size + margin, v - margin - size / 2 - g.getFont():getHeight() / 2)
+  g.setFont(font)
+  g.white()
+  g.print(str, x + xpadding + icon:getWidth() * scale + spacer, y + height / 2 - font:getHeight() / 2 + textNudge)
 end
 
 function hud:drawWaves()
