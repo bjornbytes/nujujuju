@@ -65,6 +65,7 @@ function hud:bind()
         end)
 
         self:drawAbilities()
+        self:drawAbility(app.context.abilities.list[1], 20, 20)
 
         return -1000
       end),
@@ -148,7 +149,6 @@ function hud:drawJuju()
   local scale = (height - (2 * ypadding)) / icon:getHeight()
   local font = fonts.rawengulk((30 / 720) * v)
   local width = xpadding + icon:getWidth() * scale + spacer + font:getWidth(str) + xpadding
-
   local x = u * .5 - width * .5
   local y = (14 / 720) * v
 
@@ -158,8 +158,8 @@ function hud:drawJuju()
   g.white()
   g.draw(icon, x + xpadding, y + ypadding, 0, scale, scale)
 
-  g.setFont(font)
   g.white()
+  g.setFont(font)
   g.print(str, x + xpadding + icon:getWidth() * scale + spacer, y + height / 2 - font:getHeight() / 2 + textNudge)
 end
 
@@ -227,6 +227,42 @@ function hud:drawWaves()
     g.white()
     g.print(str, x - g.getFont():getWidth(str) / 2, v * .2)
   end
+end
+
+function hud:drawAbility(ability, x, y)
+  local u, v = self.u, self.v
+  local p = app.context.objects.muju
+  local size = (70 / 720) * v
+  local cost = ability:getCost()
+  local canAfford = not cost or p.juju >= cost
+  local xpadding = (5 / 720) * v
+  local ypadding = (4 / 720) * v
+  local costHeight = (22 / 720) * v
+  local juju = app.art.juju
+  local jujuScale = (costHeight - 2 * ypadding) / juju:getHeight()
+  local font = fonts.rawengulk((20 / 720) * v)
+  local costWidth = xpadding + juju:getWidth() * jujuScale + xpadding + font:getWidth(cost) + xpadding
+  local costX = x + size - costWidth
+  local costY = y + size - costHeight
+  local icon = app.art.icons[ability.tag]
+  local iconPadding = (4 / 720) * v
+  local iconScale = (size * .8) / math.max(icon:getWidth(), icon:getHeight())
+
+  g.setColor(0, 0, 0, 90)
+  g.rectangle('fill', x, y, size, size)
+
+  g.white()
+  g.draw(icon, x + size / 2, y + size / 2, 0, iconScale, iconScale, icon:getWidth() / 2, icon:getHeight() / 2)
+
+  g.setColor(0, 0, 0, 90)
+  g.rectangle('fill', costX, costY, costWidth, costHeight)
+
+  g.white()
+  g.draw(juju, costX + xpadding, costY + ypadding, 0, jujuScale, jujuScale)
+
+  g.white()
+  g.setFont(font)
+  g.print(cost, costX + xpadding + juju:getWidth() * jujuScale + xpadding, costY + costHeight / 2 - font:getHeight() / 2)
 end
 
 function hud:drawAbilities()
