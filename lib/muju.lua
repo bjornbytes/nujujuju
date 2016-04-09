@@ -8,16 +8,7 @@ function muju:tint(r, g, b)
 end
 
 function muju:hurt(amount)
-  if self.dead then return end
-
-  self.health = math.max(self.health - amount, 0)
-  app.context.view:screenshake(.1)
-
-  if self.health == 0 then
-    self.dead = true
-    app.context:unload()
-    app.context.load('overgrowth')
-  end
+  return
 end
 
 function muju:addJuju(amount)

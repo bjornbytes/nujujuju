@@ -56,7 +56,6 @@ function hud:bind()
         app.art.heartHalf:setFilter('nearest')
 
         local healthbars = {}
-        healthbars = util.concat(healthbars, { app.context.objects.muju })
         healthbars = util.concat(healthbars, util.filter(app.context.objects, 'isMinion'))
         healthbars = util.concat(healthbars, util.filter(app.context.objects, 'isEnemy'))
 
