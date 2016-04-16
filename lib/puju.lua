@@ -125,7 +125,16 @@ function puju:draw()
   g.white()
   self.animation:tick(lib.tick.delta)
   self.animation.skeleton:findBone('body').rotation = 270 + self.yank * 20 * (self.animation.flipped and 1 or -1)
-  self.animation:draw(self.position.x, self.position.y)
+
+  if util.timeSince(self.lastHurt) < self.config.damageFlashDuration then
+    self.animation:draw(self.position.x, self.position.y)
+    app.shaders.colorize:send('color', { 1, 1, 1, 1 - util.timeSince(self.lastHurt) / self.config.damageFlashDuration })
+    g.setShader(app.shaders.colorize)
+    self.animation:draw(self.position.x, self.position.y)
+    g.setShader()
+  else
+    self.animation:draw(self.position.x, self.position.y)
+  end
 
   local image = app.art.puju
   local scale = g.imageScale(image, 35 * baseScale)
