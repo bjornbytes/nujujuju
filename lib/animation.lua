@@ -13,7 +13,6 @@ function animation.create(spine, config)
   end
 
   self.skeletonJson = lib.spine.SkeletonJson.new(self.atlasAttachmentLoader)
-  print(self.config.scale)
   self.skeletonJson.scale = self.config.scale or 1
   self.skeletonData = self.skeletonJson:readSkeletonData(spine.data)
   self.skeleton = lib.spine.Skeleton.new(self.skeletonData)
@@ -71,7 +70,7 @@ end
 function animation:tick(delta)
   delta = delta or lib.tick.rate
 
-  self.animationState.timeScale = self.speed
+  self.animationState.timeScale = self.speed or 1
   for i = 0, self.animationState.trackCount do
     local track = self.animationState.tracks[i]
     if track then
@@ -81,12 +80,21 @@ function animation:tick(delta)
         local speed = animation.duration / state.length
         self.animationState.tracks[i].timeScale = speed
       else
-        self.animationState.tracks[i].timeScale = state.speed
+        if self.config.speedHack then
+          self.animationState.tracks[i].timeScale = state.speed or 1
+        else
+          self.animationState.tracks[i].timeScale = 1
+        end
       end
     end
   end
 
-  self.animationState:update(delta)
+  if self.config.speedHack then
+    self.animationState:update(delta)
+  else
+    self.animationState:update(delta * (self.active.speed or 1))
+  end
+
   self.animationState:apply(self.skeleton)
 end
 

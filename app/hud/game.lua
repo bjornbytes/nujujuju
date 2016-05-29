@@ -10,11 +10,10 @@ hud.config = {
 
 function hud:init()
   self.abilityFactor = {}
+  self.jujuCostActive = false
   self.jujuCostFactor = 0
-  self.jujuCostExitTween = nil
-  self.jujuSpendIndex = nil
 
-  local brujuConfig = util.merge({ scale = 1 }, util.clone(app.minions.bruju.animation))
+  local brujuConfig = util.merge({ scale = 1, speedHack = true }, util.clone(app.minions.bruju.animation))
 
   self.animations = {}
   self.animations.bruju = lib.animation.create(app.minions.bruju.spine, brujuConfig)
@@ -83,6 +82,25 @@ function hud:bind()
           app.context.abilities.selected = app.context.abilities.list[index]
         else
           app.context.abilities.selected = nil
+        end
+      end),
+
+    love.update
+      :subscribe(function()
+        local isActuallyCastingSomething = util.match(app.context.abilities.casts, function(cast)
+          return cast.active and (not cast.owner.isMinion or cast.ability)
+        end)
+
+        if isActuallyCastingSomething then
+          if not self.jujuCostActive then
+            lib.flux.to(self, .2, { jujuCostFactor = 1 })
+            self.jujuCostActive = true
+          end
+        else
+          if self.jujuCostActive then
+            lib.flux.to(self, .2, { jujuCostFactor = 0 })
+            self.jujuCostActive = false
+          end
         end
       end)
   }
@@ -166,6 +184,40 @@ function hud:drawJuju()
   g.white()
   g.setFont(font)
   g.print(str, x + xpadding + icon:getWidth() * scale + spacer, y + height / 2 - font:getHeight() / 2 + textNudge)
+
+  if self.jujuCostFactor > 0 then
+    local totalCost = util.reduce(app.context.abilities.casts, function(cost, cast)
+      if cast.active and (not cast.owner.isMinion or cast.ability) then
+        cost = cost or 0
+
+        if not cast.ability then
+          cost = cost + util.count(util.filter(app.context.objects, 'isMinion'))
+        else
+          cost = cost + cost.ability:getCost()
+        end
+      end
+
+      return cost
+    end, 0)
+
+    local text = totalCost
+    local width = xpadding + font:getWidth(str) + xpadding
+    local x = u * .5 - width * .5
+    local y = y + height + ypadding
+
+    y = y + .01 * v * (1 - self.jujuCostFactor)
+
+    g.setColor(0, 0, 0, 90 * self.jujuCostFactor)
+    g.rectangle('fill', x, y, width, height, height / 2, height / 2)
+
+    if totalCost > 0 then
+      g.setColor(200, 140, 140, 255 * self.jujuCostFactor)
+    else
+      g.white(255 * self.jujuCostFactor)
+    end
+
+    g.print(text, u * .5 - font:getWidth(str) / 2, y + height / 2 - g.getFont():getHeight() / 2)
+  end
 end
 
 function hud:drawWaves()

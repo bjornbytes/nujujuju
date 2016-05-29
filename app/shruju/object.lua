@@ -68,7 +68,7 @@ function shruju:draw()
   local actualPosition = self.position
   self.position = self.initialPosition
 
-  if self.carrier then
+  if actualPosition.x ~= self.initialPosition.x or actualPosition.y ~= self.initialPosition.y then
     self:drawRing(255, 40, 40)
   else
     self:drawRing(40, 200, 40)

@@ -7,7 +7,7 @@ return {
   default = 'spawn',
   states = {
     spawn = {
-      speed = .16
+      speed = .3
     },
     idle = {
       loop = true,

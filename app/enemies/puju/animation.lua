@@ -1,5 +1,6 @@
 return {
   scale = .22,
+  speedHack = true,
   flipped = true,
   offset = {
     x = 0,
