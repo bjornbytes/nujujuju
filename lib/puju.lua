@@ -114,9 +114,7 @@ function puju:run()
   self.velocity.y = util.lerp(self.velocity.y, velocityY, lib.tick.getLerpFactor(self.config.acceleration))
 
   if distance < 50 then
-    print('HA')
-    app.context:removeObject(self.target)
-    self.target:unbind()
+    self.target:die()
     self.state = 'idle'
   end
 end

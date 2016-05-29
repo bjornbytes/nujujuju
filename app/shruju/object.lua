@@ -34,6 +34,18 @@ function shruju:pickup(carrier)
   return false
 end
 
+function shruju:die()
+  app.context:removeObject(self)
+  self:unbind()
+
+  app.context.view:screenshake(.1)
+
+  if #util.filter(app.context.objects, 'isShruju') == 0 then
+    app.context:unload()
+    app.context.load('overgrowth')
+  end
+end
+
 function shruju:draw()
   if not self.carrier then
     local image = app.art.shadow

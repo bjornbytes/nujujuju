@@ -87,9 +87,7 @@ function spuju:run()
   self:moveInDirection(self.direction, self.config.speed / 2)
 
   if distance < 50 then
-    print('HA')
-    app.context:removeObject(self.target)
-    self.target:unbind()
+    self.target:die()
     self.state = 'idle'
   end
 end
