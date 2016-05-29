@@ -11,8 +11,8 @@ overgrowth.objects = {
   { 'muju',
     key = 'muju',
     position = {
-      x = w / 2,
-      y = h / 2
+      x = w * .5,
+      y = h * .25
     }
   },
   { 'abilities.manager', key = 'abilities' },
@@ -91,6 +91,24 @@ overgrowth.objects = {
           }
         }
       }
+    }
+  },
+  { 'shruju',
+    position = {
+      x = w * .5,
+      y = h * .25 + 67
+    }
+  },
+  { 'shruju',
+    position = {
+      x = w * .5 - 100,
+      y = h * .25
+    }
+  },
+  { 'shruju',
+    position = {
+      x = w * .5 + 100,
+      y = h * .25
     }
   }
 }

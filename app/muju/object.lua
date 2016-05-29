@@ -3,8 +3,8 @@ local muju = lib.object.create():include(lib.entity, lib.muju)
 function muju:init()
   self.team = 'player'
   self.position = {
-    x = app.context.scene.width / 2,
-    y = app.context.scene.height / 2
+    x = app.context.scene.width * .5,
+    y = app.context.scene.height * .25
   }
   self.health = muju.config.maxHealth
   self.juju = 0

@@ -158,4 +158,10 @@ function unit:drawBuffs()
   end
 end
 
+function unit:isCarryingShruju()
+  return util.match(app.context.objects, function(object)
+    return util.isa(object, app.shruju.object) and object.carrier == self
+  end)
+end
+
 return unit
