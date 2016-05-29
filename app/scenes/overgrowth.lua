@@ -96,18 +96,18 @@ overgrowth.objects = {
   { 'shruju',
     position = {
       x = w * .5,
-      y = h * .25 + 67
+      y = h * .25 + 100
     }
   },
   { 'shruju',
     position = {
-      x = w * .5 - 100,
+      x = w * .5 - 150,
       y = h * .25
     }
   },
   { 'shruju',
     position = {
-      x = w * .5 + 100,
+      x = w * .5 + 150,
       y = h * .25
     }
   }

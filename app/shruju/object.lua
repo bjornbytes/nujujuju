@@ -1,7 +1,12 @@
-local shruju = lib.object.create()
+local shruju = lib.object.create():include(lib.entity)
 
 function shruju:init()
   self.carrier = nil
+
+  local animationKey = 'shruju' .. love.math.random(1, 5)
+  local animation = app.shruju.animations[animationKey]
+  self.animation = lib.animation.create(animation.spine, animation.config)
+  self.animation:set('idle')
 end
 
 function shruju:bind()
@@ -23,10 +28,13 @@ function shruju:draw()
   local size = self.config.radius * 3
   local scale = g.imageScale(image, size)
 
-  g.white()
+  g.white(50)
   g.draw(image, self.position.x, self.position.y, 0, scale, scale / 2, image:getWidth() / 2, image:getHeight() / 2)
 
-  g.circle('fill', self.position.x, self.position.y, shruju.config.radius)
+  self:drawRing(40, 200, 40)
+
+  self.animation:tick(lib.tick.delta)
+  self.animation:draw(self.position.x, self.position.y)
 
   return -self.position.y
 end
