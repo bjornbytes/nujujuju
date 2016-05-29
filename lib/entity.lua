@@ -66,6 +66,14 @@ function entity.closest(source, ...)
       if source ~= player then
         table.insert(result, {player, entity.distanceTo(source, player)})
       end
+    end,
+
+    shruju = function(source, result)
+      util.each(util.filter(app.context.objects, 'isShruju'), function(shruju)
+        if source ~= shruju and not shruju.carrier then
+          table.insert(result, {shruju, entity.distanceTo(source, shruju)})
+        end
+      end)
     end
   }
 
@@ -94,6 +102,14 @@ function entity.closestToPoint(x, y, ...)
     player = function(result)
       local player = app.context.objects.muju
       table.insert(result, {player, entity.distanceToPoint(player, x, y)})
+    end,
+
+    shruju = function(result)
+      util.each(util.filter(app.context.objects, 'isShruju'), function(shruju)
+        if not shruju.carrier then
+          table.insert(result, {shruju, entity.distanceToPoint(shruju, x, y)})
+        end
+      end)
     end
   }
 
@@ -131,6 +147,15 @@ function entity.inRange(x, y, range, ...)
       if distance <= range then
         table.insert(result, player)
       end
+    end,
+
+    shruju = function(result)
+      util.each(util.filter(app.context.objects, 'isShruju'), function(shruju)
+        local distance = entity.distanceToPoint(shruju, x, y)
+        if distance <= range and not shruju.carrier then
+          table.insert(result, shruju)
+        end
+      end)
     end
   }
 

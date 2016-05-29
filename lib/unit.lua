@@ -128,6 +128,8 @@ function unit:heal(amount, source)
 end
 
 function unit:die()
+  self:dropShruju()
+
   if not self.dead then
     self.dead = true
     self.animation:set('death')
@@ -158,10 +160,22 @@ function unit:drawBuffs()
   end
 end
 
-function unit:isCarryingShruju()
+function unit:isCarryingShruju(target)
   return util.match(app.context.objects, function(object)
-    return util.isa(object, app.shruju.object) and object.carrier == self
+    return util.isa(object, app.shruju.object) and object.carrier == self and (not target or object == target)
   end)
+end
+
+function unit:pickupShruju(shruju)
+  return shruju:pickup(self)
+end
+
+function unit:dropShruju()
+  local shruju = self:isCarryingShruju()
+
+  if shruju then
+    shruju.carrier = nil
+  end
 end
 
 return unit

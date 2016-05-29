@@ -42,10 +42,11 @@ function spuju:bind()
     bindState('move'),
     bindState('attack'),
     bindState('fear'),
+    bindState('run'),
 
     love.update
       :subscribe(function()
-        if not self.dead then
+        if not self.dead and not self:isCarryingShruju() then
           local sign = self:signTo(self.target)
 
           if sign ~= 0 then

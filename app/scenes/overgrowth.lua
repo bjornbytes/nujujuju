@@ -12,7 +12,7 @@ overgrowth.objects = {
     key = 'muju',
     position = {
       x = w * .5,
-      y = h * .25
+      y = h * .33
     }
   },
   { 'abilities.manager', key = 'abilities' },
@@ -23,7 +23,7 @@ overgrowth.objects = {
       [1] = {
         events = {
           [1] = {
-            kind = 'puju',
+            kind = 'spuju',
             count = 1,
             time = 0
           }
@@ -96,19 +96,19 @@ overgrowth.objects = {
   { 'shruju',
     position = {
       x = w * .5,
-      y = h * .25 + 100
+      y = h * .33 + 100
     }
   },
   { 'shruju',
     position = {
       x = w * .5 - 150,
-      y = h * .25
+      y = h * .33
     }
   },
   { 'shruju',
     position = {
       x = w * .5 + 150,
-      y = h * .25
+      y = h * .33
     }
   }
 }

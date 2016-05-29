@@ -2,6 +2,7 @@ local shruju = lib.object.create():include(lib.entity)
 
 function shruju:init()
   self.carrier = nil
+  self.isShruju = true
 
   local animationKey = 'shruju' .. love.math.random(1, 5)
   local animation = app.shruju.animations[animationKey]
@@ -14,8 +15,8 @@ function shruju:bind()
     love.update
       :filter(function() return self.carrier end)
       :subscribe(function()
-        self.position.x = self.carrier.postiion.x
-        self.position.y = self.carrier.postiion.y
+        self.position.x = self.carrier.position.x
+        self.position.y = self.carrier.position.y
       end),
 
     app.context.view.draw
@@ -23,20 +24,32 @@ function shruju:bind()
   }
 end
 
+function shruju:pickup(carrier)
+  if not self.carrier then
+    self.carrier = carrier
+
+    return true
+  end
+
+  return false
+end
+
 function shruju:draw()
-  local image = app.art.shadow
-  local size = self.config.radius * 3
-  local scale = g.imageScale(image, size)
+  if not self.carrier then
+    local image = app.art.shadow
+    local size = self.config.radius * 3
+    local scale = g.imageScale(image, size)
 
-  g.white(50)
-  g.draw(image, self.position.x, self.position.y, 0, scale, scale / 2, image:getWidth() / 2, image:getHeight() / 2)
+    g.white(50)
+    g.draw(image, self.position.x, self.position.y, 0, scale, scale / 2, image:getWidth() / 2, image:getHeight() / 2)
 
-  self:drawRing(40, 200, 40)
+    self:drawRing(40, 200, 40)
+  end
 
   self.animation:tick(lib.tick.delta)
   self.animation:draw(self.position.x, self.position.y)
 
-  return -self.position.y
+  return -self.position.y - 5
 end
 
 return shruju

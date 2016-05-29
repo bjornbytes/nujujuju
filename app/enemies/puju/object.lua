@@ -46,6 +46,7 @@ function puju:bind()
     bindState('idle'),
     bindState('move'),
     bindState('attack'),
+    bindState('run'),
 
     self.collisions:subscribe(self:wrap(self.resolveCollision)),
     love.update:subscribe(self:wrap(self.enclose)),

@@ -1,7 +1,7 @@
 local spuju = {}
 
 function spuju:idle()
-  self.target = self:closest('minion', 'player')
+  self.target = self:closest('minion', 'shruju')
 
   if self.target then
     self.state = 'move'
@@ -9,11 +9,27 @@ function spuju:idle()
 end
 
 function spuju:move()
-  self.target = self:closest('minion', 'player')
+  self.target = self:closest('minion', 'shruju')
 
   local isInRange = self:isInRangeOf(self.target)
   local distanceToTarget = self:distanceTo(self.target) - self.config.radius - self.target.config.radius
   local directionToTarget = self:directionTo(self.target)
+
+  if self.target.isShruju then
+    self.animation:set('walk')
+    self.targetDirection = directionToTarget
+    self.direction = util.anglerp(self.direction, self.targetDirection, lib.tick.getLerpFactor(.05))
+
+    self:moveInDirection(self.direction, self.config.speed)
+
+    if distanceToTarget <= 0 then
+      if self:pickupShruju(self.target) then
+        self.state = 'run'
+      end
+    end
+
+    return
+  end
 
   if isInRange and love.math.random() < .25 / lib.tick.rate then
     if distanceToTarget < self.config.fearRange and love.math.random() < .25 and self.abilities.fear:canCast(self) then
@@ -49,6 +65,33 @@ end
 
 function spuju:fear()
   -- wait for animation to complete
+end
+
+function spuju:run()
+  local targetX, targetY
+
+  if self.position.x < app.context.scene.width / 2 then
+    targetX = 0
+    targetY = app.context.scene.height / 2
+    self.animation.flipped = false
+  else
+    targetX = app.context.scene.width
+    targetY = app.context.scene.height / 2
+    self.animation.flipped = true
+  end
+
+  local distance = self:distanceToPoint(targetX, targetY)
+  local direction = self:directionToPoint(targetX, targetY)
+
+  self.direction = util.anglerp(self.direction, direction, lib.tick.getLerpFactor(.05))
+  self:moveInDirection(self.direction, self.config.speed / 2)
+
+  if distance < 50 then
+    print('HA')
+    app.context:removeObject(self.target)
+    self.target:unbind()
+    self.state = 'idle'
+  end
 end
 
 function spuju:hurt(...)

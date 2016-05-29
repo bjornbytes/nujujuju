@@ -1,7 +1,7 @@
 local puju = {}
 
 function puju:idle()
-  self.target = self:closest('minion', 'player')
+  self.target = self:closest('minion', 'shruju')
 
   if self.target then
     self.state = 'move'
@@ -15,7 +15,7 @@ function puju:move()
     return
   end
 
-  self.target = self:closest('minion', 'player')
+  self.target = self:closest('minion', 'shruju')
 
   if self.target then
     sign = self:signTo(self.target)
@@ -29,15 +29,31 @@ function puju:move()
 
   local distance = self:distanceTo(self.target)
   local angle = self:directionTo(self.target)
-  local speed = math.min(self.config.speed * lib.tick.rate, distance)
   local targetVelocityX = math.cos(angle) * self.config.speed * lib.tick.rate
   local targetVelocityY = math.sin(angle) * self.config.speed * lib.tick.rate
+
+  if self.target.isShruju then
+    self.velocity.x = util.lerp(self.velocity.x, targetVelocityX, lib.tick.getLerpFactor(self.config.acceleration))
+    self.velocity.y = util.lerp(self.velocity.y, targetVelocityY, lib.tick.getLerpFactor(self.config.acceleration))
+
+    if self:isCarryingShruju(self.target) then
+      self.state = 'run'
+    end
+
+    if self:distanceTo(self.target) <= self.config.radius + self.target.config.radius then
+      if self:pickupShruju(self.target) then
+        self.state = 'run'
+      end
+    end
+
+    return
+  end
+
   local distanceFactor = util.clamp((distance - self.config.range) / (self.config.range / 4), 0, 1)
+  self.velocity.x = util.lerp(self.velocity.x, targetVelocityX, lib.tick.getLerpFactor(self.config.acceleration))
+  self.velocity.y = util.lerp(self.velocity.y, targetVelocityY, lib.tick.getLerpFactor(self.config.acceleration))
 
-  self.velocity.x = util.lerp(self.velocity.x, targetVelocityX * distanceFactor, lib.tick.getLerpFactor(self.config.acceleration))
-  self.velocity.y = util.lerp(self.velocity.y, targetVelocityY * distanceFactor, lib.tick.getLerpFactor(self.config.acceleration))
-
-  if self:isInRangeOf(self.target) and love.math.random() < lib.tick.rate * 2 then
+  if self:isInRangeOf(self.target) and love.math.random() < lib.tick.rate * 2 and not self.target.isShruju then
     self.state = 'attack'
   end
 end
@@ -76,6 +92,33 @@ function puju:attack()
 
   self.velocity.x = util.lerp(self.velocity.x, 0, lib.tick.getLerpFactor(self.config.acceleration))
   self.velocity.y = util.lerp(self.velocity.y, 0, lib.tick.getLerpFactor(self.config.acceleration))
+end
+
+function puju:run()
+  local targetX, targetY
+
+  if self.position.x < app.context.scene.width / 2 then
+    targetX = 0
+    targetY = app.context.scene.height / 2
+  else
+    targetX = app.context.scene.width
+    targetY = app.context.scene.height / 2
+  end
+
+  local distance = self:distanceToPoint(targetX, targetY)
+  local angle = self:directionToPoint(targetX, targetY)
+  local velocityX = math.cos(angle) * self.config.speed / 2 * lib.tick.rate
+  local velocityY = math.sin(angle) * self.config.speed / 2 * lib.tick.rate
+
+  self.velocity.x = util.lerp(self.velocity.x, velocityX, lib.tick.getLerpFactor(self.config.acceleration))
+  self.velocity.y = util.lerp(self.velocity.y, velocityY, lib.tick.getLerpFactor(self.config.acceleration))
+
+  if distance < 50 then
+    print('HA')
+    app.context:removeObject(self.target)
+    self.target:unbind()
+    self.state = 'idle'
+  end
 end
 
 function puju:isHovered(x, y)
@@ -153,6 +196,7 @@ function puju:die()
   if self.dead then return end
 
   self.dead = true
+  self:dropShruju()
 
   lib.flux.to(self, .4, { alpha = 0 }):ease('cubicout'):oncomplete(function()
     self:remove()
