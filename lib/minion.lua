@@ -5,6 +5,10 @@ function minion:setIsMinion()
 end
 
 function minion:getBaseSpeed()
+  if self:isCarryingShruju() then
+    return self.config.speed / 1.5
+  end
+
   return self.config.speed
 end
 

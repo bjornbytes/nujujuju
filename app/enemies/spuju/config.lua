@@ -1,7 +1,7 @@
 return {
   radius = 50,
-  maxHealth = 4,
-  speed = 50,
+  maxHealth = 3,
+  speed = 40,
   range = 200,
   aggroRange = 200,
   fearRange = 50,

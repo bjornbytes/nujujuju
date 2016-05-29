@@ -168,7 +168,7 @@ function abilities:draw()
       if not tx or not ty then return end
 
       local entity = lib.target.objectAtPosition(tx, ty)
-      if entity and entity.isEnemy then
+      if entity and (entity.isEnemy or entity.isShruju) then
         tx = util.lerp(tx, entity.position.x, .5)
         ty = util.lerp(ty, entity.position.y, .5)
         radius = radius + 10

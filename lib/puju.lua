@@ -107,8 +107,8 @@ function puju:run()
 
   local distance = self:distanceToPoint(targetX, targetY)
   local angle = self:directionToPoint(targetX, targetY)
-  local velocityX = math.cos(angle) * self.config.speed / 2 * lib.tick.rate
-  local velocityY = math.sin(angle) * self.config.speed / 2 * lib.tick.rate
+  local velocityX = math.cos(angle) * self.config.speed / 3 * lib.tick.rate
+  local velocityY = math.sin(angle) * self.config.speed / 3 * lib.tick.rate
 
   self.velocity.x = util.lerp(self.velocity.x, velocityX, lib.tick.getLerpFactor(self.config.acceleration))
   self.velocity.y = util.lerp(self.velocity.y, velocityY, lib.tick.getLerpFactor(self.config.acceleration))

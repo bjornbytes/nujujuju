@@ -84,7 +84,7 @@ function spuju:run()
   local direction = self:directionToPoint(targetX, targetY)
 
   self.direction = util.anglerp(self.direction, direction, lib.tick.getLerpFactor(.05))
-  self:moveInDirection(self.direction, self.config.speed / 2)
+  self:moveInDirection(self.direction, self.config.speed / 3)
 
   if distance < 50 then
     self.target:die()

@@ -11,7 +11,7 @@ function unit:command(x, y)
     self.attacking = nil
   end
 
-  if entity and (util.isa(entity, app.juju) or entity.isEnemy) then
+  if entity and (entity.isEnemy or entity.isShruju) then
     self.target = entity
   else
 

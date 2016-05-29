@@ -40,8 +40,8 @@ function bruju:move()
         self.state = 'attack'
         self.attacking = self.target
         return
-      elseif util.isa(self.target, app.juju) then
-        self.target:pickup()
+      elseif util.isa(self.target, app.shruju.object) then
+        self:pickupShruju(self.target)
         self.state = 'idle'
         return
       else
@@ -76,7 +76,7 @@ function bruju:attack()
   end
 
   if self:runIfFeared() then
-    self.state = 'walk'
+    self.state = 'move'
     self.animation:set('walk')
     return
   end
