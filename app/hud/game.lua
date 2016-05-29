@@ -13,6 +13,13 @@ function hud:init()
   self.jujuCostFactor = 0
   self.jujuCostExitTween = nil
   self.jujuSpendIndex = nil
+
+  local brujuConfig = util.merge({ scale = 1 }, util.clone(app.minions.bruju.animation))
+
+  self.animations = {}
+  self.animations.bruju = lib.animation.create(app.minions.bruju.spine, brujuConfig)
+  self.animations.bruju.speed = .5
+  self.animations.bruju:set('idle')
 end
 
 function hud:bind()
@@ -63,8 +70,7 @@ function hud:bind()
           self:drawHealthbar(unit)
         end)
 
-        self:drawAbilities()
-        self:drawAbility(app.context.abilities.list[1], 20, 20)
+        self:drawAbilities2()
 
         return -1000
       end),
@@ -317,6 +323,15 @@ function hud:drawAbilities()
 
     x = x + inc
   end
+end
+
+function hud:drawAbilities2()
+  local u, v = self.u, self.v
+  self.animations.bruju:tick(lib.tick.rate)
+  self.animations.bruju:draw(.065 * v, .11 * v)
+  self:drawAbility(app.context.abilities.list[1], .15 * v, 20)
+  self:drawAbility(app.context.abilities.list[1], .275 * v, 20)
+  self:drawAbility(app.context.abilities.list[1], .4 * v, 20)
 end
 
 return hud

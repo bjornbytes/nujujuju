@@ -13,6 +13,7 @@ function animation.create(spine, config)
   end
 
   self.skeletonJson = lib.spine.SkeletonJson.new(self.atlasAttachmentLoader)
+  print(self.config.scale)
   self.skeletonJson.scale = self.config.scale or 1
   self.skeletonData = self.skeletonJson:readSkeletonData(spine.data)
   self.skeleton = lib.spine.Skeleton.new(self.skeletonData)
